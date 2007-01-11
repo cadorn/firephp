@@ -1,0 +1,19 @@
+
+.firephp-panel-menu-spacer {
+  padding: 5px;
+}
+
+.firephp-panel-menu-icon-disabled {
+  background: url(chrome://firephp/skin/PoweredByFirePHP_v1.png) no-repeat bottom;
+  height: 15px;
+  width: 80px;
+  margin-bottom: +3px;
+  -moz-opacity: 0.2;
+}
+
+.firephp-panel-menu-icon-enabled {
+  background: url(chrome://firephp/skin/PoweredByFirePHP_v1.png) no-repeat bottom;
+  height: 15px;
+  width: 80px;
+  margin-bottom: +3px;
+}
