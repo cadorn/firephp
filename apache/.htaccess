@@ -1,0 +1,7 @@
+Options +FollowSymLinks -MultiViews
+RewriteEngine on
+
+RewriteBase /PINF/com.googlecode.firephp
+
+RewriteRule    ^XML.php$	XML.php [QSA,L]
+RewriteRule    ^(.*)\.xml$		XML.php?PINFURI=$1 [QSA,L]
