@@ -5,9 +5,9 @@ The FirePHP extension uses the [http://www.getfirebug.com/ Firebug] extension as
 
 The primary motivations for extending Firebug instead of publishing an independent extension without the requirement of needing Firebug installed are:
 
-* Firebug provides 95% of all functionality required to track and manage browser requests and contexts as needed by FirePHP
-* Firebug provides a large base of library functions
-* The user interface of Firebug is already used by many developers and FirePHP will attempt to stay as consistent with the existing UI as possible to minimize the adoption and learning curves of FirePHP
+ * Firebug provides 95% of all functionality required to track and manage browser requests and contexts as needed by FirePHP
+ * Firebug provides a large base of library functions
+ * The user interface of Firebug is already used by many developers and FirePHP will attempt to stay as consistent with the existing UI as possible to minimize the adoption and learning curves of FirePHP
 
 This tutorial focuses on how FirePHP is able to extend Firebug in an effort to help you make your own additions to Firebug.
 
