@@ -30,7 +30,7 @@ NOTE: When you are done playing with this extension and want to remove it again,
 
 To keep this tutorial brief I am assuming you have some basic knowledge on how to build a Firefox extension and you have your development environment already setup. If you need more information on these topics you can visit the [http://developer.mozilla.org/en/docs/Extensions Mozilla Developer Center].
 
-The extension for this example is called "FirebugTestExtension" and you can change any references to this name if you are trying this out with your own extension.
+The extension for this example is called "!FirebugTestExtension" and you can change any references to this name if you are trying this out with your own extension.
 
 When developing additions to Firebug it is very useful to have the Firebug source available. I suggest that you extract the Firebug XPI package and load it into your development environment just like your own extensions. This way you can add debug code to Firebug during development and can look through all the Firebug code to help understand what happens behind the scenes.
 
