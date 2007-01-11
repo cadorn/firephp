@@ -68,7 +68,11 @@ class com__googlecode__firephp__FirePHP_class {
     if(constant('PINF-com.googlecode.firephp-BufferOutput')===true ||
        $this->content_started===false) {
 
-      header('PINF-com.googlecode.firephp-'.$Name.': '.$Value);
+      if(headers_sent($file,$line)) {
+        trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
+      } else { 
+        header('PINF-com.googlecode.firephp-'.$Name.': '.$Value);
+      }
     }
   }  
   
