@@ -1,2 +1,131 @@
 
-Test File
+------------------------------------------------------
+	Requirements
+------------------------------------------------------
+
+Client Side:
+
+	- Firefox - http://www.mozilla.com/en-US/firefox/
+	- Firebug - http://www.getfirebug.com/ (Version: 1.0b8)
+
+Server Side:
+
+	- The code is being developed under PHP5 however
+	  it should work with PHP4 as well
+
+
+------------------------------------------------------
+	Install
+------------------------------------------------------
+
+	This project is still in Alpha stage.
+	No packages for easy install have been built yet.
+	
+	To test out the code follow these instructions:
+	
+	1) Checkout code from:
+		
+		svn checkout http://firephp.googlecode.com/svn/trunk
+		
+	2) Configure Firefox to load the extension:
+			
+			a) Place a file called "FirePHPExtension@firephp.org"
+			   into the /extensions/ directory of your Firefox profile
+			b) The content of the file should be the filepath
+			   to the /FirefoxExtension/ directory of the code you
+			   checked out above
+			   e.g. P:\packages\com.googlecode.firephp\FirefoxExtension\
+
+	3) For the server PHP code you have two options:
+	
+			a) Setup a new apache vhost and domain that points to
+			   the /apache/ directory of the code you checked out above
+			   
+			   To see a test page you would then need to navigate to
+			   
+			   <YOUR_DOMAIN>/PINF/com.googlecode.firephp/TestPage.php
+			   
+			OR
+			
+			b) Include the FirePHP Server code in your own PHP project.
+			   To get started you can simply include the following file:
+			   /PearPackage/FirePHP/Init.inc.php
+			   (Again this is form the code you checked out above)
+			   
+			   Secondly you need to configure apache to respond to some
+			   utility requests by setting up an alias in the vhost config
+			   of your domain as follows:
+			   
+			   Alias /PINF/com.googlecode.firephp/			P:/packages/com.googlecode.firephp/apache/
+			   
+			   (Replace the path to point to the /apache/ directory
+			   of the code you checked out above)
+
+	4) Navigate to the URL that will call your PHP code (or to the
+	   test page URL mentioned above) which in trun will call the
+	   server components of the FirePHP tool.
+
+	   Open the FireBug extension and click on the "FirePHP" tab.
+
+	   If everything is working properly you should see a page request
+	   in the panel including the name of the frame it is loaded into
+	   and the URL that is currently loaded.
+
+------------------------------------------------------
+	TODO
+------------------------------------------------------
+
+	- Information on how the extension works
+	- Documentation for the PHP API
+	- Add ability for server to store request information in a separate data store
+	  that can then be accessed by the extension via the RequestID to obtain more info
+	  about the request. This will remove data from the HTTP Response Headers
+	  and will not require the PHP script output to be buffered
+  - Add ability to request list to expand each request to view more info
+	- When mousing-over the requests in the panel highlight the corresponding frame
+	- Allow inspection of applications running in subdirectories of a domain where the
+	  root domain knows nothing of FirePHP
+	- Enable the extension to work on clustered applications with a centralized data store
+	- Allow the developer to set variables in the extension that can be accessed
+	  from the PHP backend to enable and disable the tracking of specific info.
+	  The list of available variables should be dynamically determined for each page
+	  by reflecting the server code.
+	- Implemenet authentication to restrict backend data access, store developer profiles and
+	  only store the backend data if in development mode.
+
+------------------------------------------------------
+	Roadmap
+------------------------------------------------------
+
+	1) Setup www.firephp.org site to give the project a home other than Google Code Hosting
+		- Setup a test page that shows all available features
+	2) Build easy-install versions of the Firefox extension and PEAR package
+	3) Get moving on the TODO list
+
+	This project is being developed on an as needed basis	at this point in time.
+	Any help in testing, developing, writing documentation is welcome.
+
+
+------------------------------------------------------
+	Acknowledgements
+------------------------------------------------------
+
+	- Many thanks to Joe Hewitt for his excellent FireBug extension which
+	  this extension plugs into and heavily relies on.
+
+------------------------------------------------------
+	Contribute
+------------------------------------------------------
+
+	If you want to contribute let me know. The TODO list is above.
+
+	If you have any feature requests you can also send these to me.
+
+
+------------------------------------------------------
+	Contact
+------------------------------------------------------
+
+	Any comments or questions please send to: christoph@christophdorn.com
+
+	
