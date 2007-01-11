@@ -36,6 +36,7 @@
 
 
 define('PINF-com.googlecode.firephp-BufferOutput',true);
+define('PINF-com.googlecode.firephp-RunShutdownFunction',true);
 
 require_once('./../PearPackage/FirePHP/Init.inc.php');
 

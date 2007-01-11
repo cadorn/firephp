@@ -43,7 +43,8 @@
 /* Initialize any default constants */
 
 define('PINF-com.googlecode.firephp-BufferOutput',false);
-
+define('PINF-com.googlecode.firephp-RunShutdownFunction',false);
+define('PINF-com.googlecode.firephp-SetContentStarted',true);
 
 /* Include the mail worker class */
 
@@ -69,7 +70,9 @@ $FirePHP->setRequestID(md5(uniqid(rand(), true)));
  * as well as number of loaded files
  */ 
 
-register_shutdown_function('com__googlecode__firephp__Init_inc__Shutdown');
+if(constant('PINF-com.googlecode.firephp-RunShutdownFunction')===true) {
+  register_shutdown_function('com__googlecode__firephp__Init_inc__Shutdown');
+}
 
 
 /* Record time of when execution started */
@@ -88,7 +91,9 @@ if(constant('PINF-com.googlecode.firephp-BufferOutput')===true) {
 
 /* Set a flag that the content generation has started */
 
-$FirePHP->setContentStarted(true);
+if(constant('PINF-com.googlecode.firephp-SetContentStarted')===true) {
+  $FirePHP->setContentStarted(true);
+}
 
 
 
