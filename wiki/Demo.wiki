@@ -1,0 +1,4 @@
+#labels Featured
+A demo for the FirePHP extension is now available.
+
+You can find the demo here: http://www.firephp.org/Demo/
