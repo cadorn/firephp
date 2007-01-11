@@ -1,3 +1,4 @@
+#labels Featured
 = Introduction =
 
 The FirePHP extension uses the [http://www.getfirebug.com/ Firebug] extension as its base and adds a new panel called "FirePHP" to it.
@@ -20,7 +21,8 @@ Similarly FirePHP uses overlays to add functionality to Firebug without needing 
 
 The following example illustrates how to add a new panel called "Test Panel" to Firebug.
 
-You can download and install this extension from: ??
+You can download and install this extension from:
+http://firephp.googlecode.com/files/FirebugTestExtension-0.0.1.xpi
 
 NOTE: When you are done playing with this extension and want to remove it again, before you remove it make sure you select one of the default Firebug tabs! See the Caution section below for more information.
 
@@ -137,4 +139,3 @@ The above code succeeds in extending Firebug because Gecko within Firefox will i
 = Comments & Questions =
 
 If you have any corrections, comments or questions to the above information please let me know. You can reach me at christoph@christophdorn.com
-
