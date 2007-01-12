@@ -40,8 +40,7 @@ FBL.ns(function() { with (FBL) {
 
 
 top.FirePHP = {
-
-  version: '0.0.1'
+  version: '0.0.2'
 
 }
 
