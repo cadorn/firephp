@@ -1,6 +1,7 @@
 <?xml version="1.0"?> 
 
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
+
 <?xml-stylesheet href="chrome://firebug/content/firebug.css"?>
 <?xml-stylesheet href="chrome://firephp/skin/style.css"?>
 
@@ -14,7 +15,7 @@
 
 		<toolbox>
 		  <toolbar id="FirePHPSidebar_Toolbar">
-		    <toolbarbutton class="default" label="Clear" oncommand="FirePHPSidebar.clear();"/>
+		    <toolbarbutton class="FirePHPSidebar_Toolbar_Button" label="Clear" oncommand="FirePHPSidebar.clear();"/>
 		  </toolbar>
 		</toolbox>
 

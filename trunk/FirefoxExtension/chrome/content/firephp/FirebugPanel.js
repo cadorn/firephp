@@ -181,6 +181,19 @@ Firebug.FirePHP = extend(Firebug.Module,
     shutdown: function()
     {
       this.logEvent('shutdown',null);
+
+      /* Check if we have the panel set to FirePHP, if we do
+       * set it to "console" so we avoind problems if the FirePHP
+       * extension is removed
+       * This is inconvenient if you always want to use FirePHP
+       * but until Firebug does not fail silently for non-existent
+       * panels this is the safest route.
+       * A patch has been submitted to Firebug: http://groups.google.com/group/firebug/browse_frm/thread/a6233d09fb7ed779/bbb09160c2c23e4b#bbb09160c2c23e4b
+       */
+      if(Firebug.getPref('defaultPanelName')=='FirePHP') {
+        Firebug.setPref('defaultPanelName','console');
+      }
+
 //      alert('shutdown');
     },
     /* Called when a page is loaded into the browser (or a new tab).
@@ -401,7 +414,9 @@ Firebug.FirePHP = extend(Firebug.Module,
             },
             failure: function(o) { 
               switch(o.status) {
-                case 0:     /* Not 100% sure when this happens */
+                case 0:     /* Not 100% sure when this happens.
+                             * TODO: Need to spend more time investigating to handle this event properly
+                             */
                   serverContext.detectStatus = -1;
                   break;
                 case 403:   /* Forbidden */

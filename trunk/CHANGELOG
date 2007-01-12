@@ -1,4 +1,12 @@
 
+2007-01-12
+
+	- Set defaultPanelName preference to "console" if set to
+	  "FirePHP" to prevent Firebug from failing silently when
+	  extension is removed and "FirePHP" panel is still selected.
+	  Thanks to Matthieu Honel for the suggestion.
+	  A patch has been submitted to Firebug: http://groups.google.com/group/firebug/browse_frm/thread/a6233d09fb7ed779/bbb09160c2c23e4b#bbb09160c2c23e4b
+
 2007-01-11
 	
 	- Added a sidebar and button to toggle sidebar.
