@@ -39,6 +39,13 @@ FBL.ns(function() { with (FBL) {
 // ************************************************************************************************
 
 
+top.FirePHP = {
+
+  version: '0.0.1'
+
+}
+
+
 
 function FirePHPProgressListener() {}
 
@@ -165,6 +172,7 @@ Firebug.FirePHP = extend(Firebug.Module,
      */
     initialize: function()
     {
+      this.logEvent('initialize',null);
 //      alert('initialize');
     },
     /* Called when firefox (the chrome specifically) is destroyed
@@ -172,6 +180,7 @@ Firebug.FirePHP = extend(Firebug.Module,
      */
     shutdown: function()
     {
+      this.logEvent('shutdown',null);
 //      alert('shutdown');
     },
     /* Called when a page is loaded into the browser (or a new tab).
@@ -181,6 +190,7 @@ Firebug.FirePHP = extend(Firebug.Module,
      */
     initContext: function(context)
     {
+      this.logEvent('initContext',context.window);
 //      alert('initContext');
       /* Add a listener to the browser so we can monitor all window/frame/document loading states
        */
@@ -189,6 +199,7 @@ Firebug.FirePHP = extend(Firebug.Module,
     },
     reattachContext: function(context)
     {
+      this.logEvent('reattachContext',context.window);
 //      alert('reattachContext');
     },
     /* Opposite of initContext called when a URL is unloaded prior
@@ -197,40 +208,58 @@ Firebug.FirePHP = extend(Firebug.Module,
      */
     destroyContext: function(context, persistedState)
     {
+      this.logEvent('destroyContext',context.window);
       /* Remove the listener we attached to do proper cleanup
        */
       context.browser.removeProgressListener(FirePHPProgressListenerObject);
 //      alert('destroyContext');
     },
+    /* Called for every window/frame loaded
+     */
     watchWindow: function(context, win)
     {
+      this.logEvent('watchWindow',win);
 //      alert('watchWindow');
 //      alert('watchWindow: '+win.location.href);
 //      this.attachToWindow(win);
     },
+    /* Called before for every window/frame is un-loaded
+     */
     unwatchWindow: function(context, win)
     {
+      this.logEvent('unwatchWindow',win);
 //      alert('unwatchWindow: '+win.location.href);
 //      this.unattachFromWindow(win);
     },
     showContext: function(browser, context)
     {
+      this.logEvent('showContext',context.window);
 //      alert('showContext');
     },
     loadedContext: function(context)
     {
+      this.logEvent('loadedContext',context.window);
 //      alert('loadedContext');
     },
     showPanel: function(browser, panel)
     {
+      var isFirePHP = panel && panel.name == "FirePHP";
+      var FirePHPButtons = browser.chrome.$("fbFirePHPButtons");
+      collapse(FirePHPButtons, !isFirePHP);
+      
+      if(!isFirePHP) return;
+
+      this.logEvent('showPanel',null);
 //      alert('showPanel');
 
-        var isFirePHP = panel && panel.name == "FirePHP";
-        var FirePHPButtons = browser.chrome.$("fbFirePHPButtons");
-        collapse(FirePHPButtons, !isFirePHP);
     },
     showSidePanel: function(browser, panel)
     {
+      var isFirePHP = panel && panel.name == "FirePHP";
+      
+      if(!isFirePHP) return;
+
+      this.logEvent('showSidePanel',null);
 //      alert('showSidePanel');
     },
 
@@ -242,16 +271,33 @@ Firebug.FirePHP = extend(Firebug.Module,
 
 
     attachToWindow: function(win) {
+      this.logEvent('attachToWindow',win);
     },    
 
     unattachFromWindow: function(win) {
+      this.logEvent('unattachFromWindow',win);
     },    
 
+
+    
+    logEvent: function(EventName,Window) {
+      if(!FirePHP.Sidebar) return;
+      if(Window) {
+        FirePHP.Sidebar.appendItem('Module.'+EventName,Window.name,Window.location.href);
+      } else {
+        FirePHP.Sidebar.appendItem('Module.'+EventName,'','');
+      }
+    },
 
 
         
     triggerMenuToggle: function(button) {
       switch(button) {
+      
+        case 'Sidebar':
+          toggleSidebar('FirePHPSidebar');
+          break;
+      
         case 'Info':
 
           this.printLine('Info Button Clicked!');
@@ -355,6 +401,9 @@ Firebug.FirePHP = extend(Firebug.Module,
             },
             failure: function(o) { 
               switch(o.status) {
+                case 0:     /* Not 100% sure when this happens */
+                  serverContext.detectStatus = -1;
+                  break;
                 case 403:   /* Forbidden */
                   /* We were not allowed to read the detection URL on the server.
                    * We assume we do not have access to the FirePHPServer and
@@ -455,12 +504,21 @@ FirePHPPanel.prototype = extend(Firebug.Panel,
      */
     show: function(state)
     {
+      this.logEvent('show',null);
       /* Whenever the panel is shown (assumes user wants to use FirePHP)
        * detect if there is a FirePHPServer for the loaded URL
        */
       Firebug.FirePHP.triggerFirePHPServerDetect(this.context);
     },
 
+    logEvent: function(EventName,Window) {
+      if(!FirePHP.Sidebar) return;
+      if(Window) {
+        FirePHP.Sidebar.appendItem('Panel.'+EventName,Window.name,Window.location.href);
+      } else {
+        FirePHP.Sidebar.appendItem('Panel.'+EventName,'','');
+      }
+    },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *    
     // Internal

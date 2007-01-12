@@ -1,0 +1,7 @@
+
+2007-01-11
+	
+	- Added a sidebar and button to toggle sidebar.
+	  The sidebar currently contains one listbox that lists all
+	  events fired by Firebug as they occur. This will help
+	  during development to establish a clean order of events.

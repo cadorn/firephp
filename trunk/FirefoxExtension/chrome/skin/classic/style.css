@@ -17,3 +17,16 @@
   width: 80px;
   margin-bottom: +3px;
 }
+
+
+#FirePHPSidebar_List listhead listheader {
+  font-family: Arial;
+  font-size: 11px;  
+  font-weight: bold;
+}
+
+#FirePHPSidebar_List listitem listcell {
+  font-family: Arial;
+  font-size: 9px;  
+  font-weight: plain;
+}
