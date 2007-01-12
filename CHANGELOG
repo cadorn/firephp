@@ -6,6 +6,8 @@
 	  extension is removed and "FirePHP" panel is still selected.
 	  Thanks to Matthieu Honel for the suggestion.
 	  A patch has been submitted to Firebug: http://groups.google.com/group/firebug/browse_frm/thread/a6233d09fb7ed779/bbb09160c2c23e4b#bbb09160c2c23e4b
+	- Added updateURL to install.rdf
+	- Incremented version to 0.0.3
 
 2007-01-11
 	

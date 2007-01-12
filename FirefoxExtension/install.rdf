@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>FirePHPExtension@firephp.org</em:id>
-    <em:version>0.0.2</em:version>
+    <em:version>0.0.3</em:version>
     <em:type>2</em:type>
    
     <!-- Firefox -->
@@ -21,5 +21,6 @@
     <em:description>PHP Developer Tool</em:description>
     <em:creator>Christoph Dorn</em:creator>
     <em:homepageURL>http://www.firephp.org/</em:homepageURL>
-  </Description>      
+    <em:updateURL>http://www.firephp.org/FirefoxExtensionUpdateCheck?id=%ITEM_ID%</em:updateURL>
+  </Description>
 </RDF>
