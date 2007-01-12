@@ -94,6 +94,20 @@ Server Side:
 	- Implemenet authentication to restrict backend data access, store developer profiles and
 	  only store the backend data if in development mode.
 
+	- Add standard styles to Sidebar panel to be consistent with rest of Firefox.
+	  Need to research how Firefox styles are inherited and how they can be customized incrementally
+	- Make columns in sidebar listbox resizable
+
+
+------------------------------------------------------
+	Bugs
+------------------------------------------------------
+
+	- The request info is replaced if a window with the same name from a different URL is loaded.
+	  This is specifically evident for internal frames where the internal frame names are the same.
+	  The name of the internal frames should be pre-fixed with the name of the parent window
+	  for internal storage purposes
+
 
 ------------------------------------------------------
 	Roadmap

@@ -1,0 +1,32 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://firebug/content/firebug.css"?>
+<?xml-stylesheet href="chrome://firephp/skin/style.css"?>
+
+<deck id="FirePHPSidebar" selectedIndex="0" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	
+	<script type="application/x-javascript" src="Sidebar.js"/>
+
+
+	<vbox flex="1">
+
+		<toolbox>
+		  <toolbar id="FirePHPSidebar_Toolbar">
+		    <toolbarbutton class="default" label="Clear" oncommand="FirePHPSidebar.clear();"/>
+		  </toolbar>
+		</toolbox>
+
+		<listbox id="FirePHPSidebar_List" flex="1">
+			<listhead>
+		    <listheader label="Event"/>
+		    <listheader label="Window/Frame"/>
+		    <listheader label="URL"/>
+		  </listhead>
+		  
+		</listbox>
+
+	</vbox>
+
+</deck>

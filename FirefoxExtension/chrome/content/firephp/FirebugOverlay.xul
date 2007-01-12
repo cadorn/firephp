@@ -9,10 +9,26 @@
 		<script type="application/x-javascript" src="chrome://firephp/content/yahoo/YAHOO.js"/>
 		<script type="application/x-javascript" src="chrome://firephp/content/yahoo/connection.js"/>
 
+
     <script type="application/x-javascript" src="chrome://firephp/content/FirebugPanel.js"/>
+
+
+
+		<broadcasterset id="mainBroadcasterSet">
+		  <broadcaster id="FirePHPSidebar"
+		               autoCheck="false"
+		               label="FirePHP"
+		               type="checkbox" 
+		               group="sidebar"
+		               sidebarurl="chrome://firephp/content/Sidebar.xul"
+		               sidebartitle="FirePHP"
+		               oncommand="Firebug.FirePHP.triggerMenuToggle('Sidebar');"/>
+		</broadcasterset>
+
 
 		<commandset id="mainCommandSet">
 
+        <command id="cmd_FirePHP_SidebarToggle" oncommand="Firebug.FirePHP.triggerMenuToggle('Sidebar')"/>
         <command id="cmd_FirePHP_InfoToggle" oncommand="Firebug.FirePHP.triggerMenuToggle('Info')"/>
         <command id="cmd_FirePHP_VriablesToggle" oncommand="Firebug.FirePHP.triggerMenuToggle('Variables')"/>
 
@@ -26,6 +42,9 @@
 				        <image id="FirePHPPanelMenuIcon" class="firephp-panel-menu-icon-disabled"/>
 
                 <label class="firephp-panel-menu-spacer"/>
+
+                <toolbarbutton label="Sidebar" class="toolbar-text-button"
+                               tooltiptext="Tiggle Sidebar" command="cmd_FirePHP_SidebarToggle"/>
 
                 <toolbarbutton label="Info" class="toolbar-text-button"
                                tooltiptext="Application Information" command="cmd_FirePHP_InfoToggle"/>
