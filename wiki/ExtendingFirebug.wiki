@@ -22,15 +22,13 @@ Similarly FirePHP uses overlays to add functionality to Firebug without needing 
 The following example illustrates how to add a new panel called "Test Panel" to Firebug.
 
 You can download and install this extension from:
-http://firephp.googlecode.com/files/FirebugTestExtension-0.0.1.xpi
-
-NOTE: When you are done playing with this extension and want to remove it again, before you remove it make sure you select one of the default Firebug tabs! See the Caution section below for more information.
+http://firephp.googlecode.com/files/FirebugTestExtension-0.0.2.xpi
 
 == Assumptions and Requirements ==
 
 To keep this tutorial brief I am assuming you have some basic knowledge on how to build a Firefox extension and you have your development environment already setup. If you need more information on these topics you can visit the [http://developer.mozilla.org/en/docs/Extensions Mozilla Developer Center].
 
-The extension for this example is called "!FirebugTestExtension" and you can change any references to this name if you are trying this out with your own extension.
+The extension for this example is called "FirebugTestExtension" and you can change any references to this name if you are trying this out with your own extension.
 
 When developing additions to Firebug it is very useful to have the Firebug source available. I suggest that you extract the Firebug XPI package and load it into your development environment just like your own extensions. This way you can add debug code to Firebug during development and can look through all the Firebug code to help understand what happens behind the scenes.
 
@@ -51,22 +49,20 @@ Next we define the XUL code used to insert new UI components. The following code
 {{{
 <?xml version="1.0"?> 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
-    <script type="application/x-javascript"
-            src="chrome://FirebugTestExtension/content/FirebugPanel.js"/> 
-    <commandset id="mainCommandSet"> 
-        <command id="cmd_button1FirebugTestExtension" oncommand="Firebug.FirebugTestExtension.button1()"/> 
-        <command id="cmd_button2FirebugTestExtension" oncommand="Firebug.FirebugTestExtension.button2()"/> 
-    </commandset> 
-    <toolbar id="fbToolbar" align="center"> 
-        <hbox id="fbToolbarInner" insertbefore="fbDetachButton" flex="1" align="center"> 
-            <hbox id="fbFirebugTestExtensionButtons" insertafter="fbNetButtons"> 
-                <toolbarbutton label="Button 1" class="toolbar-text-button" 
-                               tooltiptext="Button 1" command="cmd_button1FirebugTestExtension"/> 
-                <toolbarbutton label="Button 2" class="toolbar-text-button" 
-                               tooltiptext="Button 2" command="cmd_button2FirebugTestExtension"/> 
-            </hbox> 
-        </hbox> 
-    </toolbar> 
+  <script type="application/x-javascript"
+          src="chrome://FirebugTestExtension/content/FirebugPanel.js"/> 
+  <commandset id="mainCommandSet"> 
+    <command id="cmd_button1FirebugTestExtension" oncommand="Firebug.FirebugTestExtension.button1()"/> 
+    <command id="cmd_button2FirebugTestExtension" oncommand="Firebug.FirebugTestExtension.button2()"/> 
+  </commandset> 
+  <toolbar id="fbToolbar" align="center"> 
+    <hbox id="fbToolbarInner" insertbefore="fbDetachButton" flex="1" align="center"> 
+      <hbox id="fbFirebugTestExtensionButtons" insertafter="fbNetButtons"> 
+        <toolbarbutton label="Button 1" class="toolbar-text-button" tooltiptext="Button 1" command="cmd_button1FirebugTestExtension"/> 
+        <toolbarbutton label="Button 2" class="toolbar-text-button" tooltiptext="Button 2" command="cmd_button2FirebugTestExtension"/> 
+      </hbox> 
+    </hbox> 
+  </toolbar> 
 </overlay> 
 }}}
 
@@ -77,34 +73,40 @@ In the XUL file we are including a JavaScript file from _chrome://firebugtestext
 FBL.ns(function() { with (FBL) { 
 Firebug.FirebugTestExtension = extend(Firebug.Module, 
 { 
-    showPanel: function(browser, panel) 
-    { 
-        var isFirebugTestExtension = panel && panel.name == "FirebugTestExtension"; 
-        var FirebugTestExtensionButtons = browser.chrome.$("fbFirebugTestExtensionButtons"); 
-        collapse(FirebugTestExtensionButtons, !isFirebugTestExtension); 
-    }, 
-    button1: function() 
-    { 
-      FirebugContext.getPanel("FirebugTestExtension").printLine('Clicked Button 1'); 
-    }, 
-    button2: function() 
-    { 
-      FirebugContext.getPanel("FirebugTestExtension").printLine('Clicked Button 2'); 
-    } 
+  shutdown: function()
+  {
+    if(Firebug.getPref('defaultPanelName')=='FirebugTestExtension') {
+      Firebug.setPref('defaultPanelName','console');
+    }
+  },
+  showPanel: function(browser, panel) 
+  { 
+    var isFirebugTestExtension = panel && panel.name == "FirebugTestExtension"; 
+    var FirebugTestExtensionButtons = browser.chrome.$("fbFirebugTestExtensionButtons"); 
+    collapse(FirebugTestExtensionButtons, !isFirebugTestExtension); 
+  }, 
+  button1: function() 
+  { 
+    FirebugContext.getPanel("FirebugTestExtension").printLine('Clicked Button 1'); 
+  }, 
+  button2: function() 
+  { 
+    FirebugContext.getPanel("FirebugTestExtension").printLine('Clicked Button 2'); 
+  } 
 }); 
 function FirebugTestExtensionPanel() {} 
 FirebugTestExtensionPanel.prototype = extend(Firebug.Panel, 
 { 
-    name: "FirebugTestExtension", 
-    title: "Test Panel", 
-    searchable: false, 
-    editable: false,
+  name: "FirebugTestExtension", 
+  title: "Test Panel", 
+  searchable: false, 
+  editable: false,
 
-    printLine: function(message) {
-      var elt = this.document.createElement("p");
-      elt.innerHTML = message;
-      this.panelNode.appendChild(elt);
-    }
+  printLine: function(message) {
+    var elt = this.document.createElement("p");
+    elt.innerHTML = message;
+    this.panelNode.appendChild(elt);
+  }
 }); 
 Firebug.registerModule(Firebug.FirebugTestExtension); 
 Firebug.registerPanel(FirebugTestExtensionPanel); 
@@ -113,9 +115,11 @@ Firebug.registerPanel(FirebugTestExtensionPanel);
 
 We create two new objects. A _Firebug.Module_ and a _Firebug.Panel_. The Module is designed to do all the heavy lifting of your new logic while the Panel is designed to primarily concern itself with the display of your new features in the "panel" which is the large white area underneath the tabs in the Firebug extension.
 
-The _Firebug.FirebugTestExtension.showPanel()_ method is called whenever the tab for our new panel is selected. Here we now tell Firebug to display the buttons we added in the XUL overlay by referencing them via the _fbFirebugTestExtensionButtons_ id.
+The _Firebug.FirebugTestExtension.showPanel()_ method is called whenever a new tab is selected by the user. Note that this method fires even when the panel being selected is not ours. If you want to know if specifically your panel was selected you must test for it as shown. Here we now tell Firebug to display the buttons we added in the XUL overlay by referencing them via the _fbFirebugTestExtensionButtons_ id (and hide them if our panel is not shown).
 
 We also implemented two methods to catch events coming from the two XUL commands we setup and connected with the buttons in the XUL file. When the events fire (you click on the buttons) we obtain a reference to the FirebugTestExtension panel and and call the _printLine()_ method.
+
+The _Firebug.FirebugTestExtension.shutdown()_ method ensures the default Firebug panel is set to "console" when we exit the browser so that when you remove the custom extension Firebug will still work when it starts up again. Firebug currently fails silently when it cannot find a panel upon startup, something which hopefully will be fixed in the next release. See the Caution section below for more information.
 
 In _FirebugTestExtensionPanel.printLine()_ you can see that we create a new paragraph element and append it to _this.panelNode_ which is a reference to a DIV tag that Firebug automatically adds as the top level element of the document that resides in the white bottom panel.
 
@@ -129,8 +133,9 @@ A helpful strategy is to use the _Firebug.Module_ to gather and store informatio
 
 == Caution! ==
 
-When you play with adding your own additions to Firebug make sure that you always exit the browser after having selected one of the default tabs that Firebug offers. If you have your new tab selected, you close Firefox and remove your extension, the next time Firebug starts no panels will be visible at all. This is because the _extensions.firebug.defaultPanelName_ user preference will be set to a panel name that Firebug no longer knows of and it will fail silently.
+When you play with making your own additions to Firebug make sure you always exit the browser after having selected one of the default tabs that Firebug offers or you have implemented the shutdown() method as suggested above. If you have your new tab selected, you close Firefox and remove your extension, the next time Firebug starts no panels will be visible at all. This is because the _extensions.firebug.defaultPanelName_ user preference will be set to a panel name that Firebug no longer knows of and it will fail silently.
 If this happens to you, close Firefox, open the prefs.js file from your Firefox profile and delete the mentioned preference, start Firefox and everything should work again. You can always of course add your extension back in, start Firefox select a different panel and then remove your extension again.
+Hopefully this limitation will be fixed in the next release of Firebug.
 
 == Summary ==
 
@@ -138,4 +143,8 @@ The above code succeeds in extending Firebug because Gecko within Firefox will i
 
 = Comments & Questions =
 
-If you have any corrections, comments or questions to the above information please let me know. You can reach me at christoph@christophdorn.com
+If you have any corrections, comments or questions to the above information please let me know. You can reach me at Christoph@ChristophDorn.com
+
+= Contributions =
+
+ * Thanks to Matthieu Honel for suggesting to reset the _extensions.firebug.defaultPanelName_ user preference on shutdown to avoid problems when the custom extension is removed and our custom panel was last selected
