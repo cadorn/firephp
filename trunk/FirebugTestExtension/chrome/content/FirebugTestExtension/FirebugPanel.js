@@ -38,6 +38,12 @@
 FBL.ns(function() { with (FBL) { 
 Firebug.FirebugTestExtension = extend(Firebug.Module, 
 { 
+    shutdown: function()
+    {
+      if(Firebug.getPref('defaultPanelName')=='FirebugTestExtension') {
+        Firebug.setPref('defaultPanelName','console');
+      }
+    },
     showPanel: function(browser, panel) 
     { 
         var isFirebugTestExtension = panel && panel.name == "FirebugTestExtension"; 
