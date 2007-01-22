@@ -136,6 +136,7 @@ A helpful strategy is to use the _Firebug.Module_ to gather and store informatio
 When you play with making your own additions to Firebug make sure you always exit the browser after having selected one of the default tabs that Firebug offers or you have implemented the shutdown() method as suggested above. If you have your new tab selected, you close Firefox and remove your extension, the next time Firebug starts no panels will be visible at all. This is because the _extensions.firebug.defaultPanelName_ user preference will be set to a panel name that Firebug no longer knows of and it will fail silently.
 If this happens to you, close Firefox, open the prefs.js file from your Firefox profile and delete the mentioned preference, start Firefox and everything should work again. You can always of course add your extension back in, start Firefox select a different panel and then remove your extension again.
 Hopefully this limitation will be fixed in the next release of Firebug.
+ * *As of Firebug version 1.0b9 this is no longer a problem as Firebug now correctly recovers from non-existent panels.*
 
 == Summary ==
 
