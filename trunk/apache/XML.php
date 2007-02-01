@@ -41,7 +41,9 @@
  */
 
 $vars = array();
+$vars['App.Base.Domain'] = $_SERVER['HTTP_HOST'];
 $vars['App.Base.URL'] = 'http://'.$_SERVER['HTTP_HOST'].'/';
+$vars['App.Name'] = $_SERVER['PINF_APPLICATION_NAME'];
 
 
 $response = array();
@@ -50,11 +52,19 @@ switch($_GET['PINFURI']) {
 
   case 'Detect':
     $response[] = '<pinf>';
-    $response[] =   '<package name="com.googlecode.firephp">';
-    $response[] =     '<vargroup name="Application">';
-    $response[] =       '<var name="App.Base.URL"><value>'.$vars['App.Base.URL'].'</value></var>';
-    $response[] =     '</vargroup>';
-    $response[] =   '</package>';
+    $response[] =   '<domain name="'.$vars['App.Base.Domain'].'">';
+    $response[] =     '<package name="com.googlecode.firephp">';
+    $response[] =       '<vargroup name="Application">';
+    $response[] =         '<var name="Label"><value>'.$vars['App.Name'].'</value></var>';
+    $response[] =         '<var name="Name"><value>'.$vars['App.Name'].'</value></var>';
+    $response[] =         '<var name="Base.URL"><value>'.$vars['App.Base.URL'].'</value></var>';
+    $response[] =       '</vargroup>';
+    $response[] =       '<vargroup name="FirefoxExtension.BottomToolbarTabs">';
+    $response[] =         '<tab name="about" label="About" source="http://www.google.com/"/>';
+    $response[] =         '<tab name="detect" label="Detect" source="'.$vars['App.Base.URL'].'/PINF/com.googlecode.firephp/Detect.xml"/>';
+    $response[] =       '</vargroup>';
+    $response[] =     '</package>';
+    $response[] =   '</domain>';
     $response[] = '</pinf>';
     break;
 

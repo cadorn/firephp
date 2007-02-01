@@ -36,52 +36,171 @@
 
 
 class com__googlecode__firephp__FirePHP_class {
-  
-  
+
+  var $version = '0.0.1';
+
   var $request_id = null;
+  var $primary_content_type = 'text/html';
   var $time_markers = array();
-  var $content_started = false;
-    
+
+  var $multipart_requested = false;
+  var $multipart_enabled = false;
+  var $collection_enabled = false;
   
+  var $content_started = false;
+  
+
   function setRequestID($RequestID) {
-    $this->request_id = $RequestID;
+    if($this->content_started) {
+      trigger_error('Content has already started. You set the request ID before calling startContent()!');
+      return false;
+    }
     
+    $this->request_id = $RequestID;
     $this->setHeaderVariable('RequestID',$this->request_id);
+    
+    return true;
   }
   function getRequestID() {
     return $this->request_id;
   }
   
   
-  function setContentStarted($ContentStarted) {
-    $this->content_started = $ContentStarted;
+  /* Check if the browser accepts multipart/firephp server responses */
+  function doesBrowserAccept() {
+    if(preg_match_all("/(^|,|\s)(multipart\/firephp)($|,|\s)/si",$_SERVER['HTTP_ACCEPT'],$m)) {
+      return true;
+    }
+    return false;
+  }
+  
+  /* Enable the multipart/firephp server response by setting the header
+   * and keeping a flag that we can collect the data.
+   * There is no need to collect the data and slow down PHP if we cannot
+   * even send it.
+   */ 
+  function enableMultipartData() {
+    if($this->content_started) {
+      trigger_error('Content has already started. You must enable multipart data before calling startContent()!');
+      return false;
+    }
+
+    if(headers_sent($file,$line)) {
+      trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
+      return false;
+    } else { 
+      
+      if(!$this->request_id) {
+        trigger_error('The RequestID must be set first before enabeling the multipart response!');
+        return false;
+      }
+      
+      $this->multipart_requested = true;
+      return true;
+    }
+  }
+
+  function setHeaderVariable($Name,$Value) {
+    if($this->content_started) {
+      trigger_error('Content has already started. You must set header variables before calling startContent()!');
+      return false;
+    }
+    if(headers_sent($file,$line)) {
+      trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
+      return false;
+    } else { 
+      header('PINF-org.firephp-'.$Name.': '.$Value);
+      return true;
+    }
+  }  
+
+  function setPrimaryContentType($Type) {
+    if($this->content_started) {
+      trigger_error('Content has already started. You must set the content type before calling startContent()!');
+      return false;
+    }
+    $this->primary_content_type = $Type;
+    
+    if(headers_sent($file,$line)) {
+      trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
+      return false;
+    } else { 
+      $this->setHeaderVariable('PrimaryContentType',$this->primary_content_type);
+    }
+    
+    return true;
   }
   
   
-  
-  function setHeaderVariable($Name,$Value) {
+  function startContent($PrimaryContentType=false) {
+    
+    if($PrimaryContentType) {
+      if(!$this->setPrimaryContentType($PrimaryContentType)) return false;
+    }
 
-    /* Only set headers if the content has not already started
-     * or if we are buffering the output
-     */
+    if(headers_sent($file,$line)) {
+      trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
+      return false;
+    } else { 
 
-    if(constant('PINF-com.googlecode.firephp-BufferOutput')===true ||
-       $this->content_started===false) {
-
-      if(headers_sent($file,$line)) {
-        trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
-      } else { 
-        header('PINF-com.googlecode.firephp-'.$Name.': '.$Value);
+      if($this->multipart_requested) {
+        header('Content-type: multipart/firephp; boundary="'.$this->request_id.'"');
+        
+        $this->multipart_enabled = true;
+        $this->collection_enabled = true;
       }
     }
-  }  
+  
+    $this->content_started = true;
+
+    if($this->multipart_enabled) {
+      print '--'.$this->request_id."\n";
+      // print 'Content-type: '.$this->primary_content_type."\n";
+      print "\n";
+    }
+
+    /* Record time of when content started */
+    $this->stampTime('com.googlecode.firephp','StartPrimaryContent');
+
+    return true;
+  }
+
+  function endContent() {
+
+    /* Record time of when content ended */
+    $this->stampTime('com.googlecode.firephp','EndPrimaryContent');
+
+    if($this->multipart_enabled) {
+      print "\n".'--'.$this->request_id."\n";
+    }
+  }
+
+
+  function dumpFirePHPData($Data=false) {
+    
+    /* If there is no data defined that should be dumped lets just dump the execution time */
+    
+    if(!$Data) {
+      $Data = 'Execution Time: '.$this->getTimeSpan('com.googlecode.firephp','StartPrimaryContent','EndPrimaryContent',4);
+    }
+    
+    if($this->multipart_enabled) {
+      print 'Content-type: text/firephp'."\n"; 
+      print "\n";
+      print trim($Data)."\n";        
+      print '--'.$this->request_id.'--'."\n";
+    }
+  }
   
   
   
   function stampTime($Group,$Marker) {
+    if(!$this->collection_enabled) return false;
     $this->time_markers[$Group][$Marker] = microtime();
+    return true;
   }
   function getTimeSpan($Group,$StartMarker,$EndMarker,$Precision=4) {
+    if(!$this->collection_enabled) return false;
     
     $start_time = explode(' ',$this->time_markers[$Group][$StartMarker]);
     $start_time = $start_time[1].substr($start_time[0], 1);

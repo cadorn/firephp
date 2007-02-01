@@ -1,4 +1,3 @@
-<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,41 +34,34 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-/*
- * Called to initialize the FirePHPServer component
- */
+var FirePHP = top.FirePHP = {
 
-
-/* Include the mail worker class */
-
-require_once('FirePHP.class.php');
-
-
-/* Instanciate the FirePHP Class that will do all the work */
-global $FirePHP;
-$FirePHP =& new com__googlecode__firephp__FirePHP_class();
-
-/* Register the object in the PINF singleton registry */
-global $PINF_SINGLETON_OBJECTS;
-$PINF_SINGLETON_OBJECTS['com.googlecode.firephp/FirePHP.class'] =& $FirePHP;  
-
-/* First generate a RequestID for this request so that any data
- * can be referenced later and set the ID in the response headers
- */
- 
-$FirePHP->setRequestID(md5(uniqid(rand(), true)));
-
-/* Check if browser accepts multipart/firephp responses */
-
-if($FirePHP->doesBrowserAccept()) {
+  version: '0.0.3',
   
-  $FirePHP->enableMultipartData();
-  
-  /* Set the primary content type.
-   * This can be overwritten by the user
-   */
+  selectedApplication: null,
 
-  $FirePHP->setPrimaryContentType('text/html');   
+
+  initialize: function() {
+    
+    /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
+    try {
+      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
+    } catch (err) {}
+  
+  },
+
+  setSelectedApplication: function(Name) {
+    this.selectedApplication = Name;
+  },
+
+  getSelectedApplication: function() {
+    return this.selectedApplication;
+  },
 }
 
-?>
+
+
+
+/* Initialize FirePHP */
+
+FirePHP.initialize();

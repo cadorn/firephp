@@ -38,6 +38,20 @@
 FBL.ns(function() { with (FBL) { 
 Firebug.FirebugTestExtension = extend(Firebug.Module, 
 { 
+    initialize: function()
+    {
+
+      /* Example of how to listen to events from the Firebug Console */
+      var fbCommandLine = $('fbCommandLine');
+      fbCommandLine.addEventListener('input',function listener(Event){
+        $('fbFirebugTestExtensionStatusBarPanel').label = 'Firebug Console Command Line Value: '+fbCommandLine.value;
+        if(fbCommandLine.value.charAt(fbCommandLine.value.length-1)=='.') {
+          fbCommandLine.value = "You wrote: "+fbCommandLine.value;
+          FirebugContext.window.console.log("You wrote: "+fbCommandLine.value);
+        }
+      },false);
+
+    },
     shutdown: function()
     {
       if(Firebug.getPref('defaultPanelName')=='FirebugTestExtension') {

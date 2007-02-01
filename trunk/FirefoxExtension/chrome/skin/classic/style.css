@@ -1,4 +1,18 @@
 
+
+
+tagFirePHPBottomToolbar {
+  -moz-binding: url("chrome://firephp/content/BottomToolbar/bindings.xml#tagFirePHPBottomToolbar");
+  -moz-box-orient: vertical;
+}
+
+tagFirePHPBottomToolbarDropdownItem {
+  -moz-binding: url("chrome://firephp/content/BottomToolbar/bindings.xml#tagFirePHPBottomToolbarDropdownItem");
+  -moz-box-orient: vertical;
+}
+
+
+
 .firephp-panel-menu-spacer {
   padding: 5px;
 }
@@ -7,7 +21,8 @@
   background: url(chrome://firephp/skin/PoweredByFirePHP_v1.png) no-repeat bottom;
   height: 15px;
   width: 80px;
-  margin-bottom: +3px;
+  margin-left: 8px;
+  margin-bottom: 0px;
   -moz-opacity: 0.2;
 }
 

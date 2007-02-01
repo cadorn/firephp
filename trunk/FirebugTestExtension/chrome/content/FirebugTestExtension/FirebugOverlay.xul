@@ -29,4 +29,9 @@
 
     </toolbar> 
 
+
+	 <statusbar id="status-bar">
+	 	 <statusbarpanel id="fbFirebugTestExtensionStatusBarPanel" insertbefore="statusbar-display"/>
+	 </statusbar>
+
 </overlay>
