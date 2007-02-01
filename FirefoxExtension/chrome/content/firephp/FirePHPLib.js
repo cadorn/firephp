@@ -34,46 +34,75 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-top.FirePHP.Sidebar = FirePHPSidebar = {
-  
-  
-  
-  appendItem: function(Event,FrameName,URL) {
+var FirePHPLib = top.FirePHPLib = {
 
-    var sidebar_list = document.getElementById('FirePHPSidebar_List');
+
+  createMenuItem: function(popup, item) {
     
-    var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
- 
-    var item = document.createElementNS(XULNS, "listitem");
-    var cell = null;
-    cell = document.createElementNS(XULNS, "listcell");
-    cell.setAttribute("label", Event);
-    cell.setAttribute("value", Event);
-    item.appendChild(cell);
-    cell = document.createElementNS(XULNS, "listcell");
-    cell.setAttribute("label", FrameName);
-    cell.setAttribute("value", FrameName);
-    item.appendChild(cell);
-    cell = document.createElementNS(XULNS, "listcell");
-    cell.setAttribute("label", URL);
-    cell.setAttribute("value", URL);
-    item.appendChild(cell);
+    var menuitem = popup.ownerDocument.createElement("menuitem");
+
+    var label = item.label;
     
-    sidebar_list.appendChild(item);
+    menuitem.setAttribute("label", label);
+    menuitem.setAttribute("type", item.type);
+    menuitem.setAttribute("value", item.value);
+    if (item.checked)
+        menuitem.setAttribute("checked", "true");
+    if (item.disabled)
+        menuitem.setAttribute("disabled", "true");
+    
+    if (item.command)
+        menuitem.addEventListener("command", item.command, false);
+
+    popup.appendChild(menuitem);
+    return menuitem;
+  },
+
+  
+  extend: function(l, r) {
+    var newOb = {};
+    for (var n in l)
+        newOb[n] = l[n];
+    for (var n in r)
+        newOb[n] = r[n];
+    return newOb;
   },
   
+  bindFixed: function() {
+      var args = cloneArray(arguments), fn = args.shift(), object = args.shift();
+      return function() { return fn.apply(object, args); }
+  },
   
-  /* Clears all content of the list in the Sidebar
-   */
-  clear: function() {
+  /* Prints the given object to the console */
+  dump: function(Object,Name,Filter,IncludeValues) {
+    dump('Var: '+Name+' ['+Object+']'+"\n");
+    if(!Object) return;
     
-    var topWindow = top;
+    var list = new Array();
+    for( var name in Object ) {
     
-    var sidebar_list = document.getElementById('FirePHPSidebar_List');
-    
-    while( sidebar_list.childNodes.length > 1) {
-      sidebar_list.removeItemAt(0) ;
+      if(Filter) {
+        if(name.substring(0,Filter.length)==Filter) {
+          list[list.length] = name;
+        }
+      } else {
+        list[list.length] = name;
+      }
     }
-  }
-};
+    
+    if(!list) return;    
+    
+    list.sort();
 
+    dump(' {'+"\n");
+    
+    for( var name in list ) {
+      if(IncludeValues) {
+        dump('  '+list[name]+' = '+Object[list[name]]+"\n");
+      } else {
+        dump('  '+list[name]+"\n");
+      }
+    }
+    dump(' }'+"\n");
+  }
+}

@@ -98,6 +98,13 @@ Server Side:
 	  Need to research how Firefox styles are inherited and how they can be customized incrementally
 	- Make columns in sidebar listbox resizable
 
+	- Implement viewing of all PHP request and environment variables
+	- Implement viewing of phpinfo()
+	- Implement viewing of all php_ini values including include path
+	- Implement viewing of all global variables at end of request
+	- Implement viewing of source code of all included files
+	- Implement viewer for server logs including filter to view only specific types of lines
+
 
 ------------------------------------------------------
 	Bugs
@@ -107,19 +114,6 @@ Server Side:
 	  This is specifically evident for internal frames where the internal frame names are the same.
 	  The name of the internal frames should be pre-fixed with the name of the parent window
 	  for internal storage purposes
-
-
-------------------------------------------------------
-	Roadmap
-------------------------------------------------------
-
-	1) Setup www.firephp.org site to give the project a home other than Google Code Hosting
-		- Setup a test page that shows all available features
-	2) Build easy-install versions of the Firefox extension and PEAR package
-	3) Get moving on the TODO list
-
-	This project is being developed on an as needed basis	at this point in time.
-	Any help in testing, developing, writing documentation is welcome.
 
 
 ------------------------------------------------------

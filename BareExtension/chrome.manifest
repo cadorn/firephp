@@ -1,0 +1,3 @@
+content bareextension chrome/content/bareextension/ xpcnativewrappers=no
+
+overlay chrome://browser/content/browser.xul         chrome://BareExtension/content/BrowserOverlay.xul

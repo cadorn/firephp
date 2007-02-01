@@ -1,4 +1,5 @@
 content firephp chrome/content/firephp/ xpcnativewrappers=no
 skin	firephp	classic/1.0	chrome/skin/classic/
 
-overlay chrome://firebug/content/firebugOverlay.xul         chrome://firephp/content/FirebugOverlay.xul
+overlay chrome://firebug/content/browserOverlay.xul   chrome://firephp/content/FirebugBrowserOverlay.xul
+overlay chrome://firebug/content/firebugOverlay.xul   chrome://firephp/content/FirebugOverlay.xul
