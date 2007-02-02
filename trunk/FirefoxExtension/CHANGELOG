@@ -1,4 +1,10 @@
 
+2007-02-02 - Release Version: 0.0.5
+
+	- Wrapped add progress listener into try/catch to prevent some console warnings
+	- Removed debug dump statements
+
+
 2007-02-01 - Release Version: 0.0.4
 
 	- New code structure

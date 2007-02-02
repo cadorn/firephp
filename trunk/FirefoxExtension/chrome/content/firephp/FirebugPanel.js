@@ -65,8 +65,12 @@ Firebug.FirePHP = extend(Firebug.Module, {
      */
     initContext: function(context) {
       /* Add a listener to the browser so we can monitor all window/frame/document loading states */
-      context.browser.addProgressListener(FirePHP.FirePHPRequestHandler,Components.interfaces.nsIWebProgress.NOTIFY_DOCUMENT);
-      context.browser.addProgressListener(FirePHP.FirePHPRequestHandler,Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
+      try {
+        context.browser.addProgressListener(FirePHP.FirePHPRequestHandler,Components.interfaces.nsIWebProgress.NOTIFY_DOCUMENT);
+      } catch(err) {}
+      try {
+        context.browser.addProgressListener(FirePHP.FirePHPRequestHandler,Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
+      } catch(err) {}
     },
     reattachContext: function(context) {},
     /* Opposite of initContext called when a URL is unloaded prior
@@ -75,7 +79,9 @@ Firebug.FirePHP = extend(Firebug.Module, {
      */
     destroyContext: function(context, persistedState) {
       /* Remove the listener we attached to do proper cleanup */
-      context.browser.removeProgressListener(FirePHP.FirePHPRequestHandler);
+      try {
+        context.browser.removeProgressListener(FirePHP.FirePHPRequestHandler);
+      } catch(err) {}
     },
     /* Called for every window/frame loaded */
     watchWindow: function(context, win) {},
@@ -156,7 +162,7 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
     /* Check context and ensure UI is consistent with serverContext */
     refreshUI: function() {
     
-      dump('FirePHPPanel.refreshUI()'+"\n");
+//      dump('FirePHPPanel.refreshUI()'+"\n");
     
       /* Only do this if the panel is visible.
        * We can limit based on the visibility because this method will

@@ -76,7 +76,7 @@ var FirePHPChrome = top.FirePHPChrome = {
    */
   refreshContext: function() {
 
-    dump('FirePHPChrome.refreshContext()'+"\n");
+//    dump('FirePHPChrome.refreshContext()'+"\n");
     
     /* Check to see if our panel is showing and
      * show/hide our additional toolbars and panels accordingly
@@ -106,14 +106,14 @@ var FirePHPChrome = top.FirePHPChrome = {
    */
   triggerRefreshUI: function(Context) {
 
-    dump('FirePHPChrome.triggerRefreshUI()'+"\n");
+//    dump('FirePHPChrome.triggerRefreshUI()'+"\n");
 
     setTimeout(FBL.bindFixed(function() { FirePHPChrome.refreshUI(); }, Context));
   },
    
   refreshUI: function() {
 
-    dump('FirePHPChrome.refreshUI()'+"\n");
+//    dump('FirePHPChrome.refreshUI()'+"\n");
     
     /* Check to see if our panel is showing
      * We only want to continue if it is showing

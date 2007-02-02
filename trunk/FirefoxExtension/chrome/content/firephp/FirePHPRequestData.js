@@ -104,7 +104,7 @@ FirePHP.FirePHPRequestHandler = {
       this.windowDataMap[requestData.windowName] = new Array();
     }
 
-dump(' -- SET ANCHOR: '+requestData.windowName+' - '+requestData.anchor+"\n");
+//dump(' -- SET ANCHOR: '+requestData.windowName+' - '+requestData.anchor+"\n");
 
     this.windowDataMap[requestData.windowName][requestData.anchor] = requestData;
   },
@@ -112,7 +112,7 @@ dump(' -- SET ANCHOR: '+requestData.windowName+' - '+requestData.anchor+"\n");
   
   setRequestData: function(RequestID,WindowName,URL,ServerVars) {
 
-dump('setRequestData: '+RequestID+"\n");
+//dump('setRequestData: '+RequestID+"\n");
 
     var requestData = this.getData(RequestID);
     if(!requestData) {
@@ -208,7 +208,7 @@ dump('setRequestData: '+RequestID+"\n");
 
   
       if(serverVars['RequestID']) {
-FirePHPLib.dump(serverVars,'serverVars - '+aProgress.DOMWindow.name+' - '+aRequest.QueryInterface(Components.interfaces.nsIChannel).URI.spec,false,true);
+//FirePHPLib.dump(serverVars,'serverVars - '+aProgress.DOMWindow.name+' - '+aRequest.QueryInterface(Components.interfaces.nsIChannel).URI.spec,false,true);
 
 
 //FirePHPLib.dump(aRequest,'aRequest - '+aRequest.QueryInterface(Components.interfaces.nsIChannel).URI.spec,false,true);
@@ -267,7 +267,7 @@ FirePHP.FirePHPRequestContentListener = {
 
 /* TODO: At the moment the data for CSS requests is not properly set */
 
-dump('    DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+"\n");                
+//dump('    DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+"\n");                
 
 
     /* Now that we have all data collected lets set it for the corresponding request object */    
@@ -307,7 +307,7 @@ dump('    DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChann
                 }
                 requestData.setData(node.singleNodeValue.textContent);
 
-dump('SET DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+' - '+anchor+' - '+requestID+"\n");                
+//dump('SET DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+' - '+anchor+' - '+requestID+"\n");                
 
                 /* Target the request to the correct spot in the inspector */
                 FirePHP.FirePHPRequestHandler.anchorRequest(requestID,anchor);
