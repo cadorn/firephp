@@ -1,6 +1,2 @@
-#labels Featured
-= Source Code Preview =
-
-I have committed the first set of source code for this project.
-
-If you are interested in checking it out you can find some information to get started here: http://firephp.googlecode.com/svn/trunk/README
+#labels Deprecated
+This document has moved to: http://www.firephp.org/Developers/
