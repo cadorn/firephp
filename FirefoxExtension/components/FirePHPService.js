@@ -127,7 +127,7 @@ FirePHPProxy.prototype.observe = function(subject, topic, data) {
         subject.QueryInterface(Components.interfaces.nsIHttpChannel);
         
         if(this.FirePHPService.getRequestHeaderEnabled()) {
-          subject.setRequestHeader("Accept", "multipart/firephp", true);
+          subject.setRequestHeader("Accept", "text/firephp", true);
         }
     } else if (topic == 'app-startup') {
       FirePHP_logMessage("topic is app-startup");

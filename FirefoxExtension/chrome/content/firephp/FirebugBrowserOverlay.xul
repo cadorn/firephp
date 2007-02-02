@@ -16,4 +16,12 @@
 
   <script type="application/x-javascript" src="chrome://firephp/content/FirebugPanel.js"/>
 
+  <script>
+		
+		/* Initialize FirePHP */
+
+		FirePHP.initialize();
+		
+  </script>
+
 </overlay>

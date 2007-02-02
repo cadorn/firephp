@@ -68,7 +68,7 @@ class com__googlecode__firephp__FirePHP_class {
   
   /* Check if the browser accepts multipart/firephp server responses */
   function doesBrowserAccept() {
-    if(preg_match_all("/(^|,|\s)(multipart\/firephp)($|,|\s)/si",$_SERVER['HTTP_ACCEPT'],$m)) {
+    if(preg_match_all("/(^|,|\s)(text\/firephp)($|,|\s)/si",$_SERVER['HTTP_ACCEPT'],$m)) {
       return true;
     }
     return false;
@@ -113,6 +113,11 @@ class com__googlecode__firephp__FirePHP_class {
       return true;
     }
   }  
+  
+  /* Tells FirePHP where to anchor the data in the inspector */
+  function setInspectorTarget($InspectorTarget) {
+    $this->inspector_target = $InspectorTarget;
+  }
 
   function setPrimaryContentType($Type) {
     if($this->content_started) {
@@ -120,22 +125,17 @@ class com__googlecode__firephp__FirePHP_class {
       return false;
     }
     $this->primary_content_type = $Type;
-    
-    if(headers_sent($file,$line)) {
-      trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
-      return false;
-    } else { 
-      $this->setHeaderVariable('PrimaryContentType',$this->primary_content_type);
-    }
-    
     return true;
   }
   
   
-  function startContent($PrimaryContentType=false) {
+  function startContent($PrimaryContentType=false,$InspectorTarget=false) {
     
     if($PrimaryContentType) {
       if(!$this->setPrimaryContentType($PrimaryContentType)) return false;
+    }
+    if($InspectorTarget) {
+      $this->setInspectorTarget($InspectorTarget);
     }
 
     if(headers_sent($file,$line)) {
@@ -144,7 +144,14 @@ class com__googlecode__firephp__FirePHP_class {
     } else { 
 
       if($this->multipart_requested) {
-        header('Content-type: multipart/firephp; boundary="'.$this->request_id.'"');
+        /* Set the multipart mixed header */
+        header('Content-type: multipart/mixed; boundary="'.$this->request_id.'"');
+        /* Ensure that the request is never cached by the browser */
+        header('Last-Modified: '.gmdate('r', time()));
+        header('Expires: '.gmdate('r', time()-86400));
+        header('Pragma: no-cache');
+        header('Cache-Control: no-cache, no-store, must-revalidate, max_age=0');
+        header('Cache-Control: post-check=0, pre-check=0'); 
         
         $this->multipart_enabled = true;
         $this->collection_enabled = true;
@@ -155,7 +162,7 @@ class com__googlecode__firephp__FirePHP_class {
 
     if($this->multipart_enabled) {
       print '--'.$this->request_id."\n";
-      // print 'Content-type: '.$this->primary_content_type."\n";
+      print 'Content-type: '.$this->primary_content_type."\n";
       print "\n";
     }
 
@@ -185,9 +192,14 @@ class com__googlecode__firephp__FirePHP_class {
     }
     
     if($this->multipart_enabled) {
-      print 'Content-type: text/firephp'."\n"; 
+      print 'Content-type: text/firephp'."\n";
       print "\n";
-      print trim($Data)."\n";        
+      /* Lets construct the default XML envelope */
+      print '<firephp>'."\n";        
+      print '<request id="'.$this->request_id.'" anchor="'.$this->inspector_target.'">'."\n";        
+      print '<data type="html"><![CDATA['.trim($Data).']]></data>'."\n";        
+      print '</request>'."\n";        
+      print '</firephp>'."\n";        
       print '--'.$this->request_id.'--'."\n";
     }
   }

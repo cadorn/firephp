@@ -1,7 +1,23 @@
 <?php
 
-header('Content-type: multipart/firephp; boundary="gc0p4Jq0M2Yt08jU534c0p"');
-header('PINF-org.firephp-RequestID: '.md5(uniqid(rand(), true)));
+/* Add some include paths */
+
+$include_paths = array(dirname(dirname(__FILE__)),
+                       dirname(dirname(dirname(__FILE__)))); 
+
+set_include_path(implode(PATH_SEPARATOR,$include_paths).
+                 PATH_SEPARATOR.
+                 get_include_path());
+
+/* Include the FirePHP server code */
+require_once('com.googlecode.firephp/init/Init.inc.php');
+register_shutdown_function('ShutdownFirePHPWebsiteCall');
+function ShutdownFirePHPWebsiteCall() {
+  global $FirePHP;
+  $FirePHP->endContent();
+  $FirePHP->dumpFirePHPData();
+}
+
 
 $script_name = 'Multipart.php';
 
@@ -24,7 +40,10 @@ switch($_GET['File']) {
 <script>
 var myAjax = new Ajax.Request("'.$script_name.'?File=JSON", { method: "get", onComplete: showJSONResponse});
 function showJSONResponse(originalRequest) {
-  $("JSONResultDiv").innerHTML = "<pre>"+originalRequest.responseText+"</pre>";
+  var data = originalRequest.responseText;
+  data = data.replace(/</g,"&lt;");
+  data = data.replace(/>/g,"&gt;");
+  $("JSONResultDiv").innerHTML = "<pre>"+data+"</pre>";
 }
 </script>    
 
@@ -56,7 +75,7 @@ function showXMLResponse(originalRequest) {
     $content_type = 'text/css';
     $data = '
 HTML, BODY {
-  PADDING: 20px;
+  PADDING: 2px;
   background-color: #EEEEEE;
 }
 
@@ -94,18 +113,10 @@ HTML, BODY, P {
 }
 
 
-header('PINF-org.firephp-PrimaryContentType: '.$content_type);
+global $FirePHP;
+
+$FirePHP->startContent($content_type,$_GET['File']);
+
+print trim($data);
 
 ?>
-
---gc0p4Jq0M2Yt08jU534c0p
-
-<?php print trim($data); ?>
-
---gc0p4Jq0M2Yt08jU534c0p 
-Content-type: text/firephp 
-
-FIREPHP DATA: <?php print rand(100,10000); ?>
-
---gc0p4Jq0M2Yt08jU534c0p-- 
-
