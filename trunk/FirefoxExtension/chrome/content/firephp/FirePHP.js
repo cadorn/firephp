@@ -36,7 +36,7 @@
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.0.3',
+  version: '0.0.4',
   
   selectedApplication: null,
 
@@ -48,6 +48,8 @@ var FirePHP = top.FirePHP = {
       Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
     } catch (err) {}
   
+  
+    FirePHP.FirePHPRequestHandler.initialize();
   },
 
   setSelectedApplication: function(Name) {
@@ -56,12 +58,5 @@ var FirePHP = top.FirePHP = {
 
   getSelectedApplication: function() {
     return this.selectedApplication;
-  },
+  }
 }
-
-
-
-
-/* Initialize FirePHP */
-
-FirePHP.initialize();

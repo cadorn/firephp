@@ -42,9 +42,20 @@ FirePHP.FirePHPRequestData = function FirePHPRequestData() {
   this.url = null;
   this.serverVars = null;
   this.firephpMultipartData = null;
+  this.anchor = null;
   
+  
+  this.setRequestID = function(RequestID) {
+    this.requestID = RequestID;
+  }
+  this.setData = function(Data) {
+    this.firephpMultipartData = Data;
+  }
   this.getData = function() {
     return this.firephpMultipartData;
+  }
+  this.setAnchor = function(Anchor) {
+    this.anchor = Anchor;
   }
 
 };
@@ -56,6 +67,13 @@ FirePHP.FirePHPRequestHandler = {
   data: new Array(),
   windowDataMap: new Array(),
   
+  initialize: function() {
+    
+    /* Register a content lister for the text/firephp documents */
+
+    Components.classes["@mozilla.org/uriloader;1"].getService(Components.interfaces.nsIURILoader)
+        .registerContentListener(FirePHP.FirePHPRequestContentListener);
+  },
   
   getData: function(RequestID) {
     if(!RequestID || !this.data[RequestID]) return null;
@@ -70,25 +88,51 @@ FirePHP.FirePHPRequestHandler = {
   
 
   
-  setRequestData: function(RequestID,WindowName,URL,ServerVars) {
+  anchorRequest: function(RequestID,AnchorName) {
+
+    var requestData = this.getData(RequestID);
+    if(!requestData) return;
+
+    /* Only anchor the request once window name and anchor are defined */
+    if(AnchorName==null) return;
     
+    requestData.setAnchor(AnchorName);
+
+    if(requestData.windowName==null) return;
+    
+    if(!this.windowDataMap[requestData.windowName]) {
+      this.windowDataMap[requestData.windowName] = new Array();
+    }
+
+dump(' -- SET ANCHOR: '+requestData.windowName+' - '+requestData.anchor+"\n");
+
+    this.windowDataMap[requestData.windowName][requestData.anchor] = requestData;
+  },
+
+  
+  setRequestData: function(RequestID,WindowName,URL,ServerVars) {
+
+dump('setRequestData: '+RequestID+"\n");
+
     var requestData = this.getData(RequestID);
     if(!requestData) {
       requestData = this.data[RequestID] = new FirePHP.FirePHPRequestData();
     }
-
-    this.windowDataMap[WindowName] = requestData;
 
     requestData.requestID = RequestID;
     requestData.windowName = WindowName;
     requestData.url = URL;
     requestData.serverVars = ServerVars;
 
-    /* Trigger a data fetch for any additional info for this rtequest */
-    this.triggerDataFetch();
+    /* If the anchor has been set lets anchor the request.
+     * If not the backend data fetch will anchor it once it has been determined
+     */
+    if(requestData.anchor!=null) {
+      this.anchorRequest(RequestID,requestData.anchor);
+    }
 
     /* If we found FirePHP multipart data lets trigger a capabilities detection */
-    if(requestData.firephpMultipartData) {
+    if(requestData.getData()) {
       FirePHP.FirePHPApplicationHandler.triggerDetect(requestData.url);
     }
 
@@ -96,38 +140,6 @@ FirePHP.FirePHPRequestHandler = {
     FirePHPChrome.refreshUI(this);
   },
   
-  
-  /* Connects to the FirePHP Component Service and tries to get any data that is available */  
-  triggerDataFetch: function() {
-    
-    try {
-
-      var component = Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP);
-
-      var ids = component.getRequestIDs();
-      if(ids) {
-        ids = ids.split("|");
-        if(ids.length>0) {
-          var data, requestData;
-          for( var i = 0 ; i < ids.length ; i++ ) {
-            data = component.popResponseData(ids[i]);
-            if(data) {
-            
-              requestData = this.getData(ids[i]);
-              
-              /* Create the request data object if we dont already have one for this request */
-              if(!requestData) {
-                requestData = this.data[ids[i]] = new FirePHP.FirePHPRequestData();
-                requestData.requestID = ids[i];
-              }
-
-              requestData.firephpMultipartData = data;
-            }
-          }
-        }
-      }
-    } catch (err) {}    
-  },
   
   
 
@@ -148,7 +160,9 @@ FirePHP.FirePHPRequestHandler = {
   onStateChange: function(aProgress, aRequest, aFlag, aStatus) { 
 
     if( (aFlag & Components.interfaces.nsIWebProgressListener.STATE_STOP) &&
-        (aFlag & Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT)) {
+        (aFlag & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)) {
+
+//dump('aProgress.DOMWindow.location.href: '+aProgress.DOMWindow.location.href+' aRequest.name: '+aRequest.name+"\n");
   
       /* Check if we have a window name set.
        * A window name is typically not set if we are in the top window or tab window
@@ -176,30 +190,37 @@ FirePHP.FirePHPRequestHandler = {
        * headers sent by the FirePHPServer
        */
       var serverVars = new Array();
-       
-      var http = FirebugLib.QI(aRequest, Components.interfaces.nsIHttpChannel);
-      http.visitResponseHeaders({
-        visitHeader: function(name, value) {
-          if(name.substring(0,17)=='PINF-org.firephp-') {
-            serverVars[name.substring(17)] = value;
+      
+      try {
+        var http = aRequest.QueryInterface(Components.interfaces.nsIHttpChannel);
+        http.visitResponseHeaders({
+          visitHeader: function(name, value) {
+            if(name.substring(0,17)=='PINF-org.firephp-') {
+              serverVars[name.substring(17)] = value;
+            }
           }
-        }
-      });
+        });
+      } catch(err) {}
       
       
       /* Ensure that at least the RequestID header/variable is set
        */
+
   
       if(serverVars['RequestID']) {
-        
+FirePHPLib.dump(serverVars,'serverVars - '+aProgress.DOMWindow.name+' - '+aRequest.QueryInterface(Components.interfaces.nsIChannel).URI.spec,false,true);
+
+
+//FirePHPLib.dump(aRequest,'aRequest - '+aRequest.QueryInterface(Components.interfaces.nsIChannel).URI.spec,false,true);
+
         /* Now that we have determined the RequestID from the server
          * set it for the corect windowContext/name so we can make it available
          * in the inspector panel
          */
-
+        
         this.setRequestData(serverVars['RequestID'],
                             aProgress.DOMWindow.name,
-                            aProgress.DOMWindow.location.href,
+                            aRequest.QueryInterface(Components.interfaces.nsIChannel).URI.spec,
                             serverVars);
       }
     }
@@ -218,4 +239,115 @@ FirePHP.FirePHPRequestHandler = {
      return this;
    throw Components.results.NS_NOINTERFACE;
   }  
+}
+
+
+
+
+
+FirePHP.FirePHPRequestContentListener = {
+
+  loadCookie: null,
+  parentContentListener: null,
+  stream: null,
+  data: null,
+
+  QueryInterface: function(iid) {
+    if (iid.equals(Components.interfaces.nsIURIContentListener) ||
+        iid.equals(Components.interfaces.nsISupportsWeakReference) ||
+        iid.equals(Components.interfaces.nsISupports) ||
+        iid.equals(Components.interfaces.nsIStreamListener))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+  },
+  onStartRequest: function(Request, Context){
+    this.stream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance().QueryInterface(Components.interfaces.nsIScriptableInputStream);
+  },
+  onStopRequest: function(Request, Context, Status) {
+
+/* TODO: At the moment the data for CSS requests is not properly set */
+
+dump('    DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+"\n");                
+
+
+    /* Now that we have all data collected lets set it for the corresponding request object */    
+    try {
+      
+      if(this.data && this.data.substring(0,9)=='<firephp>') {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(this.data, "text/xml");
+        if(doc) {
+        
+          var requestID = null;
+          var anchor = null;
+        
+          var findPattern = "//firephp/request";
+          var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
+          if(nodes) {
+            while (res = nodes.iterateNext()) {
+              requestID = res.getAttribute('id');
+              anchor = res.getAttribute('anchor');
+              if(!anchor) anchor = '';
+            }
+          }
+          if(requestID) {
+        
+            var findPattern = "//firephp/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
+            var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
+            if(node) {
+              
+              if(node.singleNodeValue.textContent) {
+        
+  
+                var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
+                /* Create the request data object if we dont already have one for this request */
+                if(!requestData) {
+                  requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
+                  requestData.setRequestID(requestID);
+                }
+                requestData.setData(node.singleNodeValue.textContent);
+
+dump('SET DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+' - '+anchor+' - '+requestID+"\n");                
+
+                /* Target the request to the correct spot in the inspector */
+                FirePHP.FirePHPRequestHandler.anchorRequest(requestID,anchor);
+                
+              }
+            }
+          }
+        }
+      }
+    } catch(err) {}
+
+    this.data = null;
+    this.stream = null;
+  },
+  onDataAvailable: function (Request, Context, InputStream, Offset, Count) {
+    this.stream.init(InputStream);
+    this.data = '';
+    try {
+     while (true) {
+       var chunk = this.stream.read(512);
+       if (chunk.length == 0) break;
+       this.data = this.data + chunk;
+     }
+   } catch (err) {}
+  },
+
+  onStartURIOpen: function(uri) { return false; },
+  doContent: function(contentType, isContentPreferred, request, contentHandler) {
+    contentHandler.value = this;
+    return false;
+  },
+  isPreferred: function(contentType, desiredContentType) {
+    /* Lets handle the text/firephp content */
+    if(contentType=='text/firephp') return true;
+    return false;
+  },
+  canHandleContent: function(contentType, isContentPreferred, desiredContentType) {
+    /* Lets handle the text/firephp content */
+    if(contentType=='text/firephp') return true;
+    return false;
+  },
+  GetWeakReference: function() { return this; }
 }

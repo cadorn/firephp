@@ -191,7 +191,13 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
       
       /* Fetch all window contexts and insert them into the table */
       for( var i=0 ; i<this.context.windows.length ; i++ ) {
-        this.insertRequestInfoRequestTable(this.context.windows[i].name);
+      
+        var windowContexts = FirePHP.FirePHPRequestHandler.getDataForWindow(this.context.windows[i].name);
+        if(windowContexts) {
+          for( var anchor in windowContexts ) {
+            this.insertRequestInfoRequestTable(windowContexts[anchor]);
+          }
+        }
       }
     },
     
@@ -213,11 +219,9 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
 '</table>';
     },
 
-    insertRequestInfoRequestTable: function(WindowName) {
+    insertRequestInfoRequestTable: function(windowContext) {
     
-      var windowContext = FirePHP.FirePHPRequestHandler.getDataForWindow(WindowName);
       if(!windowContext) return;
-
     
       var requestTable = this.document.getElementById('FirePHP-RequestTable');
 
@@ -227,7 +231,11 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
       var newCell = null;
 
       newCell = newRow.insertCell(0);
-      newCell.innerHTML = windowContext.windowName;
+      if(windowContext.anchor) {
+        newCell.innerHTML = windowContext.windowName + ' > '+windowContext.anchor;
+      } else {
+        newCell.innerHTML = windowContext.windowName;
+      }
 
       newCell = newRow.insertCell(1);
       newCell.innerHTML = windowContext.url;
