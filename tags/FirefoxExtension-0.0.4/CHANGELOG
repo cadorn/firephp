@@ -1,0 +1,22 @@
+
+2007-02-01 - Release Version: 0.0.4
+
+	- New code structure
+	- Lots of feature enhancements
+
+
+2007-01-12 - Release Version: 0.0.3
+
+	- Set defaultPanelName preference to "console" if set to
+	  "FirePHP" to prevent Firebug from failing silently when
+	  extension is removed and "FirePHP" panel is still selected.
+	  Thanks to Matthieu Honel for the suggestion.
+	  A patch has been submitted to Firebug.
+	- Added updateURL to install.rdf
+
+2007-01-11
+	
+	- Added a sidebar and button to toggle sidebar.
+	  The sidebar currently contains one listbox that lists all
+	  events fired by Firebug as they occur. This will help
+	  during development to establish a clean order of events.
