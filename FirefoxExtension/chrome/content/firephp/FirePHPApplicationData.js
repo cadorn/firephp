@@ -204,7 +204,7 @@ FirePHP.FirePHPApplicationHandler = {
 
   triggerDetect: function(URL,ForceDetect) {
 
-dump('URL: '+URL+"\n");    
+//dump('URL: '+URL+"\n");    
     var keys = this.parseDomainPaths(URL);
     if(!keys) return false;
     
@@ -244,7 +244,7 @@ dump('URL: '+URL+"\n");
       serverData.setDetectStatus(0);
   
       var url = key+'PINF/org.firephp/Capabilities';
-dump('RUN DETECTION: '+url+"\n");      
+//dump('RUN DETECTION: '+url+"\n");      
       try {
   
         var callback =

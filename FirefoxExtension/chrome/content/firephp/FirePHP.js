@@ -36,7 +36,7 @@
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.0.4',
+  version: '0.0.5',
   
   selectedApplication: null,
 

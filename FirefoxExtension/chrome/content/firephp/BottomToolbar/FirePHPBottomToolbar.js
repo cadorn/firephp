@@ -44,7 +44,7 @@ FirePHPChrome.BottomToolbar = {
 
   refreshUI: function(ForceUIRefresh) {
 
-    dump('FirePHPChrome.BottomToolbar.refreshUI()'+"\n");
+//    dump('FirePHPChrome.BottomToolbar.refreshUI()'+"\n");
 
     var FirePHPBottomToolbar = FirePHPChrome.$("idFirePHPBottomToolbar");
 
