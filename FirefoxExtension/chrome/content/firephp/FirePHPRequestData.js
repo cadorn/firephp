@@ -195,8 +195,8 @@ FirePHP.FirePHPRequestHandler = {
         var http = aRequest.QueryInterface(Components.interfaces.nsIHttpChannel);
         http.visitResponseHeaders({
           visitHeader: function(name, value) {
-            if(name.substring(0,17)=='PINF-org.firephp-') {
-              serverVars[name.substring(17)] = value;
+            if(name.substring(0,19)=='X-PINF-org.firephp-') {
+              serverVars[name.substring(19)] = value;
             }
           }
         });

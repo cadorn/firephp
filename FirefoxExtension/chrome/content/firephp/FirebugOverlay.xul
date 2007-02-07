@@ -6,24 +6,23 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChrome.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBottomToolbar.js"/>
 
-	  <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBottomToolbar.js"/>
+  <toolbar id="fbToolbar" align="center">
+		<hbox id="fbToolbarInner" insertbefore="fbDetachButton" flex="1" align="center">            
 
-    <toolbar id="fbToolbar" align="center">
-        <hbox id="fbToolbarInner" insertbefore="fbDetachButton" flex="1" align="center">            
+    	<hbox id="fbFirePHPButtons" insertafter="fbNetButtons">
 
-            <hbox id="fbFirePHPButtons" insertafter="fbNetButtons">
-
-				        <image id="FirePHPPanelMenuIcon" class="firephp-panel-menu-icon-disabled" onclick="Firebug.FirePHP.triggerMenuToggle('StatusIndicator')"/>
+				<image id="FirePHPPanelMenuIcon" class="firephp-panel-menu-icon-disabled" onclick="Firebug.FirePHP.triggerMenuToggle('StatusIndicator')"/>
                                                
-            </hbox>
-        </hbox>            
-    </toolbar>
+      </hbox>
+    </hbox>            
+	</toolbar>
 
-    <vbox id="fbContentBox">
-	    <vbox insertafter="fbCommandBox">
-				<tagFirePHPBottomToolbar id="idFirePHPBottomToolbar" hidden="true"/>
-			</vbox>
-    </vbox>
+  <vbox id="fbContentBox">
+		<vbox insertafter="fbCommandBox">
+			<tagFirePHPBottomToolbar id="idFirePHPBottomToolbar" hidden="true"/>
+		</vbox>
+  </vbox>
 
 </overlay>

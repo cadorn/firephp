@@ -36,13 +36,19 @@
 
 
 FirePHPChrome.BottomToolbar = {
-  
-  
+
   panels: null,
-  
-  
+
+  /* Set true initially so its refreshed at least once for every new instance */
+  forceRefresh: true,
+
 
   refreshUI: function(ForceUIRefresh) {
+
+    if(this.forceRefresh) {
+      ForceUIRefresh = true;
+      this.forceRefresh = false;
+    }
 
 //    dump('FirePHPChrome.BottomToolbar.refreshUI()'+"\n");
 
