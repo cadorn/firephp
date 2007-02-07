@@ -109,7 +109,7 @@ class com__googlecode__firephp__FirePHP_class {
       trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
       return false;
     } else { 
-      header('PINF-org.firephp-'.$Name.': '.$Value);
+      header('X-PINF-org.firephp-'.$Name.': '.$Value);
       return true;
     }
   }  
