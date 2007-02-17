@@ -47,5 +47,19 @@
   border-top: 1px solid #BBB9BA;
   border-bottom: 1px solid #BBB9BA;
 }
- 
+
+#idFirePHPSplitterRequestFlowBox {
+  height: 9px !important;
+  border-left: 1px solid #BBB9BA !important;
+  border-right-width: 1px !important;
+  -moz-border-right-colors: #BBB9BA !important;  
+}
+
+.FirePHP-VariablePanelLabel {
+  background: #F6F6F6 url(chrome://firebug/skin/mac/toolbar.gif) repeat-x;
+}
+
+#idFirePHPVariableRequestLabel {
+  background: #ECECEC;
+}
  
