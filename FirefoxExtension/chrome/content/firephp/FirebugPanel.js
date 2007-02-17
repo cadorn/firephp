@@ -95,7 +95,7 @@ Firebug.FirePHP = extend(Firebug.Module, {
       var isFirePHP = panel && panel.name == "FirePHP";
       var FirePHPButtons = browser.chrome.$("fbFirePHPButtons");
       collapse(FirePHPButtons, !isFirePHP);
-      
+
       /* Notify opur chrome to refresh its context based on the
        * selected Firebug tab
        */
@@ -110,8 +110,7 @@ Firebug.FirePHP = extend(Firebug.Module, {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
     // Internal
-
-    
+ 
     triggerMenuToggle: function(button) {
       switch(button) {
         case 'StatusIndicator':
@@ -162,13 +161,18 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
     /* Check context and ensure UI is consistent with serverContext */
     refreshUI: function() {
     
-//      dump('FirePHPPanel.refreshUI()'+"\n");
+      dump('FirePHPPanel.refreshUI()'+"\n");
     
       /* Only do this if the panel is visible.
        * We can limit based on the visibility because this method will
        * be called again if the panel was hidden and changed to visible
        */
       if(!this.visible) return;
+      
+      /* Set the style of the encompassing DIV element manually as
+       * setting our own custom sytle definition via .panelNode-FirePHP does not work
+       */
+      this.panelNode.setAttribute('style','background-color: #ECECEC;');
 
       /* Try and get the serverContext from the FirePHP module
        * Once we have it we can update all default components of the UI
@@ -210,17 +214,14 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
     
     renderRequestTable: function() {
       this.panelNode.innerHTML =  ''+
-'<style>'+
-  '#FirePHP-RequestTable TR TD {'+
-    'border: 1px solid #ececec;'+
-    'vertical-align: top;'+
-  '}'+
-'</style>'+
-'<table style="margin: 5px;" id="FirePHP-RequestTable" border="0" cellpadding="5" cellspacing="0">'+
+      
+'<link rel="stylesheet" href="chrome://firephp/skin/RequestsPanel.css"></link>'+
+'<table id="FirePHP-RequestTable" border="0" cellpadding="0" cellspacing="0">'+
   '<tr>'+
-    '<td><b>Frame</b></td>'+
-    '<td><b>URL</b></td>'+
-    '<td><b>Data</b></td>'+
+    '<td class="header"><b>Application</b></td>'+
+    '<td class="header"><b>Anchor</b></td>'+
+    '<td class="header"><b>Frame</b></td>'+
+    '<td class="header"><b>URL</b></td>'+
   '</tr>'+
 '</table>';
     },
@@ -233,23 +234,21 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
 
       var newRow = requestTable.insertRow(requestTable.rows.length)
       newRow.id = windowContext.requestID;
+      newRow.addEventListener('click',FirePHPChrome.RequestListListener,true);
 
       var newCell = null;
 
       newCell = newRow.insertCell(0);
-      if(windowContext.anchor) {
-        newCell.innerHTML = windowContext.windowName + ' > '+windowContext.anchor;
-      } else {
-        newCell.innerHTML = windowContext.windowName;
-      }
+      newCell.innerHTML = windowContext.getApplicationLabel();
 
       newCell = newRow.insertCell(1);
-      newCell.innerHTML = windowContext.url;
+      newCell.innerHTML = windowContext.getAnchorLabel();
 
       newCell = newRow.insertCell(2);
-      
-      
-      newCell.innerHTML = windowContext.getData();
+      newCell.innerHTML = windowContext.getFrameName();
+
+      newCell = newRow.insertCell(3);
+      newCell.innerHTML = windowContext.getDisplayURL();
   
 /*      
       var html = '';

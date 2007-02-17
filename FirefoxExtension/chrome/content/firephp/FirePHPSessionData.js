@@ -1,4 +1,3 @@
-<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,39 +34,53 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-/*
- * Called to initialize the FirePHPServer component
- */
 
+FirePHP.FirePHPSessionData = function FirePHPSessionData() {
 
-/* Include the mail worker class */
-
-require_once('FirePHP.class.php');
-
-
-/* Instanciate the FirePHP Class that will do all the work */
-global $FirePHP;
-class FirePHP extends com__googlecode__firephp__FirePHP_class {}
-$FirePHP =& FirePHP::GetInstance('FirePHP');
-
-
-/* First generate a RequestID for this request so that any data
- * can be referenced later and set the ID in the response headers
- */
- 
-$FirePHP->setRequestID(md5(uniqid(rand(), true)));
-
-/* Check if browser accepts multipart/firephp responses */
-
-if($FirePHP->doesBrowserAccept()) {
+  this.applicationID = null;
+  this.variables = new Array();
   
-  $FirePHP->enableMultipartData();
-  
-  /* Set the primary content type.
-   * This can be overwritten by the user
-   */
+  this.setApplicationID = function(ApplicationID) {
+    this.applicationID = ApplicationID;
+  }
+  this.setVariable = function(RequestData,VariableData) {
+    if(!this.variables[VariableData[0]]) {
+      this.variables[VariableData[0]] = new Array();
+    }
+    this.variables[VariableData[0]][this.variables[VariableData[0]].length] = new Array(RequestData,VariableData[3]);
+  }
+  this.getVariables = function(Key) {
+    if(Key) {
+      return this.variables[Key];
+    } else {
+      return this.variables;
+    }
+  }
+};
 
-  $FirePHP->setPrimaryContentType('text/html');   
+
+
+FirePHP.FirePHPSessionHandler = {
+
+  data: new Array(),
+  
+  getVariables: function(ApplicationID) {
+    if(!ApplicationID || !this.data[ApplicationID]) return null;
+    return this.data[ApplicationID].variables;
+  },
+
+  getVariable: function(ApplicationID,Key) {
+    if(!ApplicationID || !this.data[ApplicationID]) return null;
+    return this.data[ApplicationID].getVariables(Key);
+  },
+
+  setVariable: function(ApplicationID,RequestData,VariableData) {
+    if(!ApplicationID) return null;
+    var data = this.data[ApplicationID];
+    if(!data) {
+      data = this.data[ApplicationID] = new FirePHP.FirePHPSessionData();
+      data.setApplicationID(ApplicationID);
+    }
+    data.setVariable(RequestData,VariableData);
+  }
 }
-
-?>

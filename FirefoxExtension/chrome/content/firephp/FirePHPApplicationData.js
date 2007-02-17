@@ -38,6 +38,7 @@
 
 FirePHP.FirePHPApplicationData = function FirePHPApplicationData() {
 
+  this.id = null;
   this.url = null;
   this.detectStatus = null;    /* 0 => Detection in progress, 1 => Server Detected, -1 => Server not Detected */
   this.vars = new Array();
@@ -46,6 +47,10 @@ FirePHP.FirePHPApplicationData = function FirePHPApplicationData() {
   this.changed = false;
 
   
+  this.setID = function(ID) {
+    this.id = ID;
+    FirePHP.FirePHPApplicationHandler.data_id_map[ID] = this;
+  }
   this.hasChanged = function() {
     return this.changed;
   }
@@ -56,6 +61,9 @@ FirePHP.FirePHPApplicationData = function FirePHPApplicationData() {
   this.setURL = function(URL) {
     this.url = URL;
     this.changed = true;
+  }
+  this.getURL = function(URL) {
+    return this.url;
   }
   this.setDetectStatus = function(Status) {
     this.detectStatus = Status;
@@ -115,6 +123,7 @@ FirePHP.FirePHPApplicationHandler = {
   
 
   data: new Array(),
+  data_id_map: new Array(),
 
 
   parseDomainPaths: function(Arg1) {
@@ -173,8 +182,16 @@ FirePHP.FirePHPApplicationHandler = {
     return null;
   },
 
+
   
-  getData: function(URL,ExactMatch,ParseURL) {
+  getDataByID: function(ApplicationID) {
+    return this.data_id_map[ApplicationID];
+  },
+
+  
+  /* @param BestFoundMatch  The existing and valid FirePHP server context found for the deepest url
+   */
+  getData: function(URL,ExactMatch,ParseURL,BestFoundMatch) {
     if(ExactMatch) {
       var key;
       if(ParseURL) {
@@ -187,16 +204,29 @@ FirePHP.FirePHPApplicationHandler = {
       if(!key || !this.data[key]) return null;
       return this.data[key];
     } else {
-      var keys = this.parseDomainPaths(URL);
-      if(!keys) return null;
+      if(ParseURL==false) {
+        keys = new Array(URL);
+      } else {
+        var keys = this.parseDomainPaths(URL);
+        if(!keys) return null;
+      }
       /* Search for all matching URL's */
       var result = new Array();
       for( var i = keys.length-1 ; i>=0 ; i-- ) {
         if(this.data[keys[i]]) {
-          result.push(this.data[keys[i]]);
+          if(BestFoundMatch) {
+            if(this.data[keys[i]].detectStatus==1) {
+              result.push(this.data[keys[i]]);
+            }
+          } else {
+            result.push(this.data[keys[i]]);
+          }
         }
       }
       if(!result) return null;
+      if(BestFoundMatch || ParseURL==false) {
+        return result[0];
+      }
       return result;
     }
   },
@@ -288,6 +318,9 @@ FirePHP.FirePHPApplicationHandler = {
           while (res = nodes.iterateNext()) {
             if(res.getAttribute('url')==key) {
               serverData.setDetectStatus(1);
+              if( res.getAttribute('id') && res.getAttribute('id')!='default') {
+                serverData.setID(res.getAttribute('id'));
+              }
               serverData.setVar('Application','Label',res.getAttribute('label'));
             }
           }
@@ -308,8 +341,7 @@ FirePHP.FirePHPApplicationHandler = {
     /* Trigger an update for the FirePHPChrome to ensure the display is consistent with
      * the internal data
      */
-
-    FirePHPChrome.refreshUI();
+    FirePHPChrome.triggerRefreshUI(this);
   },
   
   parseServerFailureResponse: function(Response) {
@@ -352,6 +384,6 @@ FirePHP.FirePHPApplicationHandler = {
      * the internal data
      */
 
-    FirePHPChrome.refreshUI();
+    FirePHPChrome.triggerRefreshUI(this);
   }
 }

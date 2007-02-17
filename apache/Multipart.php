@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 /* Add some include paths */
 
 $include_paths = array(dirname(dirname(__FILE__)),
@@ -17,6 +19,39 @@ function ShutdownFirePHPWebsiteCall() {
   $FirePHP->endContent();
   $FirePHP->dumpFirePHPData();
 }
+
+global $FirePHP;
+$FirePHP->setApplicationID('FirePHPTests');
+$FirePHP->setVariableCallback('variable_id_resolver');
+
+function variable_id_resolver(&$ID,&$Options,&$Value,&$Key,&$Scope,&$Label) {
+
+  $Key = $ID;
+  $Label = $ID;
+
+  switch($ID) {
+    case '$_SERVER':
+      $Scope = 'APPLICATION';
+      break;
+    case '$_SESSION':
+      $Scope = 'SESSION';
+      break;
+    case '$_GET':
+      $Scope = 'REQUEST';
+      break;
+  }
+
+  return true;
+}
+
+if(!$_SESSION['RequestStack']) $_SESSION['RequestStack'] = array();
+array_unshift($_SESSION['RequestStack'],$_GET['File']);
+if(sizeof($_SESSION['RequestStack'])>3) array_pop($_SESSION['RequestStack']);
+
+
+FirePHP::SetVariable(true,'$_SERVER',$_SERVER);
+FirePHP::SetVariable(true,'$_SESSION',$_SESSION);
+FirePHP::SetVariable(true,'$_GET',$_GET);
 
 
 $script_name = 'Multipart.php';
