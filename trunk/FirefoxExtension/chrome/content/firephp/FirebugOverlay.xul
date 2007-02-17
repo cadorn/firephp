@@ -69,7 +69,7 @@
 
   <vbox id="fbContentBox">
 
-	  <splitter id="idFirePHPSplitter" resizebefore="closest" insertafter="fbCommandBox" hidden="true">
+	  <splitter id="idFirePHPSplitter" class="FirePHPSplitter" resizebefore="closest" insertafter="fbCommandBox" hidden="true" orient="vertical">
 	  	<html:div flex="1" style="height: 6px;">
 				<html:div id="idFirePHPSplitterRequestFlowBox"></html:div>
 	  	</html:div>
@@ -88,7 +88,7 @@
 				  <iframe flex="1" id="idFirePHPVariableApplicationFrame" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
 				</vbox>
 				  
-			  <splitter resizeafter="farthest">
+			  <splitter resizeafter="farthest" class="FirePHPSplitter" orient="horizontal">
 			    <grippy/>
 			  </splitter>
 
@@ -97,7 +97,7 @@
 				  <iframe flex="1" id="content-2" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
 				</vbox>
 
-			  <splitter id="idFirePHPVariableSessionRequestSplitter" resizebefore="closest" resizeafter="farthest">
+			  <splitter id="idFirePHPVariableSessionRequestSplitter" class="FirePHPSplitter" resizebefore="closest" resizeafter="farthest" orient="horizontal">
 			    <grippy/>
 			  </splitter>
 
@@ -106,7 +106,7 @@
 				  <iframe id="idFirePHPVariableRequestFrame" flex="1" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
 				</vbox>
 
-			  <splitter resizeafter="closest">
+			  <splitter resizeafter="closest" class="FirePHPSplitter" orient="horizontal">
 			    <grippy/>
 			  </splitter>
 
@@ -117,12 +117,12 @@
 
 			</hbox>
 
-		  <splitter id="idFirePHPConsoleSplitter" resizeafter="closest"></splitter>
+		  <splitter id="idFirePHPConsoleSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
 		  <iframe id="idFirePHPConsoleFrame" flex="1" src="chrome://firephp/content/VariableInspector/VariableViewerPanel.htm" persist="height"/>
 		  
 	  	</vbox>
 
-			  <splitter id="idFirePHPVariableViewerSplitter" resizebefore="closest" resizeafter="farthest" width="8">
+			  <splitter id="idFirePHPVariableViewerSplitter" class="FirePHPSplitter" resizebefore="closest" resizeafter="farthest" width="8" orient="horizontal">
 			    <grippy/>
 			  </splitter>
 			  
@@ -134,7 +134,7 @@
 		  
 
 
-		  <splitter id="idFirePHPApplicationSplitter" resizeafter="closest"></splitter>
+		  <splitter id="idFirePHPApplicationSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
 
 			<deck id="idFirePHPApplicationDeck" flex="1" persist="height">
 				<browser/>
