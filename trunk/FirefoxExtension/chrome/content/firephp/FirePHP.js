@@ -33,12 +33,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-
 var FirePHP = top.FirePHP = {
 
   version: '0.0.5',
   
   selectedApplication: null,
+  selectedRequest: null,
+  
+  preferencesService: null,
 
 
   initialize: function() {
@@ -47,8 +49,12 @@ var FirePHP = top.FirePHP = {
     try {
       Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
     } catch (err) {}
-  
-  
+
+    /* Get preferences service */
+    try {
+      this.preferencesService = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch2);
+    } catch (err) {}
+
     FirePHP.FirePHPRequestHandler.initialize();
   },
 
@@ -58,5 +64,54 @@ var FirePHP = top.FirePHP = {
 
   getSelectedApplication: function() {
     return this.selectedApplication;
+  },
+  
+  setSelectedRequestID: function(RequestID) {
+    this.selectedRequest = RequestID;
+  },
+  
+  getSelectedRequestID: function() {
+    return this.selectedRequest;
+  },
+
+
+  /* Synchronizes the UI based on all context, preference and
+   * status information. It takes the current browser mode
+   * into account and targets the appropriate FirePHPChrome object.
+   */
+  syncUI: function() {
+    setTimeout(FBL.bindFixed(function() { FirePHPChrome.syncUI(); }, this));
+  },
+
+  /* Sets a user preference and refreshes the UI afterwards */
+  setUIPreference: function(Name,Value) {
+    this.setPreference(Name,Value);
+    this.syncUI();
+  },
+
+  setPreference: function(Name,Value) {
+    Name = "extensions.firephp."+Name;
+    switch(this.preferencesService.getPrefType(Name)) {
+      case Components.interfaces.nsIPrefBranch.PREF_STRING:
+        this.preferencesService.setCharPref(Name, Value);
+        break;
+      case Components.interfaces.nsIPrefBranch.PREF_INT:
+        this.preferencesService.setIntPref(Name, Value);
+        break;
+      case Components.interfaces.nsIPrefBranch.PREF_BOOL:
+        this.preferencesService.setBoolPref(Name, Value);
+        break;
+    }
+  },
+  getPreference: function(Name) {
+    Name = "extensions.firephp."+Name;
+    switch(this.preferencesService.getPrefType(Name)) {
+      case Components.interfaces.nsIPrefBranch.PREF_STRING:
+        return this.preferencesService.getCharPref(Name);
+      case Components.interfaces.nsIPrefBranch.PREF_INT:
+        return this.preferencesService.getIntPref(Name);
+      case Components.interfaces.nsIPrefBranch.PREF_BOOL:
+        return this.preferencesService.getBoolPref(Name);
+    }
   }
 }

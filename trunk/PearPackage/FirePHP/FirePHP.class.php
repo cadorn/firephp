@@ -35,10 +35,15 @@
  * ***** END LICENSE BLOCK ***** */
 
 
+
+require_once('JSON.php');
+
+
 class com__googlecode__firephp__FirePHP_class {
 
   var $version = '0.0.1';
 
+  var $application_id = 'default';
   var $request_id = null;
   var $primary_content_type = 'text/html';
   var $time_markers = array();
@@ -49,6 +54,48 @@ class com__googlecode__firephp__FirePHP_class {
   
   var $content_started = false;
   
+  /* Default options */
+  var $options = 0;
+  
+  var $variables = array();
+  var $variable_callback = null;
+  
+  
+  function &GetInstance($ClassName=false) {
+    global $PINF_SINGLETON_OBJECTS;
+    
+    /* Check if we already have an instance */
+    if($PINF_SINGLETON_OBJECTS && array_key_exists('com.googlecode.firephp/FirePHP.class',$PINF_SINGLETON_OBJECTS)) {
+      return $PINF_SINGLETON_OBJECTS['com.googlecode.firephp/FirePHP.class'];
+    }
+
+    if(!$ClassName) {
+      trigger_error('Could not create FirePHP instance without ClassName. Make sure you have initialized the instance first!');
+      return false;
+    }
+    
+    /* We did not find an instance so lets create it */
+    $instance =& new $ClassName();
+
+    /* Register the object in the PINF singleton registry */
+    $PINF_SINGLETON_OBJECTS['com.googlecode.firephp/FirePHP.class'] =& $instance;  
+
+    return $instance;    
+  }
+  
+  
+  function setVariableCallback($Callback) {
+    $this->variable_callback = $Callback;
+  }
+
+  function setApplicationID($ApplicationID) {
+    if($this->content_started) {
+      trigger_error('Content has already started. You set the application ID before calling startContent()!');
+      return false;
+    }
+
+    $this->application_id = $ApplicationID;
+  }
 
   function setRequestID($RequestID) {
     if($this->content_started) {
@@ -183,6 +230,58 @@ class com__googlecode__firephp__FirePHP_class {
   }
 
 
+  function SetVariable($Options, $ID, $Value) {
+    $instance =& com__googlecode__firephp__FirePHP_class::GetInstance();
+    
+    if($Options===true) {
+      /* Use the default options */
+      $options = $instance->options;
+    } else
+    if($Options===false) {
+      /* Do not use any options */
+      $options = 0;
+    } else {
+      /* Use the options we supplied */
+
+      /* TODO: Check for an option merge option to determine if
+       * we should merge these specific options with our default
+       * options or replace them.
+       * The default is to merge them.
+       */
+
+      $options = $instance->options | $Options;
+    }
+
+    /* TODO: Look at options to gather additional data */
+    
+    $instance->variables[$ID][] = array($options,$Value); 
+  }
+
+
+  /* Internal method used to resolve the variable ID's
+   * to standard keys, scope and labels used within the
+   * FirePHP Extension.
+   */
+  function _resolveVariables() {
+    if(!$this->variables) return;
+    $callback = $this->variable_callback;
+    foreach( $this->variables as $variable_id => $variable_info ) {
+      for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
+        $options = $variable_info[$i][0];
+        $value = $variable_info[$i][1];
+        $key = null;
+        $scope = null;
+        $label = null;
+        if($callback($variable_id,$options,$value,$key,$scope,$label)===true) {
+          $this->variables[$variable_id][$i][2] = $key;
+          $this->variables[$variable_id][$i][3] = $scope;
+          $this->variables[$variable_id][$i][4] = $label;
+        }
+      }
+    }
+  }
+
+
   function dumpFirePHPData($Data=false) {
     
     /* If there is no data defined that should be dumped lets just dump the execution time */
@@ -190,15 +289,33 @@ class com__googlecode__firephp__FirePHP_class {
     if(!$Data) {
       $Data = 'Execution Time: '.$this->getTimeSpan('com.googlecode.firephp','StartPrimaryContent','EndPrimaryContent',4);
     }
-    
+
+    /* Resolve any variables that have been set */
+    $this->_resolveVariables();
+
     if($this->multipart_enabled) {
       print 'Content-type: text/firephp'."\n";
       print "\n";
       /* Lets construct the default XML envelope */
       print '<firephp>'."\n";        
+      print '<application id="'.$this->application_id.'">'."\n";        
       print '<request id="'.$this->request_id.'" anchor="'.$this->inspector_target.'">'."\n";        
       print '<data type="html"><![CDATA['.trim($Data).']]></data>'."\n";        
+      if($this->variables) {
+        $json_service = new Services_JSON();
+        foreach( $this->variables as $variable_id => $variable_info ) {
+          for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
+            print '<variable id="'.$variable_id.
+                         '" key="'.$variable_info[$i][2].
+                       '" scope="'.$variable_info[$i][3].
+                       '" label="'.$variable_info[$i][4].
+                     '" options="'.$variable_info[$i][0].
+                     '"><![CDATA['.$json_service->encode($variable_info[$i][1]).']]></variable>'."\n";
+          }
+        }
+      }
       print '</request>'."\n";        
+      print '</application>'."\n";        
       print '</firephp>'."\n";        
       print '--'.$this->request_id.'--'."\n";
     }

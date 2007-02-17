@@ -53,6 +53,7 @@ FirePHPChrome.BottomToolbar = {
 //    dump('FirePHPChrome.BottomToolbar.refreshUI()'+"\n");
 
     var FirePHPBottomToolbar = FirePHPChrome.$("idFirePHPBottomToolbar");
+    var FirePHPApplicationDeck = FirePHPChrome.$("idFirePHPApplicationDeck");
 
 
     var selectedApplication = FirePHP.getSelectedApplication();
@@ -77,12 +78,11 @@ FirePHPChrome.BottomToolbar = {
       if(!serverData.hasChanged()) {
         
         /* Update the correct deck index based on the selected tab */
-        var fbPanelBar1 = FirePHPChrome.$("fbPanelBar1");
         var selectedTab = serverData.getSelectedTab();
         if(selectedTab!=null && this.panels) {
           for (var i = 0; i < this.panels.length; ++i) {
             if(this.panels[i].name==selectedTab) {
-              fbPanelBar1.deck.selectedIndex = parseInt(this.panels[i].tabIndex)+1;
+              FirePHPApplicationDeck.selectedIndex = parseInt(this.panels[i].tabIndex)+1;
             }
           }
         }
@@ -155,7 +155,6 @@ FirePHPChrome.BottomToolbar = {
 
       var tabs = serverData.getTabs();
       if(tabs) {
-        var fbPanelBar1 = FirePHPChrome.$("fbPanelBar1");
         
         /* Remove any previous browsers we have in the deck
          * TODO: Instead of removing browsers whenever the application is switched
@@ -163,9 +162,9 @@ FirePHPChrome.BottomToolbar = {
          *       scoped by serverData and tab and then add and remove them
          *       as needed. This way we never loose the browser context.
          */
-        if(fbPanelBar1.deck.childNodes.length>1) {
-          while( fbPanelBar1.deck.childNodes.length > 1) {
-            fbPanelBar1.deck.removeChild(fbPanelBar1.deck.childNodes.item(fbPanelBar1.deck.childNodes.length-1));
+        if(FirePHPApplicationDeck.childNodes.length>1) {
+          while( FirePHPApplicationDeck.childNodes.length > 1) {
+            FirePHPApplicationDeck.removeChild(FirePHPApplicationDeck.childNodes.item(FirePHPApplicationDeck.childNodes.length-1));
           }
         }
     
@@ -174,7 +173,7 @@ FirePHPChrome.BottomToolbar = {
           /* Create a browser for the tab and add it to the deck */
           var browser = FirePHPChrome.getDocument().createElement("browser");
           browser.setAttribute("type","content");
-          fbPanelBar1.deck.appendChild(browser);
+          FirePHPApplicationDeck.appendChild(browser);
     
           /* Create a tab */
           var panel = FirePHPLib.extend(FirePHPChrome.BottomToolbar.Panel,{
@@ -256,19 +255,19 @@ FirePHPChrome.BottomToolbar.Panel = {
      * If we had a double-click on the tab, re-load the original source
      */
 
-    var fbPanelBar1 = FirePHPChrome.$("fbPanelBar1");
+    var FirePHPApplicationDeck = FirePHPChrome.$("idFirePHPApplicationDeck");
     
     if(this.name=='FirePHPRequests') {
 
       /* Select the first element in the deck with is the default Firebug panel */
-      fbPanelBar1.deck.selectedIndex = 0;
+      FirePHPApplicationDeck.selectedIndex = 0;
 
     } else {
 
       /* Select the correct browser element for the tab */
-      fbPanelBar1.deck.selectedIndex = parseInt(this.tabIndex)+1;
+      FirePHPApplicationDeck.selectedIndex = parseInt(this.tabIndex)+1;
 
-      var browser = fbPanelBar1.deck.childNodes.item(parseInt(this.tabIndex)+1);
+      var browser = FirePHPApplicationDeck.childNodes.item(parseInt(this.tabIndex)+1);
 
       /* If we had a double-click we set the source for the browser again
        * and reload the URL

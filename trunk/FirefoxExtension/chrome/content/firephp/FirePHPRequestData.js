@@ -37,14 +37,24 @@
 
 FirePHP.FirePHPRequestData = function FirePHPRequestData() {
 
+  this.applicationID = null;
   this.requestID = null;
   this.windowName = null;
   this.url = null;
   this.serverVars = null;
   this.firephpMultipartData = null;
   this.anchor = null;
-  
-  
+  this.variables = new Array();
+
+  this.setApplicationID = function(ApplicationID) {
+    this.applicationID = ApplicationID;
+  }
+  this.getApplicationID = function() {
+    return this.applicationID;
+  }
+  this.getApplicationData = function() {
+    return FirePHP.FirePHPApplicationHandler.getDataByID(this.applicationID);
+  }
   this.setRequestID = function(RequestID) {
     this.requestID = RequestID;
   }
@@ -56,6 +66,41 @@ FirePHP.FirePHPRequestData = function FirePHPRequestData() {
   }
   this.setAnchor = function(Anchor) {
     this.anchor = Anchor;
+  }
+  this.setVariable = function(Key, ID, Scope, Label, Options, Value ) {
+    if(!this.variables[Key]) {
+      this.variables[Key] = new Array();
+    }
+    var data = this.variables[Key][this.variables[Key].length] = new Array(Key, ID, Scope, Label, Options, Value);
+
+    if(Scope=='SESSION') {
+      FirePHP.FirePHPSessionHandler.setVariable(this.applicationID,this,data);
+    }
+  }
+  this.getVariables = function(Key) {
+    if(Key) {
+      return this.variables[Key];
+    } else {
+      return this.variables;
+    }
+  }
+  this.getAnchorLabel = function() {
+    return this.anchor;
+  }
+  this.getFrameName = function() {
+    return this.windowName;
+  }
+  this.getApplicationLabel = function() {
+    try {
+      return this.getApplicationData().getVar('Application','Label');
+    } catch(err) {}
+    return 'ID: '+this.applicationID;
+  }
+  this.getDisplayURL = function() {
+    try {
+      return this.url.substring(this.getApplicationData().getURL().length);
+    } catch(err) {}
+    return this.url;
   }
 
 };
@@ -278,11 +323,19 @@ FirePHP.FirePHPRequestContentListener = {
         var doc = parser.parseFromString(this.data, "text/xml");
         if(doc) {
         
+          var applicationID = null;
           var requestID = null;
           var anchor = null;
         
-          var findPattern = "//firephp/request";
+          var findPattern = "//firephp/application";
           var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
+          if(nodes) {
+            while (res = nodes.iterateNext()) {
+              applicationID = res.getAttribute('id');
+            }
+          }
+          findPattern = "//firephp/application[attribute::id=\""+applicationID+"\"]/request";
+          nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
           if(nodes) {
             while (res = nodes.iterateNext()) {
               requestID = res.getAttribute('id');
@@ -291,29 +344,38 @@ FirePHP.FirePHPRequestContentListener = {
             }
           }
           if(requestID) {
+
+            var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
+            /* Create the request data object if we dont already have one for this request */
+            if(!requestData) {
+              requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
+              requestData.setApplicationID(applicationID);
+              requestData.setRequestID(requestID);
+            }
         
-            var findPattern = "//firephp/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
+            var findPattern = "//firephp/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
             var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
             if(node) {
-              
               if(node.singleNodeValue.textContent) {
-        
-  
-                var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
-                /* Create the request data object if we dont already have one for this request */
-                if(!requestData) {
-                  requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
-                  requestData.setRequestID(requestID);
-                }
                 requestData.setData(node.singleNodeValue.textContent);
-
-//dump('SET DATA FOR URI - '+Request.QueryInterface(Components.interfaces.nsIChannel).URI.spec+' - '+anchor+' - '+requestID+"\n");                
-
-                /* Target the request to the correct spot in the inspector */
-                FirePHP.FirePHPRequestHandler.anchorRequest(requestID,anchor);
-                
               }
             }
+            
+            findPattern = "//firephp/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
+            nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
+            if(nodes) {
+              while (res = nodes.iterateNext()) {
+                requestData.setVariable(res.getAttribute('key'),
+                                        res.getAttribute('id'),
+                                        res.getAttribute('scope'),
+                                        res.getAttribute('label'),
+                                        res.getAttribute('options'),
+                                        res.textContent);
+              }
+            }
+
+            /* Target the request to the correct spot in the inspector */
+            FirePHP.FirePHPRequestHandler.anchorRequest(requestID,anchor);
           }
         }
       }
