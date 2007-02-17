@@ -41,11 +41,13 @@
 .FirePHPSplitter[orient="horizontal"] {
   border-left: 1px solid #BBB9BA;
   border-right: 1px solid #BBB9BA;
+  width: 3px !important;
 }
 
 .FirePHPSplitter[orient="vertical"] {
   border-top: 1px solid #BBB9BA;
   border-bottom: 1px solid #BBB9BA;
+  height: 3px !important;
 }
 
 #idFirePHPSplitterRequestFlowBox {
@@ -57,9 +59,33 @@
 
 .FirePHP-VariablePanelLabel {
   background: #F6F6F6 url(chrome://firebug/skin/mac/toolbar.gif) repeat-x;
+  border-bottom: 1px solid #BBB9BA !important;
 }
 
 #idFirePHPVariableRequestLabel {
   background: #ECECEC;
+}
+
+#idFirePHPVariableApplicationBox {
+  border-left: 1px solid #BBB9BA !important;
+  border-top: 1px solid #BBB9BA !important;
+}
+#idFirePHPVariableSessionBox {
+  border-top: 1px solid #BBB9BA !important;
+}
+#idFirePHPVariableWatchBox {
+  border-top: 1px solid #BBB9BA !important;
+}
+#idFirePHPVariableViewerFrame {
+  border-top: 1px solid #BBB9BA !important;
+  border-bottom: 1px solid #BBB9BA !important;
+  border-right: 1px solid #BBB9BA !important;
+}
+#idFirePHPConsoleFrame {
+  border-bottom: 1px solid #BBB9BA !important;
+}
+#idFirePHPApplicationDeck {
+  border-left: 0px !important;
+  border-top: 1px solid #BBB9BA !important;
 }
  
