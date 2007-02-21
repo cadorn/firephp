@@ -84,9 +84,18 @@ Firebug.FirePHP = extend(Firebug.Module, {
       } catch(err) {}
     },
     /* Called for every window/frame loaded */
-    watchWindow: function(context, win) {},
+    watchWindow: function(context, win) {
+    	/* Add the FirePHP Channel API to the window so the page
+    	 * can access FirePHP services
+    	 */
+    	if(!win.FirePHPChannel) {
+    		win.FirePHPChannel = new FirePHPChannel();
+    	}
+    },
     /* Called before for every window/frame is un-loaded */
-    unwatchWindow: function(context, win) {},
+    unwatchWindow: function(context, win) {
+      delete win.FirePHPChannel;
+    },
     showContext: function(browser, context) {},
     loadedContext: function(context) {},
     

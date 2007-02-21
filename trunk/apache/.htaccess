@@ -3,5 +3,4 @@ RewriteEngine on
 
 RewriteBase /PINF/com.googlecode.firephp/
 
-RewriteRule    ^XML.php$	XML.php [QSA,L]
-RewriteRule    ^(.*)\.xml$		XML.php?PINFURI=$1 [QSA,L]
+RewriteRule		^PINF/org.firephp/Capabilities$		FirePHPCapabilities.php [QSA,L]

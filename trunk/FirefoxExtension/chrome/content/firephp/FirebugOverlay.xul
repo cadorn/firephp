@@ -10,7 +10,15 @@
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChrome.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBottomToolbar.js"/>
 
+  <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBrowserWatcher.js"/>
 
+  <script>
+		
+		/* Initialize FirePHPChrome related components */
+
+		FirePHPChrome.BottomToolbar.BrowserWatcher.initialize(FirePHPChrome.BottomToolbar);
+		
+  </script>
 
 	<commandset id="mainCommandSet"> 
     <command id="cmdFirePHP_RequestsToggle" oncommand="FirePHPChrome.togglePanel('RequestInspector')"/> 

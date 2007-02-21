@@ -318,7 +318,7 @@ FirePHP.FirePHPRequestContentListener = {
     /* Now that we have all data collected lets set it for the corresponding request object */    
     try {
       
-      if(this.data && this.data.substring(0,9)=='<firephp>') {
+      if(this.data && this.data.substring(0,9)=='<firephp ') {
         var parser = new DOMParser();
         var doc = parser.parseFromString(this.data, "text/xml");
         if(doc) {
@@ -327,14 +327,14 @@ FirePHP.FirePHPRequestContentListener = {
           var requestID = null;
           var anchor = null;
         
-          var findPattern = "//firephp/application";
+          var findPattern = "//firephp[attribute::version=\"0.2\"]/application";
           var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
           if(nodes) {
             while (res = nodes.iterateNext()) {
               applicationID = res.getAttribute('id');
             }
           }
-          findPattern = "//firephp/application[attribute::id=\""+applicationID+"\"]/request";
+          findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request";
           nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
           if(nodes) {
             while (res = nodes.iterateNext()) {
@@ -353,7 +353,7 @@ FirePHP.FirePHPRequestContentListener = {
               requestData.setRequestID(requestID);
             }
         
-            var findPattern = "//firephp/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
+            var findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
             var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
             if(node) {
               if(node.singleNodeValue.textContent) {
@@ -361,7 +361,7 @@ FirePHP.FirePHPRequestContentListener = {
               }
             }
             
-            findPattern = "//firephp/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
+            findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
             nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
             if(nodes) {
               while (res = nodes.iterateNext()) {

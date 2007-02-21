@@ -312,7 +312,7 @@ FirePHP.FirePHPApplicationHandler = {
       if(Response.responseXML) {
       
         var res;
-        var findPattern = "//firephp/application";
+        var findPattern = "//firephp[attribute::version=\"0.2\"]/application";
         var nodes = document.evaluate( findPattern, Response.responseXML, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
         if(nodes) {
           while (res = nodes.iterateNext()) {
@@ -326,7 +326,7 @@ FirePHP.FirePHPApplicationHandler = {
           }
         }
 
-        findPattern = "//firephp/application[attribute::url=\""+key+"\"]/toolbar[attribute::name=\"Application\"]/tab";
+        findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::url=\""+key+"\"]/toolbar[attribute::name=\"Application\"]/tab";
         nodes = document.evaluate( findPattern, Response.responseXML, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
         if(nodes) {
           /* First reset tabs so we dont add duplicates if we are forcing another detect */
