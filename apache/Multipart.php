@@ -68,6 +68,8 @@ switch($_GET['File']) {
 </head>
 <body>
 
+<p>Extension Version: <script>document.write(FirePHPChannel.getExtensionVersion());</script></p>
+
 <p>The HTML Test.</p>
 
 <p><b>The AJAX JSON Result:</b></p>

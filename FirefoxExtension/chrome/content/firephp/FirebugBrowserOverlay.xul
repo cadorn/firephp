@@ -14,6 +14,8 @@
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPApplicationData.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPSessionData.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPRequestData.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChannelAPI.js"/>
+
 
   <script type="application/x-javascript" src="chrome://firephp/content/FirebugPanel.js"/>
 

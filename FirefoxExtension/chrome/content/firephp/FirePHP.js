@@ -56,6 +56,7 @@ var FirePHP = top.FirePHP = {
     } catch (err) {}
 
     FirePHP.FirePHPRequestHandler.initialize();
+    
   },
 
   setSelectedApplication: function(Name) {
@@ -113,5 +114,26 @@ var FirePHP = top.FirePHP = {
       case Components.interfaces.nsIPrefBranch.PREF_BOOL:
         return this.preferencesService.getBoolPref(Name);
     }
+  }
+}
+
+
+
+
+FirePHP.FirePHPClientEventHandler = {
+
+ 
+  QueryInterface: function(iid) {
+    if (iid.equals(Components.interfaces.nsIDOMEventListener ) ||
+        iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+  },  
+  
+  /* Interface: Components.interfaces.nsIDOMEventListener */  
+  handleEvent: function ( event ) {
+
+Firebug.Console.log(event);
+
   }
 }

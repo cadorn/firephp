@@ -175,6 +175,8 @@ FirePHPChrome.BottomToolbar = {
           browser.setAttribute("type","content");
           FirePHPApplicationDeck.appendChild(browser);
     
+    			FirePHPChrome.BottomToolbar.BrowserWatcher.watchBrowser(browser);
+    
           /* Create a tab */
           var panel = FirePHPLib.extend(FirePHPChrome.BottomToolbar.Panel,{
             tabIndex: parseInt(i),
@@ -222,6 +224,46 @@ FirePHPChrome.BottomToolbar = {
     FirePHP.setSelectedApplication(Name);
 
     this.refreshUI(true);
+  },
+  
+  
+  
+
+  
+  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+  // BrowserWatcher Owner
+  
+  isURIAllowed: function(uri) {
+  	return true;
+  },
+  isURIDenied: function(uri) {
+  	return false;
+  },
+  createTabContext: function(win, browser, chrome, state) {
+    return new FirePHPChrome.BottomToolbar.TabContext(win, browser, chrome, state);
+  },
+  destroyTabContext: function(browser, context) {
+  },
+
+  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+  // BrowserWatcher Listener
+
+  initContext: function(context) {
+  },
+  showContext: function(browser, context) {
+  },
+  watchWindow: function(context, win) {
+  	/* Add the FirePHP Channel API to the window so the page
+  	 * can access FirePHP services
+  	 */
+  	if(!win.FirePHPChannel) {
+  		win.FirePHPChannel = new FirePHPChannel();
+  	}
+  },
+  unwatchWindow: function(context, win) {
+    delete win.FirePHPChannel;
+  },
+  loadedContext: function(context) {
   }
 
 };
@@ -284,6 +326,18 @@ FirePHPChrome.BottomToolbar.Panel = {
       }
     }
   }
-
 };
 
+FirePHPChrome.BottomToolbar.TabContext = function(win, browser, chrome, persistedState)
+{
+  this.window = win;
+  this.browser = browser;
+  this.persistedState = persistedState;    
+  this.chrome = chrome;
+  this.windows = [];    
+  this.panelMap = {};
+  this.sidePanelNames = {};
+  
+  this.destroy = function(state) {
+  };
+};

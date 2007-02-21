@@ -3,6 +3,7 @@
 	- Added support for an application ID
 	- Added support to set variables
 	- Encoding of variables in JSON format to send to client
+  - Introduced versioning for the FirePHP XML protocol at set to 0.2
 
 2007-02-01 - Release Version: 0.0.1
 

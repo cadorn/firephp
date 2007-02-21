@@ -297,7 +297,7 @@ class com__googlecode__firephp__FirePHP_class {
       print 'Content-type: text/firephp'."\n";
       print "\n";
       /* Lets construct the default XML envelope */
-      print '<firephp>'."\n";        
+      print '<firephp version="0.2">'."\n";        
       print '<application id="'.$this->application_id.'">'."\n";        
       print '<request id="'.$this->request_id.'" anchor="'.$this->inspector_target.'">'."\n";        
       print '<data type="html"><![CDATA['.trim($Data).']]></data>'."\n";        

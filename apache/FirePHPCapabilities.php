@@ -35,40 +35,23 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-
-/* Used by the FirePHP extension to detect if the domain supports
- * the FirePHPServer components
- */
-
 $vars = array();
 $vars['App.Base.Domain'] = $_SERVER['HTTP_HOST'];
-$vars['App.Base.URL'] = 'http://'.$_SERVER['HTTP_HOST'].'/';
+$vars['App.Base.URL'] = 'http://'.$_SERVER['HTTP_HOST'].'/PINF/com.googlecode.firephp/';
 $vars['App.Name'] = $_SERVER['PINF_APPLICATION_NAME'];
+$vars['App.ID'] = 'FirePHPTests';
+$vars['App.Label'] = 'FirePHP Tests';
 
 
 $response = array();
+$response[] = '<firephp version="0.2">';
+$response[] =   '<application id="'. $vars['App.ID'].'" label="'.$vars['App.Label'].'" url="'.$vars['App.Base.URL'].'">';
+$response[] =     '<toolbar name="Application">';
+$response[] =       '<tab selected="true" name="info" label="Info" source="'.$vars['App.Base.URL'].'InfoTab.php"/>';
+$response[] =     '</toolbar>';
+$response[] =   '</application>';
+$response[] = '</firephp>';
 
-switch($_GET['PINFURI']) {
-
-  case 'Detect':
-    $response[] = '<pinf>';
-    $response[] =   '<domain name="'.$vars['App.Base.Domain'].'">';
-    $response[] =     '<package name="com.googlecode.firephp">';
-    $response[] =       '<vargroup name="Application">';
-    $response[] =         '<var name="Label"><value>'.$vars['App.Name'].'</value></var>';
-    $response[] =         '<var name="Name"><value>'.$vars['App.Name'].'</value></var>';
-    $response[] =         '<var name="Base.URL"><value>'.$vars['App.Base.URL'].'</value></var>';
-    $response[] =       '</vargroup>';
-    $response[] =       '<vargroup name="FirefoxExtension.BottomToolbarTabs">';
-    $response[] =         '<tab name="about" label="About" source="http://www.google.com/"/>';
-    $response[] =         '<tab name="detect" label="Detect" source="'.$vars['App.Base.URL'].'/PINF/com.googlecode.firephp/Detect.xml"/>';
-    $response[] =       '</vargroup>';
-    $response[] =     '</package>';
-    $response[] =   '</domain>';
-    $response[] = '</pinf>';
-    break;
-
-}
 
 header('Content-Type: text/xml');
 print implode("\n",$response);
