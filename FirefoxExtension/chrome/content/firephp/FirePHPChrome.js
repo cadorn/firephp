@@ -54,6 +54,52 @@ var FirePHPLib = (FirebugExternalMode)?top.arguments[0].context.originalChrome.w
 
 var FirePHPChrome = top.FirePHPChrome = {
   
+  CapabilitiesURL: null,
+  
+  initialized: false,
+  
+  
+	initialize: function() {
+		
+		if(this.initialized) return;	
+		this.initialized = true;
+		
+dump('FirePHPChrome:initialize()'+"\n");    
+
+
+		FirePHPChrome.BottomToolbar.BrowserWatcher.initialize(FirePHPChrome.BottomToolbar);	
+
+    /* Lets listen to all Capabilities events */
+    FirePHP.FirePHPChannel.addListener("Capabilities", this);
+    
+
+    var ContentWindowTopToolbarContainer = FirePHPChrome.browser$("idContentWindowTopToolbarContainer");
+		/* Check if we have the window top toolbar already added.
+		 * If not lets insert it and then the code below can
+		 * show and hide it
+		 * Once the toolbar is added the binding will initialize and
+		 * fill it with content
+		 */
+		if(!ContentWindowTopToolbarContainer) {
+			var TabBrowserParent = FirePHPChrome.browser$("content").selectedBrowser.parentNode.parentNode.parentNode;
+			var ContentWindowTopToolbarContainer = FirePHPChrome.getDocument().createElement("tagFirePHPUIToolbar");
+			ContentWindowTopToolbarContainer.setAttribute("id","idContentWindowTopToolbarContainer");
+			TabBrowserParent.insertBefore(ContentWindowTopToolbarContainer,TabBrowserParent.childNodes[2]);
+		}    
+    
+    this.buildUI(this.CapabilitiesURL);
+    
+	},  
+  
+  	
+	notifyFirePHPEvent: function(Event,Flags) {
+  	switch(Event.getGroup()+'->'+Event.getName()+(((Flags & FirePHP.FirePHPChannel.STATE_AFTER)==FirePHP.FirePHPChannel.STATE_AFTER)?'->STATE_AFTER':'')) {
+  		case 'Capabilities->DefinitionChanged->STATE_AFTER':
+				this.buildUI(Event.getValue('CapabilitiesURL'));
+  			break;
+    }
+	},	
+  
   
   /* Get a reference to an object by ID
    * This takes into account if Firebug is running within the
@@ -62,6 +108,17 @@ var FirePHPChrome = top.FirePHPChrome = {
   $: function(Name) {
     return FirebugChrome.getCurrentBrowser().chrome.$(Name);
   },
+
+	/* Get a reference to an object ID in the main browser */
+  browser$: function(Name) {
+		var browser = Firebug.tabBrowser.selectedBrowser;    
+ 		if (browser.detached) {
+ 			return browser.originalChrome.$(Name);	
+		} else {
+    	return browser.chrome.$(Name);
+    }
+  },
+  
   /* Get a reference to the active Firebug document
    * This takes into account if Firebug is running within the
    * main window or the external window
@@ -72,9 +129,31 @@ var FirePHPChrome = top.FirePHPChrome = {
   
   
   
+  
+  /* Called whenever the capabilities definition has changed and the UI needs to be re-built */
+  buildUI: function(CapabilitiesURL) {
+  	this.CapabilitiesURL = CapabilitiesURL;
+
+		if(!this.initialized) return;	
+  		
+    dump('FirePHPChrome.buildUI()'+"\n");
+  	
+  	/* Lets first build the toolbars */
+  	
+  	var definition = FirePHP.FirePHPCapabilitiesHandler.getDefinition(CapabilitiesURL);
+
+		FirePHPChrome.UI.ContentWindowTopToolbarContainer.buildUI(definition.getToolbarDefinition('ContentWindowTopToolbarContainer'));
+  	FirePHPChrome.UI.ContentWindowTopSlideoutContainer.buildUI(definition.getSlideoutDefinition('ContentWindowTopSlideoutContainer'));
+  	FirePHPChrome.UI.FirePHPWindowResourceToolbarContainer.buildUI(definition.getToolbarDefinition('FirePHPWindowResourceToolbarContainer'));
+		FirePHPChrome.UI.FirePHPWindowResourceWidgetContainer.buildUI(definition.getWidgetDefinition('FirePHPWindowResourceWidgetContainer'));
+  },  
+  
+  
   /* This method is called whenever Firebug tabs change
    */
   refreshContext: function() {
+
+		this.initialize();
 
 //    dump('FirePHPChrome.refreshContext()'+"\n");
     
@@ -85,28 +164,52 @@ var FirePHPChrome = top.FirePHPChrome = {
     var FirePHPBottomToolbar = FirePHPChrome.$("idFirePHPBottomToolbar");
     var idFirePHPSplitter = FirePHPChrome.$("idFirePHPSplitter");
     var idFirePHPPanel = FirePHPChrome.$("idFirePHPPanel");
+    var ContentWindowTopToolbarContainer = FirePHPChrome.browser$("idContentWindowTopToolbarContainer");
+		
+		
+		/* Check if we have the window top toolbar already added.
+		 * If not lets insert it and then the code below can
+		 * show and hide it
+		 * Once the toolbar is added the binding will initialize and
+		 * fill it with content
+		 */
+/*		 
+		if(!ContentWindowTopToolbarContainer) {
+			var TabBrowserParent = FirePHPChrome.browser$("content").selectedBrowser.parentNode.parentNode.parentNode;
+			var ContentWindowTopToolbarContainer = FirePHPChrome.getDocument().createElement("tagFirePHPUIToolbar");
+			ContentWindowTopToolbarContainer.setAttribute("id","idContentWindowTopToolbarContainer");
+			TabBrowserParent.insertBefore(FirePHPWindowTopToolbar,TabBrowserParent.childNodes[2]);
+		}    
+*/		
+		/* TODO: Provide a preference to keep the window top toolbar showing when
+		 * other Firebug panels are selected
+		 */
 
-    if(this.getPanel().visible==true) {
+    if(this.getPanel() && this.getPanel().visible==true) {
+      
       /* Our panel is showing */
       
-//      FirePHPBottomToolbar.hidden = false;
       idFirePHPSplitter.hidden = false;
       idFirePHPPanel.hidden = false;
-
+			ContentWindowTopToolbarContainer.hidden = false;
     } else {
+      
       /* Our panel is not showing */
 
-//      FirePHPBottomToolbar.hidden = true;
       idFirePHPSplitter.hidden = true;
       idFirePHPPanel.hidden = true;
+			ContentWindowTopToolbarContainer.hidden = true;
     }
     
     
+		FirePHPChrome.UI.ContentWindowTopSlideoutContainer.layoutUI();
+    
+  
     /* Add listener to monitor resizing of the variables panel
      * so we can adjust the flow box accordingly
      */    
     FirePHPChrome.$("idFirePHPVariableWatchBox").addEventListener('DOMAttrModified',FirePHPChrome,true);
-    
+	      
     setTimeout(FBL.bindFixed(function() { FirePHPChrome.layoutUI(); }, this));
   },
   
@@ -169,6 +272,13 @@ var FirePHPChrome = top.FirePHPChrome = {
 
     dump('FirePHPChrome.syncUI()'+"\n");
 
+
+/* TODO: Allow toggle of "Variables", "Console", "Viewer", "Resources" only for now - this needs to be updated in future to allow removing and adding of widgets etc...
+   Maybe allow use to drag a widget "pin" or "tab" to the toolbar which will add a toggle for the widget.
+   If all wigets in a container are hidden the container should be removed.
+   Need to work with Joe to allow hiding of requests panel.
+ */  
+
     /* Sync menu toggles */
     var requestFlag, variableFlag, consoleFlag, applicationFlag;
     this.$('idFirePHPRequestsToggleBroadcaster').setAttribute('checked',(requestFlag = FirePHP.getPreference('showRequestInspector')));
@@ -195,8 +305,11 @@ var FirePHPChrome = top.FirePHPChrome = {
     this.$('idFirePHPApplicationToolbarBroadcaster').setAttribute('checked',(applicationFlag = FirePHP.getPreference('showApplicationToolbar')));
 
     this.$('idFirePHPApplicationSplitter').hidden = ((!variableFlag && !consoleFlag) || !applicationFlag);
-    this.$('idFirePHPApplicationDeck').hidden = !applicationFlag;
-    this.$('idFirePHPBottomToolbar').hidden = !applicationFlag;
+//    this.$('idFirePHPApplicationDeck').hidden = !applicationFlag;
+//    this.$('idFirePHPBottomToolbar').hidden = !applicationFlag;
+
+    /* Trigger a refresh of the WindotTopToolbar */
+    FirePHPChrome.WindowTopToolbar.refreshUI();
 
     /* Trigger a refresh of the BottomToolbar */
     FirePHPChrome.BottomToolbar.refreshUI();
@@ -242,6 +355,8 @@ var FirePHPChrome = top.FirePHPChrome = {
 }
 
 
+FirePHPChrome.UI = {}
+
 
 FirePHPChrome.RequestListListener = {
   
@@ -257,8 +372,7 @@ FirePHPChrome.RequestListListener = {
   
     if(event.type=='click') {
 
-      FirePHP.setSelectedRequestID(event.currentTarget.id);
-
+			new FirePHPChannelEvent('UI','SelectRequest',{RequestID:event.currentTarget.id}).trigger();
 
       /* TODO: Instead of setting the class here we should have FirePHPChrome
        * listen for events on FirePHP and update the class based on the

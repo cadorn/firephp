@@ -9,12 +9,17 @@
 	<script type="application/x-javascript" src="chrome://firephp/content/yahoo/YAHOO.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/yahoo/connection.js"/>
 
+	<script type="application/x-javascript" src="chrome://firephp/content/lib/XMLObjTree.js"/>
+
+
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHP.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/Handlers.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChannelAPI.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPLib.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/Capabilities.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPApplicationData.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPSessionData.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPRequestData.js"/>
-  <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChannelAPI.js"/>
 
 
   <script type="application/x-javascript" src="chrome://firephp/content/FirebugPanel.js"/>
@@ -26,5 +31,28 @@
 		FirePHP.initialize();
 		
   </script>
+
+	<window id="main-window">
+		<vbox class="ContentWindowTopSlideoutContainer" id="idContentWindowTopSlideoutContainer" hidden="true">
+			<browser id="idContentWindowTopSlideoutContainerBrowser" class="ContentWindowTopSlideoutContainerBrowser" type="content" src="about:blank"/>
+		</vbox>
+	</window>
+
+
+    <commandset id="mainCommandSet">
+        <command id="cmd_FirePHP_OpenAllowedCapabilityHostsWindow" oncommand="new FirePHPChannelEvent('UI','FirefoxMenuCommand',{Name:'OpenAllowedCapabilityHostsWindow'}).trigger()"/>
+        <command id="cmd_FirePHP_GoReferenceWebsite" oncommand="new FirePHPChannelEvent('UI','FirefoxMenuCommand',{Name:'GoReferenceWebsite'}).trigger()"/>
+    </commandset>
+
+    <menupopup id="menu_ToolsPopup">
+        <menu id="menu_firephp" class="menuitem-iconic" image="chrome://firephp/skin/FirePHPLogo16.png"
+              label="FirePHP" insertafter="menu_firebug">
+            <menupopup>
+                <menuitem label="Allowed Capability Hosts" command="cmd_FirePHP_OpenAllowedCapabilityHostsWindow"/>
+								<menuseparator/>
+                <menuitem label="Help / Reference" command="cmd_FirePHP_GoReferenceWebsite"/>
+            </menupopup>
+        </menu>
+    </menupopup>
 
 </overlay>

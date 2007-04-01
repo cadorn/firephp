@@ -79,12 +79,18 @@
 #idFirePHPVariableViewerFrame {
   border-top: 1px solid #BBB9BA !important;
   border-bottom: 1px solid #BBB9BA !important;
-  border-right: 1px solid #BBB9BA !important;
+  border-right: 0px !important;
 }
 #idFirePHPConsoleFrame {
   border-bottom: 1px solid #BBB9BA !important;
 }
 #idFirePHPApplicationDeck {
+  border-left: 0px !important;
+  border-top: 1px solid #BBB9BA !important;
+}
+ 
+ 
+#idFirePHPWindowResourceWidgetContainer {
   border-left: 0px !important;
   border-top: 1px solid #BBB9BA !important;
 }

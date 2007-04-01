@@ -72,6 +72,30 @@ var FirePHPLib = top.FirePHPLib = {
       var args = cloneArray(arguments), fn = args.shift(), object = args.shift();
       return function() { return fn.apply(object, args); }
   },
+	  
+	  
+	removeKey: function(list, key) {
+    /* TODO: Try and figure out a way to do this by reference */
+		var new_list = Array();
+		for( var item in list ) {
+	  	if(item == key) {
+	    	/* Don't add element to new array */
+	    } else {
+	    	new_list[item] = list[item];
+	    }
+	  }
+	  return new_list;
+	},
+  
+  getXMLTreeNodeAttributes: function(Node) {
+  	var attributes = new Array();
+  	for( var name in Node ) {
+  		if(name.substring(0,1)=='-') {
+  			attributes[name.substring(1)] = Node[name];
+  		}
+  	}
+  	return attributes;
+  },
   
   /* Prints the given object to the console */
   dump: function(Object,Name,Filter,IncludeValues) {

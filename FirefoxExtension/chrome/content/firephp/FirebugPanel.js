@@ -64,6 +64,8 @@ Firebug.FirePHP = extend(Firebug.Module, {
      * contained within the parent URL.
      */
     initContext: function(context) {
+    	FirePHP.enable();
+
       /* Add a listener to the browser so we can monitor all window/frame/document loading states */
       try {
         context.browser.addProgressListener(FirePHP.FirePHPRequestHandler,Components.interfaces.nsIWebProgress.NOTIFY_DOCUMENT);
@@ -89,14 +91,21 @@ Firebug.FirePHP = extend(Firebug.Module, {
     	 * can access FirePHP services
     	 */
     	if(!win.FirePHPChannel) {
-    		win.FirePHPChannel = new FirePHPChannel();
+    		win.FirePHPChannel = FirePHP.FirePHPChannel;
     	}
     },
     /* Called before for every window/frame is un-loaded */
     unwatchWindow: function(context, win) {
       delete win.FirePHPChannel;
     },
-    showContext: function(browser, context) {},
+    /* Called when a browser tab is switched and a new window selected */
+    showContext: function(browser, context) {
+    dump('show context'+"\n");
+      /* Notify our chrome to refresh its context now that the Firebug
+       * context has been created/switched
+       */
+      FirePHPChrome.refreshContext();      
+    },
     loadedContext: function(context) {},
     
     showPanel: function(browser, panel) {
@@ -105,7 +114,7 @@ Firebug.FirePHP = extend(Firebug.Module, {
       var FirePHPButtons = browser.chrome.$("fbFirePHPButtons");
       collapse(FirePHPButtons, !isFirePHP);
 
-      /* Notify opur chrome to refresh its context based on the
+      /* Notify our chrome to refresh its context based on the
        * selected Firebug tab
        */
       FirePHPChrome.refreshContext();
@@ -115,7 +124,13 @@ Firebug.FirePHP = extend(Firebug.Module, {
       if(!isFirePHP) return;
     },
 
-
+    enable: function() {
+    	dump('enable'+"\n");
+    },
+    
+    disable: function() {
+    	dump('disable'+"\n");
+    },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
     // Internal

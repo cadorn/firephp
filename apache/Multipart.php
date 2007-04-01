@@ -22,6 +22,9 @@ function ShutdownFirePHPWebsiteCall() {
 
 global $FirePHP;
 $FirePHP->setApplicationID('FirePHPTests');
+$FirePHP->setProtocolMode('TemporaryFiles');
+$FirePHP->setTemporaryDirpath('/pinf/tmp/com.googlecode.firephp/');
+$FirePHP->setCapabilitiesURL('http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['REQUEST_URI']).'/PINF/org.firephp/Capabilities');
 $FirePHP->setVariableCallback('variable_id_resolver');
 
 function variable_id_resolver(&$ID,&$Options,&$Value,&$Key,&$Scope,&$Label) {
@@ -38,7 +41,6 @@ function variable_id_resolver(&$ID,&$Options,&$Value,&$Key,&$Scope,&$Label) {
       break;
     case '$_GET':
       $Scope = 'REQUEST';
-      break;
   }
 
   return true;
@@ -53,7 +55,6 @@ FirePHP::SetVariable(true,'$_SERVER',$_SERVER);
 FirePHP::SetVariable(true,'$_SESSION',$_SESSION);
 FirePHP::SetVariable(true,'$_GET',$_GET);
 
-
 $script_name = 'Multipart.php';
 
 switch($_GET['File']) {
@@ -62,13 +63,26 @@ switch($_GET['File']) {
     $content_type = 'text/html';
     $data = '
 <html>
+
 <head>
   <script src="/PINF/com.googlecode.firephp/prototype.js"></script>
   <link href="'.$script_name.'?File=Style" rel="stylesheet"></link>
 </head>
 <body>
 
-<p>Extension Version: <script>document.write(FirePHPChannel.getExtensionVersion());</script></p>
+<p>Firebug Version: <script>document.write(FirePHPChannel.getFirePHPVersion());</script></p>
+<p>FirePHP Extension Version: <script>document.write(FirePHPChannel.getExtensionVersion());</script></p>
+
+<p>Selected Request: <div id="SelectedRequestID-div"></div></p>
+<script>
+  FirePHPChannel.addListener("State", {
+    notifyFirePHPEvent: function(Event,Flags) {
+      if(Event.getName()=="SelectedRequestChanged") {
+        document.getElementById("SelectedRequestID-div").innerHTML = Event.getValue("RequestID");
+      }
+    }
+  });
+</script>
 
 <p>The HTML Test.</p>
 
@@ -78,9 +92,8 @@ switch($_GET['File']) {
 var myAjax = new Ajax.Request("'.$script_name.'?File=JSON", { method: "get", onComplete: showJSONResponse});
 function showJSONResponse(originalRequest) {
   var data = originalRequest.responseText;
-  data = data.replace(/</g,"&lt;");
-  data = data.replace(/>/g,"&gt;");
-  $("JSONResultDiv").innerHTML = "<pre>"+data+"</pre>";
+  data = FirePHPChannel.parseContentResponse(data);
+  $("JSONResultDiv").innerHTML = data;
 }
 </script>    
 
@@ -90,9 +103,12 @@ function showJSONResponse(originalRequest) {
 var myAjax = new Ajax.Request("'.$script_name.'?File=XML", { method: "get", onComplete: showXMLResponse});
 function showXMLResponse(originalRequest) {
   var data = originalRequest.responseText;
+  data = FirePHPChannel.parseContentResponse(data);
   data = data.replace(/</g,"&lt;");
   data = data.replace(/>/g,"&gt;");
-  $("XMLResultDiv").innerHTML = "<pre>"+data+"</pre>";
+  data = data.replace(/\n/g,"<br>");
+  data = data.replace(/\s/g,"&nbsp;");
+  $("XMLResultDiv").innerHTML = data;
 }
 </script>    
 

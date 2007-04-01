@@ -8,15 +8,29 @@
          xmlns:html="http://www.w3.org/1999/xhtml">
 
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChrome.js"/>
+  
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/Toolbar.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/ContentWindowTopToolbarContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/FirePHPWindowResourceToolbarContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/Slideout.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/ContentWindowTopSlideoutContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/WidgetContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/FirePHPWindowResourceWidgetContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/Widget.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/FirePHPResourceViewerWidget.js"/>
+
+  
+  <script type="application/x-javascript" src="chrome://firephp/content/WindowTopToolbar/FirePHPWindowTopToolbar.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBottomToolbar.js"/>
 
   <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBrowserWatcher.js"/>
 
+  <script type="application/x-javascript" src="chrome://firephp/content/Console.js"/>
+
   <script>
 		
-		/* Initialize FirePHPChrome related components */
-
-		FirePHPChrome.BottomToolbar.BrowserWatcher.initialize(FirePHPChrome.BottomToolbar);
+		/* Initialize FirePHPChrome */
+//		FirePHPChrome.initialize();		
 		
   </script>
 
@@ -33,7 +47,6 @@
   	<broadcaster id="idFirePHPConsoleToggleBroadcaster" checked="true"/>
   	<broadcaster id="idFirePHPApplicationToolbarBroadcaster" checked="true"/>
 	</broadcasterset>	
-
 
   <toolbar id="fbToolbar" align="center">
 		<hbox id="fbToolbarInner" insertbefore="fbDetachButton" flex="1" align="center">            
@@ -126,8 +139,8 @@
 			</hbox>
 
 		  <splitter id="idFirePHPConsoleSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
-		  <iframe id="idFirePHPConsoleFrame" flex="1" src="chrome://firephp/content/VariableInspector/VariableViewerPanel.htm" persist="height"/>
-		  
+		  <browser id="idFirePHPConsoleFrame" flex="1" src="chrome://firephp/content/Console/Panel.htm"/>
+
 	  	</vbox>
 
 			  <splitter id="idFirePHPVariableViewerSplitter" class="FirePHPSplitter" resizebefore="closest" resizeafter="farthest" width="8" orient="horizontal">
@@ -139,16 +152,14 @@
 	  	</hbox>
 		  
 		  
-		  
-
 
 		  <splitter id="idFirePHPApplicationSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
 
-			<deck id="idFirePHPApplicationDeck" flex="1" persist="height">
-				<browser/>
+			<deck id="idFirePHPWindowResourceWidgetContainer" flex="1" persist="height">
       </deck>
-
-			<tagFirePHPBottomToolbar id="idFirePHPBottomToolbar"/>
+			
+			<tagFirePHPUIToolbar id="idFirePHPWindowResourceToolbarContainer"/>
+			
 		</vbox>
 
   </vbox>
