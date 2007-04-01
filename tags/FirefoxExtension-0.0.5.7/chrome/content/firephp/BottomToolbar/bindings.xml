@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<binding id="tagFirePHPBottomToolbar">
+    <content>
+        <xul:hbox anonid="tabBox" class="panelTabBox" collapsed="false">
+            <children/>
+            <xul:spacer flex="1"/>
+        </xul:hbox>
+    </content>
+    
+    <implementation>
+        <constructor><![CDATA[
+            this.tabBox = document.getAnonymousElementByAttribute(this, "anonid", "tabBox");
+            this.optionsPopup = document.getAnonymousElementByAttribute(this, "anonid", "optionsPopup");
+            this.deck = document.getAnonymousElementByAttribute(this, "anonid", "deck");
+            this.browser = document.getAnonymousElementByAttribute(this, "anonid", "browser");
+            this.tabMap = {};
+        ]]></constructor>
+
+
+        <method name="createTab">
+            <parameter name="panel"/>
+            <body><![CDATA[
+
+            var tab = document.createElement("panelTab");
+            tab.panel = panel;
+
+            tab.setAttribute("label", panel.title);
+
+            return this.tabMap[panel.name] = tab;
+            ]]></body>
+        </method>
+        
+        <method name="createDropdown">
+            <parameter name="panel"/>
+            <body><![CDATA[
+
+            var tab = document.createElement("tagFirePHPBottomToolbarDropdownItem");
+            tab.panel = panel;
+
+            tab.setAttribute("label", panel.title);
+
+            return this.tabMap[panel.name] = tab;
+            ]]></body>
+        </method>
+        
+        <method name="addItem">
+            <parameter name="panel"/>
+            <body><![CDATA[
+            var item = null;
+            switch(panel.toolbarItemType) {
+              case 'tab':
+                item = this.createTab(panel);
+                break;
+              case 'dropdown':
+                item = this.createDropdown(panel);
+                break;
+            }
+            this.appendChild(item);
+            
+            return item;
+            ]]></body>
+        </method>
+        
+        <method name="selectTab">
+            <parameter name="tab"/>
+            <parameter name="doubleClick"/>
+            <body><![CDATA[
+                var panelName = tab ? tab.panel.name : null;
+
+                this.selectPanel(panelName,doubleClick);
+            ]]></body>
+        </method>
+        
+        <method name="selectPanel">
+            <parameter name="panelName"/>
+            <parameter name="doubleClick"/>
+            <body><![CDATA[
+                var tab = panelName ? this.tabMap[panelName] : null;
+                var panel = tab ? tab.panel : null;                
+
+                if (this.selectedTab)
+                    this.selectedTab.removeAttribute("selected");
+
+                this.selectedTab = tab;
+
+                if (tab)
+                    tab.setAttribute("selected", "true");
+
+                panel.select(this,doubleClick);
+            ]]></body>
+        </method>        
+    </implementation>
+    
+    <handlers>
+      <handler event="mousedown" button="0"><![CDATA[
+          var tab = event.target;
+          for (; tab && !tab.panel; tab = tab.parentNode);
+
+          if (tab && tab.panel.toolbarItemType=='tab')
+          {
+              // Select after a timeout to increase teh snappy
+              setTimeout(FBL.bindFixed(function()
+              {
+                  this.selectTab(tab,false);
+              }, this));
+          }
+        ]]></handler>
+      <handler event="dblclick" button="0"><![CDATA[
+          var tab = event.target;
+          for (; tab && !tab.panel; tab = tab.parentNode);
+
+          if (tab && tab.panel.toolbarItemType=='tab')
+          {
+              // Select after a timeout to increase teh snappy
+              setTimeout(FBL.bindFixed(function()
+              {
+                  this.selectTab(tab,true);
+              }, this));
+          }
+        ]]></handler>
+    </handlers>
+
+</binding>
+
+
+
+<binding id="tagFirePHPBottomToolbarDropdownItem">
+  <content>
+
+    <xul:toolbarbutton anonid="optionsButton" type="menu" class="toolbar-text-menubutton" xbl:inherits="label">
+      <xul:menupopup anonid="optionsPopup"/>
+    </xul:toolbarbutton>
+                       
+  </content>
+
+    <implementation>
+        <constructor><![CDATA[
+          this.optionsButton = document.getAnonymousElementByAttribute(this, "anonid", "optionsButton");
+          this.optionsPopup = document.getAnonymousElementByAttribute(this, "anonid", "optionsPopup");
+
+          this.panel.initialize(this);
+        ]]></constructor>
+        
+    </implementation>
+
+</binding>
+
+</bindings>
