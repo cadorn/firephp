@@ -1,0 +1,218 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Initial Developer of the Original Code is Christoph Dorn.
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *     Christoph Dorn <christoph@christophdorn.com>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+ 
+@import "chrome://firephp-os/skin/style.css";
+
+
+tagFirePHPUIToolbar {
+  -moz-binding: url("chrome://firephp/content/UI/ToolbarBindings.xml#tagFirePHPUIToolbar");
+  -moz-box-orient: vertical;
+}
+ 
+tagFirePHPBottomToolbar {
+  -moz-binding: url("chrome://firephp/content/BottomToolbar/bindings.xml#tagFirePHPBottomToolbar");
+  -moz-box-orient: vertical;
+}
+
+tagFirePHPBottomToolbarDropdownItem {
+  -moz-binding: url("chrome://firephp/content/BottomToolbar/bindings.xml#tagFirePHPBottomToolbarDropdownItem");
+  -moz-box-orient: vertical;
+}
+
+tagFirePHPWindowTopToolbar {
+  -moz-binding: url("chrome://firephp/content/WindowTopToolbar/bindings.xml#tagFirePHPWindowTopToolbar");
+  -moz-box-orient: vertical;
+}
+
+
+.FirePHPSplitter {
+}
+
+#idFirePHPSplitter {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  height: 5px;
+  align: start;
+  -moz-box-align: start;
+  pack: start;
+  -moz-box-pack: start;
+  background: url(chrome://firephp/skin/FirePHPSplitterBackground.gif) repeat top;
+}
+
+#idFirePHPSplitterRequestFlowBox {
+  position: relative;
+  left: 311px;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  border-collapse: separate;
+  border-left: 1px solid #404040;
+  width: 150px;
+  height: 6px;
+  border-right-style: solid;
+  border-right-width: 2px;
+  -moz-border-right-colors: rgb(255,255,255) rgb(128,128,128);  
+  background-color: #ECECEC;
+}
+
+#idFirePHPApplicationSplitter {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  height: 5px;
+}
+
+
+.FirePHP-VariablePanelLabel {
+  margin: 0px;
+  border: 0px;
+  font-weight: bold;
+  padding: 3px;
+  padding-left: 5px;
+  border-bottom: 1px solid #808080;
+}
+#idFirePHPVariableRequestLabel {
+  background-color: #ECECEC;
+  padding-top: 4px;
+}
+
+#idFirePHPVariableApplicationBox {
+  border-left: 1px solid #404040;
+  border-top: 1px solid #404040;
+  width: 150px;
+  min-width: 80px;
+}
+#idFirePHPVariableSessionBox {
+  border-top: 1px solid #404040;
+  width: 150px;
+  min-width: 80px;
+}
+#idFirePHPVariableRequestBox {
+  width: 150px;
+  min-width: 80px;
+}
+#idFirePHPVariableWatchBox {
+  border-top: 1px solid #404040;
+  width: 150px;
+  min-width: 80px;
+}
+#idFirePHPVariableViewerFrame {
+  border-top: 1px solid #404040;
+  border-bottom: 1px solid #808080;
+  border-right: 1px solid #808080;
+}
+#idFirePHPConsoleFrame {
+  border-bottom: 1px solid #808080;
+}
+
+
+#idFirePHPApplicationDeck {
+  border-left: 1px solid #404040;
+  border-top: 1px solid #404040;
+}
+
+#idFirePHPWindowResourceWidgetContainer {
+  border-top: 1px solid #404040;
+}
+
+
+
+.firephp-panel-menu-spacer {
+  padding: 5px;
+}
+
+.firephp-panel-menu-icon-disabled {
+  background: url(chrome://firephp/skin/LadderExtensionMenuLogo.gif) no-repeat bottom;
+  height: 15px;
+  width: 49px;
+  margin-left: 8px;
+  margin-bottom: 3px;
+//  -moz-opacity: 0.2;
+  margin-right: 12px;
+}
+
+.firephp-panel-menu-icon-enabled {
+  background: url(chrome://firephp/skin/LadderExtensionMenuLogo.gif) no-repeat bottom;
+  height: 15px;
+  width: 49px;
+  margin-bottom: +3px;
+  margin-right: 12px;
+}
+
+
+#FirePHPSidebar_List listhead listheader {
+  font-family: Arial;
+  font-size: 11px;  
+  font-weight: bold;
+}
+
+#FirePHPSidebar_List listitem listcell {
+  font-family: Arial;
+  font-size: 9px;  
+  font-weight: plain;
+}
+
+.FirePHPSidebar_Toolbar_Button {
+  font-family: Arial;
+  font-size: 12px;  
+  font-weight: plain;
+}
+
+
+
+
+
+.ContentWindowTopSlideoutContainer {
+	position:fixed;
+	padding:0px;
+	margin:0px;
+	left: 100px;
+	top: 80px;
+	width: 400px;
+	height: 200px;
+	background-color: #000000;
+}
+
+.ContentWindowTopSlideoutContainerBrowser {
+	z-index:1000;
+	position:relative;
+	background-color:#FFFFFF;
+	left: 0px;
+	top: 0px;
+	height:100%;
+	width:100%;
+	border: 1px solid #000000;
+}
