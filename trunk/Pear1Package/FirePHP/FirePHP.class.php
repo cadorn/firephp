@@ -43,7 +43,10 @@ class com__googlecode__firephp__FirePHP_class {
 
   var $version = '0.0.1';
 
+  var $protocol_mode = 'MultipartResponse';
+  var $temporary_dirpath = './.tmp/';
   var $application_id = 'default';
+  var $capabilities_url = null;
   var $request_id = null;
   var $primary_content_type = 'text/html';
   var $time_markers = array();
@@ -90,11 +93,34 @@ class com__googlecode__firephp__FirePHP_class {
 
   function setApplicationID($ApplicationID) {
     if($this->content_started) {
-      trigger_error('Content has already started. You set the application ID before calling startContent()!');
+      trigger_error('Content has already started. You must set the application ID before calling startContent()!');
       return false;
     }
 
     $this->application_id = $ApplicationID;
+  }
+  
+  function setProtocolMode($Mode) {
+    $this->protocol_mode = $Mode;
+  }
+  
+  function setTemporaryDirpath($Dirpath) {
+    if($this->content_started) {
+      trigger_error('Content has already started. You must set the temporary directory before calling startContent()!');
+      return false;
+    }
+
+    $this->temporary_dirpath = $Dirpath;
+  }
+  
+  function setCapabilitiesURL($CapabilitiesURL) {
+    if($this->content_started) {
+      trigger_error('Content has already started. You must set the capabilities URL before calling startContent()!');
+      return false;
+    }
+
+    $this->capabilities_url = $CapabilitiesURL;
+    $this->setHeaderVariable('CapabilitiesURL',$this->capabilities_url);
   }
 
   function setRequestID($RequestID) {
