@@ -91,7 +91,7 @@ Firebug.FirePHP = extend(Firebug.Module, {
     	 * can access FirePHP services
     	 */
     	if(!win.FirePHPChannel) {
-    		win.FirePHPChannel = FirePHP.FirePHPChannel;
+    		win.FirePHPChannel = FirePHP.FirePHPChannelAPI;
     	}
     },
     /* Called before for every window/frame is un-loaded */
@@ -161,9 +161,9 @@ FirePHPPanel.prototype = extend(Firebug.Panel, {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *    
     // extends Panel
-    
-    name: "FirePHP",
-    title: "FirePHP",
+
+    name: top.FirePHP.name,
+    title: top.FirePHP.title,
     searchable: false,
     editable: false,
 
