@@ -1,0 +1,9 @@
+
+Compiling the Typelib
+
+ - Use Gecko SDK from: http://developer.mozilla.org/en/docs/Gecko_SDK
+ - If you are using windows you can download the additional required DLL files from:
+ 		- http://www.driverskit.net/
+ 		- http://www.mozdev.org/notes/hello_world_js_component_win.html
+
+ - {sdk_dir}/bin/xpidl -m typelib -w -v -I {sdk_dir}/idl -e nsIFirePHP.xpt nsIFirePHP.idl
