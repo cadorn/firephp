@@ -338,7 +338,7 @@ dump('FirePHPChrome:initialize()'+"\n");
   /* Returns the FirePHP Panel */
   getPanel: function() {
     if(!FirebugContext) return false;
-    return FirebugContext.getPanel("FirePHP");
+    return FirebugContext.getPanel(FirePHP.name);
   },
 
 

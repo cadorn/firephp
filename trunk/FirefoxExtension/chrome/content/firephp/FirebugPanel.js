@@ -110,7 +110,7 @@ Firebug.FirePHP = extend(Firebug.Module, {
     
     showPanel: function(browser, panel) {
       /* Hide/Show our Firebug panel buttons */
-      var isFirePHP = panel && panel.name == top.FirePHP.name;
+      var isFirePHP = panel && panel.name == FirePHP.name;
       var FirePHPButtons = browser.chrome.$("fbFirePHPButtons");
       collapse(FirePHPButtons, !isFirePHP);
 
@@ -120,7 +120,7 @@ Firebug.FirePHP = extend(Firebug.Module, {
       FirePHPChrome.refreshContext();
     },
     showSidePanel: function(browser, panel) {
-      var isFirePHP = panel && panel.name == top.FirePHP.name;
+      var isFirePHP = panel && panel.name == FirePHP.name;
       if(!isFirePHP) return;
     },
 
