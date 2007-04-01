@@ -1,0 +1,23 @@
+
+BODY {
+  font-family: Lucida Grande, Tahoma, sans-serif;
+  font-size: 11px;
+  margin: 0px;
+  padding: 5px;
+}
+
+
+#table {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+#table TR.SelectedRow {
+  background-color: #E68326;
+}
+#table TR TD {
+  padding: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  cursor: pointer;
+}
