@@ -44,19 +44,71 @@ var FirePHP = top.FirePHP = {
 
 
   initialize: function() {
-    
-    /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
-    try {
-      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
-    } catch (err) {}
 
     /* Get preferences service */
     try {
       this.preferencesService = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch2);
     } catch (err) {}
 
+    FirePHP.Handlers.initialize();
+
+    FirePHP.FirePHPCapabilitiesHandler.initialize();
     FirePHP.FirePHPRequestHandler.initialize();
     
+    /* Lets listen to all UI and Internal events */
+    FirePHP.FirePHPChannel.addHandler("UI", this);
+    FirePHP.FirePHPChannel.addHandler("Internal", this);
+  },
+  	
+	
+	handleFirePHPEvent: function(Event,Flags) {
+  	switch(Event.getGroup()+'->'+Event.getName()) {
+
+  		case 'UI->SelectRequest':
+  	    this.selectedRequest = Event.getValue('RequestID');
+ 				new FirePHPChannelEvent('State','SelectedRequestChanged',{RequestID:this.selectedRequest}).trigger();
+  			break;
+
+  	  case 'UI->FirefoxMenuCommand':
+		  	switch(Event.getValue('Name')) {
+
+		  		case 'OpenAllowedCapabilityHostsWindow':
+		  			new FirePHPChannelEvent('Internal','OpenAllowedCapabilityHostsWindow').trigger()
+		  			break;
+
+		  		case 'GoReferenceWebsite':
+		  			FirePHPChrome.browser$("content").selectedTab = FirePHPChrome.browser$("content").addTab('http://www.firephp.org/Reference/');
+		  			break;
+		  	}
+  	  	break;
+  	  	
+  	  case 'Internal->OpenAllowedCapabilityHostsWindow':
+        var params = {
+            permissionType: "firephp.capabilities",
+            windowTitle: "FirePHP Allowed Capability Hosts",
+            introText: "The list below specifies all Capability Definition Hosts allowed by you. A capability definition adds functionality to your FirePHP tool. It is important that you load definitions only from trusted hosts. Loading an un-trusted definition may create a security hole in your browser. Please see http://www.firephp.org/Security for more information.",
+            blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: Event.getValue('URL')
+        };
+        FirebugLib.openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul","", params);
+  			break;
+    }
+	},
+
+  
+  /* Enable and disable FirePHP
+   * At the moment this enables and disables the FirePHP accept header
+   */ 
+  enable: function() {
+    /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
+    try {
+      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
+    } catch (err) {}
+  },
+  disable: function() {
+    /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
+    try {
+      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
+    } catch (err) {}
   },
 
   setSelectedApplication: function(Name) {
@@ -67,13 +119,10 @@ var FirePHP = top.FirePHP = {
     return this.selectedApplication;
   },
   
-  setSelectedRequestID: function(RequestID) {
-    this.selectedRequest = RequestID;
-  },
-  
   getSelectedRequestID: function() {
     return this.selectedRequest;
   },
+
 
 
   /* Synchronizes the UI based on all context, preference and

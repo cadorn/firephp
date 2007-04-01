@@ -151,7 +151,7 @@ FirePHPChrome.BottomToolbar = {
 
     /* Check if we have a selected application, if we do lets add the panels */
 
-    if(serverData) {
+    if(serverData && false) {
 
       var tabs = serverData.getTabs();
       if(tabs) {
@@ -190,6 +190,8 @@ FirePHPChrome.BottomToolbar = {
         }
       }
     }
+
+return;
 
     /* Add the created panels to the UI */
     for (var i = 0; i < this.panels.length; ++i) {
@@ -257,7 +259,7 @@ FirePHPChrome.BottomToolbar = {
   	 * can access FirePHP services
   	 */
   	if(!win.FirePHPChannel) {
-  		win.FirePHPChannel = new FirePHPChannel();
+  		win.FirePHPChannel = FirePHP.FirePHPChannel;
   	}
   },
   unwatchWindow: function(context, win) {

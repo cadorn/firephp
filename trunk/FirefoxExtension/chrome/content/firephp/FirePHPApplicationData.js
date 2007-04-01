@@ -125,7 +125,6 @@ FirePHP.FirePHPApplicationHandler = {
   data: new Array(),
   data_id_map: new Array(),
 
-
   parseDomainPaths: function(Arg1) {
     var urls;
     if(Arg1 instanceof String || typeof Arg1 == 'string') {

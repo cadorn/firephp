@@ -176,6 +176,11 @@ FirePHP.FirePHPRequestHandler = {
       this.anchorRequest(RequestID,requestData.anchor);
     }
 
+		/* If we found a X-PINF-org.firephp-CapabilitiesURL header lets try and load the definition */
+		if(ServerVars['CapabilitiesURL']) {
+			new FirePHPChannelEvent('Capabilities','LoadDefinition',{CapabilitiesURL:ServerVars['CapabilitiesURL']}).trigger();
+		}
+
     /* If we found FirePHP multipart data lets trigger a capabilities detection */
     if(requestData.getData()) {
       FirePHP.FirePHPApplicationHandler.triggerDetect(requestData.url);

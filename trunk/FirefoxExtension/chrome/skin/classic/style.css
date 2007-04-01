@@ -35,6 +35,11 @@
  
 @import "chrome://firephp-os/skin/style.css";
 
+
+tagFirePHPUIToolbar {
+  -moz-binding: url("chrome://firephp/content/UI/ToolbarBindings.xml#tagFirePHPUIToolbar");
+  -moz-box-orient: vertical;
+}
  
 tagFirePHPBottomToolbar {
   -moz-binding: url("chrome://firephp/content/BottomToolbar/bindings.xml#tagFirePHPBottomToolbar");
@@ -45,6 +50,12 @@ tagFirePHPBottomToolbarDropdownItem {
   -moz-binding: url("chrome://firephp/content/BottomToolbar/bindings.xml#tagFirePHPBottomToolbarDropdownItem");
   -moz-box-orient: vertical;
 }
+
+tagFirePHPWindowTopToolbar {
+  -moz-binding: url("chrome://firephp/content/WindowTopToolbar/bindings.xml#tagFirePHPWindowTopToolbar");
+  -moz-box-orient: vertical;
+}
+
 
 .FirePHPSplitter {
 }
@@ -126,8 +137,14 @@ tagFirePHPBottomToolbarDropdownItem {
 #idFirePHPConsoleFrame {
   border-bottom: 1px solid #808080;
 }
+
+
 #idFirePHPApplicationDeck {
   border-left: 1px solid #404040;
+  border-top: 1px solid #404040;
+}
+
+#idFirePHPWindowResourceWidgetContainer {
   border-top: 1px solid #404040;
 }
 
@@ -138,20 +155,21 @@ tagFirePHPBottomToolbarDropdownItem {
 }
 
 .firephp-panel-menu-icon-disabled {
-  background: url(chrome://firephp/skin/PoweredByFirePHP_v1.png) no-repeat bottom;
+  background: url(chrome://firephp/skin/LadderExtensionMenuLogo.gif) no-repeat bottom;
   height: 15px;
-  width: 80px;
+  width: 49px;
   margin-left: 8px;
   margin-bottom: 3px;
-  -moz-opacity: 0.2;
-  margin-right: 8px;
+//  -moz-opacity: 0.2;
+  margin-right: 12px;
 }
 
 .firephp-panel-menu-icon-enabled {
-  background: url(chrome://firephp/skin/PoweredByFirePHP_v1.png) no-repeat bottom;
+  background: url(chrome://firephp/skin/LadderExtensionMenuLogo.gif) no-repeat bottom;
   height: 15px;
-  width: 80px;
+  width: 49px;
   margin-bottom: +3px;
+  margin-right: 12px;
 }
 
 
@@ -171,4 +189,30 @@ tagFirePHPBottomToolbarDropdownItem {
   font-family: Arial;
   font-size: 12px;  
   font-weight: plain;
+}
+
+
+
+
+
+.ContentWindowTopSlideoutContainer {
+	position:fixed;
+	padding:0px;
+	margin:0px;
+	left: 100px;
+	top: 80px;
+	width: 400px;
+	height: 200px;
+	background-color: #000000;
+}
+
+.ContentWindowTopSlideoutContainerBrowser {
+	z-index:1000;
+	position:relative;
+	background-color:#FFFFFF;
+	left: 0px;
+	top: 0px;
+	height:100%;
+	width:100%;
+	border: 1px solid #000000;
 }

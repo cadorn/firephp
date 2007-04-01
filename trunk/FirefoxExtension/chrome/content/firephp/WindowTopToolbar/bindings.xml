@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<binding id="tagFirePHPWindowTopToolbar">
+    <content>
+        <xul:hbox anonid="tabBox" class="panelTabBox" collapsed="false">
+            <xul:label value="test label"/>
+            <children/>
+            <xul:spacer flex="1"/>
+        </xul:hbox>
+    </content>
+    
+    <implementation>
+        <constructor><![CDATA[
+            this.tabBox = document.getAnonymousElementByAttribute(this, "anonid", "tabBox");
+            this.optionsPopup = document.getAnonymousElementByAttribute(this, "anonid", "optionsPopup");
+            this.deck = document.getAnonymousElementByAttribute(this, "anonid", "deck");
+            this.browser = document.getAnonymousElementByAttribute(this, "anonid", "browser");
+            this.tabMap = {};
+
+            FirePHPChrome.WindowTopToolbar.initialize();
+        ]]></constructor>
+     
+        <method name="createButton">
+            <parameter name="info"/>
+            <body><![CDATA[
+
+            var tab = document.createElement("label");
+            tab.info = info;
+
+            tab.setAttribute("value", info.title);
+
+            return this.tabMap[info.name] = tab;
+            ]]></body>
+        </method>
+        
+        <method name="addItem">
+            <parameter name="info"/>
+            <body><![CDATA[
+            var item = null;
+            switch(info.toolbarItemType) {
+              case 'button':
+                item = this.createButton(info);
+                break;
+            }
+            this.appendChild(item);
+            
+            return item;
+            ]]></body>
+        </method>        
+         
+    </implementation>
+</binding>
+
+</bindings>

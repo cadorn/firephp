@@ -7,6 +7,11 @@
   - Introduced versioning for the FirePHP XML protocol and set to 0.2
   - Added a FirePHPChannel object to the content windows that can be
     used to communicate with/via FirePHP
+  - Added event/listener based communication of all components via FirePHPChannel
+  - Revised format of capabilities definition
+  - Revised how capability definitions are loaded
+  - Added support to allow and block capability definition loading for hosts
+  - Implemented support for build version
   
 2007-02-02 - Release Version: 0.0.5
 
