@@ -54,7 +54,7 @@ $response[] =       '<item type="tab" name="test_tab" title="Test Tab"/>';
 $response[] =       '<item type="toggle" name="test_toggle" title="Test Toggle"/>';
 $response[] =     '</toolbar>';
 $response[] =     '<slideouts container="ContentWindowTopSlideoutContainer">';
-$response[] =       '<slideout name="test_slideout" source="http://www.google.com/" width="400" height="500"/>';
+$response[] =       '<slideout name="test_slideout" source="http://www.google.com/" width="300" height="200"/>';
 $response[] =       '<slideout name="test_slideout2" source="http://www.firephp.org/" width="300" height="600"/>';
 $response[] =     '</slideouts>';
 $response[] =     '<handlers>';
