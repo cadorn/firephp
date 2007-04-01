@@ -50,10 +50,12 @@ FirePHPChrome.UI.ContentWindowTopSlideoutContainer = FirePHPLib.extend(FirePHPCh
 		
 		var tabbrowser = FirePHPChrome.browser$("content").selectedBrowser.parentNode.parentNode.parentNode;
 		var bottom_object = tabbrowser.childNodes[tabbrowser.childNodes.length-2];
-		
+	
 		/* Set the y offset for our slideout window to ensure it will match up with the top of the content window */
-		this.container_element.style.top = (bottom_object.boxObject.y+bottom_object.boxObject.height)+'px';
-		
+		if(this.container_element) {
+			this.container_element.style.top = (bottom_object.boxObject.y+bottom_object.boxObject.height)+'px';
+		}
+			
 		this.parent_window_width = tabbrowser.boxObject.width;
 	}
 	
