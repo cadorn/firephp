@@ -75,6 +75,7 @@ switch($_GET['File']) {
 
 <p>Selected Request: <div id="SelectedRequestID-div"></div></p>
 <script>
+/*
   FirePHPChannel.addListener("State", {
     notifyFirePHPEvent: function(Event,Flags) {
       if(Event.getName()=="SelectedRequestChanged") {
@@ -82,6 +83,7 @@ switch($_GET['File']) {
       }
     }
   });
+*/
 </script>
 
 <p>The HTML Test.</p>
