@@ -1,4 +1,5 @@
-<?php include('.Header.tpl.php'); ?>
+<?php include('../.Init.php');
+      include('.Header.tpl.php'); ?>
 
 <p><font size="2"><b>Welcome to the FirePHP Developer Companion!</b></font></p>
 <div style="padding-left: 10px;">

@@ -1,4 +1,5 @@
-<?php include('.Header.tpl.php'); ?>
+<?php include('../.Init.php');
+      include('.Header.tpl.php'); ?>
 
 <p><font size="2"><a name="FrameworkIntegrators"></a><b>Framework Integrators</b></font></p>
 <div style="padding-left: 10px;">

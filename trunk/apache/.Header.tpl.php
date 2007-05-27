@@ -1,3 +1,8 @@
+<?php
+
+$LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp.org/CompanionServer.php?Action=GetLatestFirefoxExtensionBuildVersion'));
+
+?>
 <html>
 <head>
   <title>FirePHP - Test Site</title>
@@ -53,7 +58,7 @@
 	<td nowrap style="padding-right: 20px; font-size: 16px; color:red; text-align: center;">Developer Companion</td>
   </tr>
   <tr>
-	<td nowrap style="padding-right: 20px; text-align:center;"><font color="gray">for</font> &nbsp;&nbsp; Extension: 0.3.3 &nbsp;&nbsp; PHP API: 0.3.4</td>
+	<td nowrap style="padding-right: 20px; text-align:center;"><font color="gray">for</font> &nbsp;&nbsp; Extension: <?php print $PROPERTIES['App']['FirefoxExtensionBuildVersion']; ?> &nbsp;&nbsp; API: <?php print $PROPERTIES['App']['PearPackageBuildVersion']; ?></td>
   </tr>
 </table>    
   
@@ -87,7 +92,7 @@
 <table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bgcolor="#FFFFFF">
   <tr>
   	<td style="text-align: center; padding-top: 5px; padding-bottom: 5px; font-weight: bold;">FirePHP Information &amp; Tools</td>
-  	<td style="text-align: right; padding-right: 15px;">You are using version <b>0.1</b> (<b>BETA</b>) of the FirePHP Firefox Extension. <a target="_blank" href="http://www.firephp.org/Downloads/#LatestBuildRelease">Latest Version</a>: <b>0.3.4</b></td>
+  	<td style="text-align: right; padding-right: 15px;">You are using version <b><script>document.write(FirePHPChannel.getExtensionVersion());</script></b> of the FirePHP Firefox Extension<script>if(FirePHPChannel.getExtensionVersion()!='<?php print $LatestFirefoxExtensionBuildVersion; ?>') { document.write('. <a target="_blank" href="http://www.firephp.org/Downloads/#LatestBuildRelease">Latest Version</a>: <b><?php print $LatestFirefoxExtensionBuildVersion; ?></b>'); }</script></td>
   </tr>  
   <tr>
 	  <td valign="top" style="background-color: #ECECEC; padding:15px; padding-top: 5px;">
