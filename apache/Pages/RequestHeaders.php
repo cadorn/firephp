@@ -1,4 +1,5 @@
-<?php include('.Header.tpl.php'); ?>
+<?php include('../.Init.php');
+      include('.Header.tpl.php'); ?>
 
 
 
@@ -41,8 +42,14 @@ foreach( $headers as $name => $value ) {
     $value = substr($value,0,$offset).'<font color="orange"><b>'.substr($value,$offset,12).'</b></font>'.substr($value,$offset+12);
     $found_accept = true;
   }
+  if($name=='Cookie' && ($offset = strpos($value,'FirePHP-AccessKey'))!==false) {
+    $end_offset = strpos($value,';',$offset);
+    if(!$end_offset) $end_offset = strlen($value);
+    $value = substr($value,0,$offset).'<font color="orange"><b>'.substr($value,$offset,$end_offset-$offset).'</b></font>'.substr($value,$end_offset);
+    $found_key = true;
+  }
   print '<tr>';
-  print '<td align="right" valign="top"><b>'.$name.'</b>:</td><td>'.wordwrap($value,70,' ',true).'</td>';
+  print '<td align="right" valign="top"><b>'.$name.'</b>:</td><td>'.wordwrap($value,80,' ',true).'</td>';
   print '</tr>';
 }
 print '</table>';

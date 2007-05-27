@@ -1,4 +1,5 @@
-<?php include('.Header.tpl.php'); ?>
+<?php include('../.Init.php');
+      include('.Header.tpl.php'); ?>
 
 API Reference
 

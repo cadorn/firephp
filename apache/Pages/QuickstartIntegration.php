@@ -1,4 +1,5 @@
-<?php include('.Header.tpl.php'); ?>
+<?php include('../.Init.php');
+      include('.Header.tpl.php'); ?>
 
 <p><a name="Overview"></a><font size="2"><b>Overview</b></font></p>
 <div style="padding-left: 10px;">

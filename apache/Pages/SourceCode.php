@@ -1,4 +1,5 @@
-<?php include('.Header.tpl.php'); ?>
+<?php include('../.Init.php');
+      include('.Header.tpl.php'); ?>
 
 
 <p><a name="SourceCode"></a><font size="2"><b>Source Code hosted at Google</b></font></p>
