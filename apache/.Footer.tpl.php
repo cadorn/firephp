@@ -1,7 +1,7 @@
 				</td>
 			</tr>
 			<tr>
-			  <td colspan="2" bgcolor="#000000" style="padding:3px;" align="center"><font size="1" color="#bbbbbb"><a class="menulink" href="/Copyright.htm">&copy; 2007 Christoph Dorn</a>&nbsp;&nbsp;&nbsp;All rights reserved.</font></td>
+			  <td colspan="2" bgcolor="#000000" style="padding:3px;" align="center"><font size="1" color="#bbbbbb"><a target="content" class="menulink" href="/Pages/Copyright.php">Developer Companion Copyright &copy; 2007 Christoph Dorn</a></font></td>
 			</tr>
 		</table>
 
