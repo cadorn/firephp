@@ -100,7 +100,7 @@
 	    	  		<li><a target="content" href="/Pages/APIReference.php">API Reference</a></li>
 	    	  		<li><a target="content" href="/Pages/DefaultAPIWrapper.php">Default API Wrapper</a></li>
 	    	  	</ul>
-	    	  	<b>In-Depth</b>
+	    	  	<p><b>In-Depth</b></p>
 	    	  	<ul style="margin-left: 20px; padding-left: 0px;">
 	    	  		<li><a target="content" href="/Pages/RequestHeaders.php">Request Headers</a></li>
 	    	  		<li><a target="content" href="/Pages/ServerProcessing.php">Server Processing</a></li>
@@ -110,6 +110,12 @@
 	    	  		<li><a target="content" href="/Pages/ResponsesHeader.php">Header</a></li>
 	    	  		<li><a target="content" href="/Pages/ResponsesSecondaryRequest.php">Secondary Request</a></li>
 	    	  		</ul>
+	    	  	</ul>
+	    	  	<br><br><br>
+	    	  	<p><b>Development</b></p>
+	    	  	<ul style="margin-left: 20px; padding-left: 0px;">
+	    	  		<li><a target="content" href="/Pages/SourceCode.php">Source Code</a></li>
+	    	  		<li><a target="content" href="/Pages/DesiredContributions.php">Desired Contributions</a></li>
 	    	  	</ul>
 	    	  <?php } ?>
 	  </td>
