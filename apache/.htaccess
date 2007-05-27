@@ -1,6 +1,6 @@
 Options +FollowSymLinks -MultiViews
 RewriteEngine on
 
-RewriteBase /PINF/com.googlecode.firephp/
+RewriteBase /
 
 RewriteRule		^PINF/org.firephp/Capabilities$		FirePHPCapabilities.php [QSA,L]
