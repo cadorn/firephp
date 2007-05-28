@@ -35,15 +35,14 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-
 require_once('JSON.php');
 
-
-class com__googlecode__firephp__FirePHP_class {
+class org__firephp__Core_class {
 
   var $version = '0.0.1';
 
-  var $protocol_mode = 'MultipartResponse';
+  var $access_key = null;
+  var $protocol_mode = 'Header';
   var $temporary_dirpath = './.tmp/';
   var $application_id = 'default';
   var $capabilities_url = null;
@@ -61,35 +60,12 @@ class com__googlecode__firephp__FirePHP_class {
   var $options = 0;
   
   var $variables = array();
-  var $variable_callback = null;
   
   
-  function &GetInstance($ClassName=false) {
-    global $PINF_SINGLETON_OBJECTS;
-    
-    /* Check if we already have an instance */
-    if($PINF_SINGLETON_OBJECTS && array_key_exists('com.googlecode.firephp/FirePHP.class',$PINF_SINGLETON_OBJECTS)) {
-      return $PINF_SINGLETON_OBJECTS['com.googlecode.firephp/FirePHP.class'];
-    }
-
-    if(!$ClassName) {
-      trigger_error('Could not create FirePHP instance without ClassName. Make sure you have initialized the instance first!');
-      return false;
-    }
-    
-    /* We did not find an instance so lets create it */
-    $instance =& new $ClassName();
-
-    /* Register the object in the PINF singleton registry */
-    $PINF_SINGLETON_OBJECTS['com.googlecode.firephp/FirePHP.class'] =& $instance;  
-
-    return $instance;    
+  function setAccessKey($Key) {
+    $this->access_key = $Key;
   }
   
-  
-  function setVariableCallback($Callback) {
-    $this->variable_callback = $Callback;
-  }
 
   function setApplicationID($ApplicationID) {
     if($this->content_started) {
@@ -139,11 +115,20 @@ class com__googlecode__firephp__FirePHP_class {
   }
   
   
-  /* Check if the browser accepts multipart/firephp server responses */
-  function doesBrowserAccept() {
-    if(preg_match_all("/(^|,|\s)(text\/firephp)($|,|\s)/si",$_SERVER['HTTP_ACCEPT'],$m)) {
+  /* Check if the browser accepts the FirePHP protocol */
+  function doesClientAccept() {
+    
+    if(preg_match_all("/(^|,|\s)(text\/firephp)($|,|\s)/si",$_SERVER['HTTP_ACCEPT'],$m) &&
+       preg_match_all("/(^|\s)(FirePHP\/(\d*\.\d*(\.\d*)?(\.\d*)?))($|\s)/si",$_SERVER['HTTP_USER_AGENT'],$m)) {
+
+      /* @TODO  Check the client extension version and use the appropriate server protocol version */
       return true;
     }
+    return false;
+  }
+  
+  function isClientAuthorized($ClientKey) {
+    if($ClientKey==$this->access_key) return true;
     return false;
   }
   
@@ -215,20 +200,30 @@ class com__googlecode__firephp__FirePHP_class {
       trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
       return false;
     } else { 
-
-      if($this->multipart_requested) {
-        /* Set the multipart mixed header */
-        header('Content-type: multipart/mixed; boundary="'.$this->request_id.'"');
-        /* Ensure that the request is never cached by the browser */
-        header('Last-Modified: '.gmdate('r', time()));
-        header('Expires: '.gmdate('r', time()-86400));
-        header('Pragma: no-cache');
-        header('Cache-Control: no-cache, no-store, must-revalidate, max_age=0');
-        header('Cache-Control: post-check=0, pre-check=0'); 
-        
-        $this->multipart_enabled = true;
-        $this->collection_enabled = true;
+      
+      /* Ensure that the request is never cached by the browser */
+      header('Last-Modified: '.gmdate('r', time()));
+      header('Expires: '.gmdate('r', time()-86400));
+      header('Pragma: no-cache');
+      header('Cache-Control: no-cache, no-store, must-revalidate, max_age=0');
+      header('Cache-Control: post-check=0, pre-check=0'); 
+      
+      switch($this->protocol_mode) {
+        case 'Multipart':
+          /* Set the multipart mixed header */
+//      if($this->multipart_requested) {
+//          header('Content-type: multipart/mixed; boundary="'.$this->request_id.'"');
+//      }
+//        $this->multipart_enabled = true;
+          break;
+        case 'Header':
+          break;
+        case 'Secondary':
+          break;
       }
+      
+        
+      $this->collection_enabled = true;
     }
   
     $this->content_started = true;
@@ -240,7 +235,7 @@ class com__googlecode__firephp__FirePHP_class {
     }
 
     /* Record time of when content started */
-    $this->stampTime('com.googlecode.firephp','StartPrimaryContent');
+    $this->stampTime('org.cadorn.projects.FirePHP','StartPrimaryContent');
 
     return true;
   }
@@ -248,7 +243,7 @@ class com__googlecode__firephp__FirePHP_class {
   function endContent() {
 
     /* Record time of when content ended */
-    $this->stampTime('com.googlecode.firephp','EndPrimaryContent');
+    $this->stampTime('org.cadorn.projects.FirePHP','EndPrimaryContent');
 
     if($this->multipart_enabled) {
       print "\n".'--'.$this->request_id."\n";
@@ -256,8 +251,7 @@ class com__googlecode__firephp__FirePHP_class {
   }
 
 
-  function SetVariable($Options, $ID, $Value) {
-    $instance =& com__googlecode__firephp__FirePHP_class::GetInstance();
+  function setVariable($Options, $ID, $Value) {
     
     if($Options===true) {
       /* Use the default options */
@@ -275,12 +269,12 @@ class com__googlecode__firephp__FirePHP_class {
        * The default is to merge them.
        */
 
-      $options = $instance->options | $Options;
+      $options = $this->options | $Options;
     }
 
     /* TODO: Look at options to gather additional data */
     
-    $instance->variables[$ID][] = array($options,$Value); 
+    $this->variables[md5(serialize($ID))][] = array($options,$ID,$Value); 
   }
 
 
@@ -288,23 +282,8 @@ class com__googlecode__firephp__FirePHP_class {
    * to standard keys, scope and labels used within the
    * FirePHP Extension.
    */
-  function _resolveVariables() {
-    if(!$this->variables) return;
-    $callback = $this->variable_callback;
-    foreach( $this->variables as $variable_id => $variable_info ) {
-      for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
-        $options = $variable_info[$i][0];
-        $value = $variable_info[$i][1];
-        $key = null;
-        $scope = null;
-        $label = null;
-        if($callback($variable_id,$options,$value,$key,$scope,$label)===true) {
-          $this->variables[$variable_id][$i][2] = $key;
-          $this->variables[$variable_id][$i][3] = $scope;
-          $this->variables[$variable_id][$i][4] = $label;
-        }
-      }
-    }
+  function resolveVariables() {
+    /* Must be subclassed */
   }
 
 
@@ -313,37 +292,56 @@ class com__googlecode__firephp__FirePHP_class {
     /* If there is no data defined that should be dumped lets just dump the execution time */
     
     if(!$Data) {
-      $Data = 'Execution Time: '.$this->getTimeSpan('com.googlecode.firephp','StartPrimaryContent','EndPrimaryContent',4);
+      $Data = 'Execution Time: '.$this->getTimeSpan('org.cadorn.projects.FirePHP','StartPrimaryContent','EndPrimaryContent',4);
     }
 
     /* Resolve any variables that have been set */
-    $this->_resolveVariables();
+    $this->resolveVariables();
 
-    if($this->multipart_enabled) {
-      print 'Content-type: text/firephp'."\n";
-      print "\n";
-      /* Lets construct the default XML envelope */
-      print '<firephp version="0.2">'."\n";        
-      print '<application id="'.$this->application_id.'">'."\n";        
-      print '<request id="'.$this->request_id.'" anchor="'.$this->inspector_target.'">'."\n";        
-      print '<data type="html"><![CDATA['.trim($Data).']]></data>'."\n";        
-      if($this->variables) {
-        $json_service = new Services_JSON();
-        foreach( $this->variables as $variable_id => $variable_info ) {
-          for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
-            print '<variable id="'.$variable_id.
-                         '" key="'.$variable_info[$i][2].
-                       '" scope="'.$variable_info[$i][3].
-                       '" label="'.$variable_info[$i][4].
-                     '" options="'.$variable_info[$i][0].
-                     '"><![CDATA['.$json_service->encode($variable_info[$i][1]).']]></variable>'."\n";
-          }
+    /* Generate the XML payload */
+    $payload = array();
+    $payload[] = '<firephp version="0.2">';        
+    $payload[] = '<application id="'.$this->application_id.'">';        
+    $payload[] = '<request id="'.$this->request_id.'" anchor="'.$this->inspector_target.'">';        
+    $payload[] = '<data type="html"><![CDATA['.trim($Data).']]></data>';        
+    if($this->variables) {
+      $json_service = new Services_JSON();
+      foreach( $this->variables as $variable_id => $variable_info ) {
+        for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
+          $payload[] = '<variable id="'.$variable_id.
+                            //   '" key="'.$variable_info[$i][2].
+                               '" scope="'.$variable_info[$i][3].
+                               '" label="'.$variable_info[$i][4].
+                               '" options="'.$variable_info[$i][0].
+                        '"><![CDATA['.$json_service->encode($variable_info[$i][2]).']]></variable>';
         }
       }
-      print '</request>'."\n";        
-      print '</application>'."\n";        
-      print '</firephp>'."\n";        
-      print '--'.$this->request_id.'--'."\n";
+    }
+    $payload[] = '</request>';        
+    $payload[] = '</application>';        
+    $payload[] = '</firephp>';        
+
+    switch($this->protocol_mode) {
+      case 'Multipart':
+        if($this->multipart_enabled) {
+          print 'Content-type: text/firephp'."\n";
+          print "\n";
+          print implode("\n",$payload);
+          print "\n";
+          print '--'.$this->request_id.'--'."\n";
+        } 
+        break;
+      case 'Header':
+        
+        if(headers_sent($file,$line)) {
+          trigger_error('Headers already sent in file['.$file.'] line['.$line.']!');
+          return false;
+        } else { 
+          header('X-PINF-org.firephp-Data: '.urlencode(implode('',$payload)));
+        }        
+        break;
+      case 'Secondary':
+        break;
     }
   }
   

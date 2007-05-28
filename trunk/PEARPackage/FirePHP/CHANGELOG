@@ -5,6 +5,10 @@
 	- Encoding of variables in JSON format to send to client
   - Introduced versioning for the FirePHP XML protocol and set to 0.2
   - Implemented support for build version
+	- Renamed main FirePHP class to org__firephp__Core_class
+	- Implemented new Default FirePHP API Wrapper
+	- Implemented verification of FirePHP/x.x.x in User-Agent Request header
+	- Implemented the "header" method of the FirePHP protocol
 
 2007-02-01 - Release Version: 0.0.1
 
