@@ -12,6 +12,9 @@
   - Revised how capability definitions are loaded
   - Added support to allow and block capability definition loading for hosts
   - Implemented support for build version
+  - Added FirePHP/x.x.x to User-Agent Request header
+  - Implemented fetching of intelligence data from X-PINF-org.firephp-Data header
+  - Fixed bug to display application ID if label is not found
   
 2007-02-02 - Release Version: 0.0.5
 

@@ -38,6 +38,12 @@ print '<table border="0" cellpadding="2" cellspacing="0">';
 foreach( $headers as $name => $value ) {
   $value = str_replace(';','; ',$value);
   $value = str_replace(',',', ',$value);
+  if($name=='User-Agent' && ($offset = strpos($value,'FirePHP/'))!==false) {
+    $end_offset = strpos($value,' ',$offset);
+    if(!$end_offset) $end_offset = strlen($value);
+    $value = substr($value,0,$offset).'<font color="orange"><b>'.substr($value,$offset,$end_offset-$offset).'</b></font>'.substr($value,$end_offset);
+    $found_agent = true;
+  }
   if($name=='Accept' && ($offset = strpos($value,'text/firephp'))!==false) {
     $value = substr($value,0,$offset).'<font color="orange"><b>'.substr($value,$offset,12).'</b></font>'.substr($value,$offset+12);
     $found_accept = true;

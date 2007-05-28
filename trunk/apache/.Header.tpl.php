@@ -5,9 +5,12 @@ $LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp
 ?>
 <html>
 <head>
-  <title>FirePHP - Test Site</title>
+  <title>FirePHP - Developer Companion</title>
   <link rel="stylesheet" href="/Style.css"></link>
+  <script src="/prototype.js"></script>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="keywords" content="php, firefox, pear, firebug, extension, developer, debug, tool" />
+  <meta name="description" content="FirePHP is a Firefox Extension that adds a panel to Firebug and provides a PEAR package to allow you to debug your PHP server code." />
 </head>
 
 <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" marginwidth="0" marginheight="0">
@@ -74,6 +77,10 @@ $LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp
 	<td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="3" bordercolor="#FFFFFF" style="border-collapse: collapse">
 			<tr>
+
+        <td nowrap bgcolor="#000000" align="center" style="padding-bottom:3px; padding-left: 10px; padding-right: 10px; font-family:verdana, arial, helvetica, sans-serif; font-size:11px">
+        <a target="_top" class="menulink" href="http://www.firephp.org/"><font color="#bbbbbb">Back to FirePHP Site</a></font></td>
+      
 				<td nowrap bgcolor="#000000" width="100%">&nbsp;</td>
 			</tr>
 		</table>	

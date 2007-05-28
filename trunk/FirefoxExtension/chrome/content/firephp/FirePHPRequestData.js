@@ -181,6 +181,13 @@ FirePHP.FirePHPRequestHandler = {
 			new FirePHPChannelEvent('Capabilities','LoadDefinition',{CapabilitiesURL:ServerVars['CapabilitiesURL']}).trigger();
 		}
 
+		/* If we found a X-PINF-org.firephp-Data header lets parse it and see if it contains data for this request */
+		if(ServerVars['Data']) {
+		
+dump(FirePHPLib.urlDecode(ServerVars['Data']));		
+			this.parseAndSetXMLDataForRequest(FirePHPLib.urlDecode(ServerVars['Data']));		
+		}
+
     /* If we found FirePHP multipart data lets trigger a capabilities detection */
     if(requestData.getData()) {
       FirePHP.FirePHPApplicationHandler.triggerDetect(requestData.url);
@@ -190,6 +197,70 @@ FirePHP.FirePHPRequestHandler = {
     FirePHPChrome.refreshUI(this);
   },
   
+  
+  parseAndSetXMLDataForRequest: function(Data) {
+        
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(Data, "text/xml");
+        if(doc) {
+        
+          var applicationID = null;
+          var requestID = null;
+          var anchor = null;
+        
+          var findPattern = "//firephp[attribute::version=\"0.2\"]/application";
+          var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
+          if(nodes) {
+            while (res = nodes.iterateNext()) {
+              applicationID = res.getAttribute('id');
+            }
+          }
+          findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request";
+          nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
+          if(nodes) {
+            while (res = nodes.iterateNext()) {
+              requestID = res.getAttribute('id');
+              anchor = res.getAttribute('anchor');
+              if(!anchor) anchor = '';
+            }
+          }
+          if(requestID) {
+
+            var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
+            /* Create the request data object if we dont already have one for this request */
+            if(!requestData) {
+              requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
+              requestData.setRequestID(requestID);
+            }
+            requestData.setApplicationID(applicationID);
+        
+            var findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
+            var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
+            if(node) {
+              if(node.singleNodeValue.textContent) {
+                requestData.setData(node.singleNodeValue.textContent);
+              }
+            }
+            
+            findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
+            nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
+            if(nodes) {
+              while (res = nodes.iterateNext()) {
+                requestData.setVariable(res.getAttribute('key'),
+                                        res.getAttribute('id'),
+                                        res.getAttribute('scope'),
+                                        res.getAttribute('label'),
+                                        res.getAttribute('options'),
+                                        res.textContent);
+              }
+            }
+
+            /* Target the request to the correct spot in the inspector */
+            FirePHP.FirePHPRequestHandler.anchorRequest(requestID,anchor);
+          }
+        }  	
+  	
+  },
   
   
 
@@ -324,65 +395,9 @@ FirePHP.FirePHPRequestContentListener = {
     try {
       
       if(this.data && this.data.substring(0,9)=='<firephp ') {
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(this.data, "text/xml");
-        if(doc) {
         
-          var applicationID = null;
-          var requestID = null;
-          var anchor = null;
-        
-          var findPattern = "//firephp[attribute::version=\"0.2\"]/application";
-          var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
-          if(nodes) {
-            while (res = nodes.iterateNext()) {
-              applicationID = res.getAttribute('id');
-            }
-          }
-          findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request";
-          nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
-          if(nodes) {
-            while (res = nodes.iterateNext()) {
-              requestID = res.getAttribute('id');
-              anchor = res.getAttribute('anchor');
-              if(!anchor) anchor = '';
-            }
-          }
-          if(requestID) {
+        FirePHP.FirePHPRequestHandler.parseAndSetXMLDataForRequest(this.data);
 
-            var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
-            /* Create the request data object if we dont already have one for this request */
-            if(!requestData) {
-              requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
-              requestData.setApplicationID(applicationID);
-              requestData.setRequestID(requestID);
-            }
-        
-            var findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
-            var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
-            if(node) {
-              if(node.singleNodeValue.textContent) {
-                requestData.setData(node.singleNodeValue.textContent);
-              }
-            }
-            
-            findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
-            nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
-            if(nodes) {
-              while (res = nodes.iterateNext()) {
-                requestData.setVariable(res.getAttribute('key'),
-                                        res.getAttribute('id'),
-                                        res.getAttribute('scope'),
-                                        res.getAttribute('label'),
-                                        res.getAttribute('options'),
-                                        res.textContent);
-              }
-            }
-
-            /* Target the request to the correct spot in the inspector */
-            FirePHP.FirePHPRequestHandler.anchorRequest(requestID,anchor);
-          }
-        }
       }
     } catch(err) {}
 

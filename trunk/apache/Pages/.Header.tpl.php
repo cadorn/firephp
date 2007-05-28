@@ -2,6 +2,7 @@
 <head>
   <title>FirePHP - Test Site</title>
   <link rel="stylesheet" href="/Style.css"></link>
+  <script src="/prototype.js"></script>
   <style>
     HTML, BODY {
       padding-right: 10px;
