@@ -55,6 +55,7 @@ const FIREPHP_SERVICE_CONTRACT_ID = "@firephp.org/service;1";
 function FirePHPService() {
   
   this.requestHeaderEnabled = false;
+  this.extensionVersion = false;
   
   this.responseData = new Array();
 
@@ -72,6 +73,14 @@ FirePHPService.prototype = {
     getRequestHeaderEnabled: function() {
       return this.requestHeaderEnabled;
     },
+
+		setExtensionVersion: function(version) {
+			this.extensionVersion = version;
+		},
+		
+		getExtensionVersion: function() {
+			return this.extensionVersion;
+		},
 
     setResponseData: function(RequestID,Data) {
       this.responseData[RequestID] = Data;
@@ -127,6 +136,9 @@ FirePHPProxy.prototype.observe = function(subject, topic, data) {
         subject.QueryInterface(Components.interfaces.nsIHttpChannel);
         
         if(this.FirePHPService.getRequestHeaderEnabled()) {
+          subject.setRequestHeader("User-Agent", 
+          	subject.getRequestHeader("User-Agent") + " "+
+            "FirePHP/"+this.FirePHPService.getExtensionVersion(), true);
           subject.setRequestHeader("Accept", "text/firephp", true);
         }
     } else if (topic == 'app-startup') {

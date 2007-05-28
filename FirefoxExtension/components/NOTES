@@ -6,4 +6,37 @@ Compiling the Typelib
  		- http://www.driverskit.net/
  		- http://www.mozdev.org/notes/hello_world_js_component_win.html
 
+ - SDK for Intel Mac:
+ 		- http://www.oxymoronical.com/view/1114
+ 		- http://developer.mozilla.org/en/docs/Mac_OS_X_Build_Prerequisites
+ 		- http://developer.mozilla.org/en/docs/XPIDL:xpidl
+ 			- Install libIDL with FINK
+ 					# apt-get update
+ 					# apt-get install orbit orbit-dev glib
+ 			- Download mozilla source (ftp://ftp.mozilla.org/pub/mozilla.org/mozilla/releases/)
+ 			- Install GTK
+ 					# apt-get install gtk+
+ 					# sudo apt-get install libidl2
+ 			- Configure mozilla source:
+ 					- Add .mozconfig file to source root
+ 							mk_add_options MOZ_CO_PROJECT=browser
+							ac_add_options --enable-application=browser
+ 					# ./configure
+ 					# make -C config
+					# make -C nsprpub
+					# make -C xpcom/typelib
+ 			- Lots of errors but it works! The xpidl shouldnow be in dist/bin/
+ 		
+ 		
  - {sdk_dir}/bin/xpidl -m typelib -w -v -I {sdk_dir}/idl -e nsIFirePHP.xpt nsIFirePHP.idl
+ 
+
+To recompile the IDL file:
+	- Use the compiled xpidl appjust compiled and link against the idl files from http://www.oxymoronical.com/view/1114
+	- Very ugly but no time to get this cleaned up now at the moment.
+
+	# cd /pinf/packages/com.googlecode.firephp/FirefoxExtension/components
+	# /Users/cadorn/Downloads/MacOSX-OpenSource/mozilla/dist/bin/xpidl -m typelib -w -v -I "/Users/cadorn/Downloads/MacOSX-OpenSource/gecko-sdk-mac-intel-1.8.1.3 Folder/idl" -e nsIFirePHP.xpt nsIFirePHP.idl
+	
+	
+	

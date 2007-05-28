@@ -36,38 +36,101 @@
 
 
 /*
- * Called to initialize the FirePHPServer component
+ * Called to initialize the FirePHP API
  */
 
 
-/* Include the mail worker class */
+/* Include the main worker class */
 
-require_once('FirePHP.class.php');
+require_once('Core.class.php');
 
 
-/* Instanciate the FirePHP Class that will do all the work */
 global $FirePHP;
-class FirePHP extends com__googlecode__firephp__FirePHP_class {}
-$FirePHP =& FirePHP::GetInstance('FirePHP');
+$FirePHP =& new org__firephp__Core_class();
 
 
-/* First generate a RequestID for this request so that any data
- * can be referenced later and set the ID in the response headers
- */
+class FirePHP {
+  
+  
+  function Init() {
+    global $FirePHP;
+
+    /* First check if FirePHP is supported by the client */
+    if(!$FirePHP->doesClientAccept()) return false;
+
+    /* Then check if the client is authorized */
+    if(!$FirePHP->isClientAuthorized($_COOKIE['FirePHP-AccessKey'])) return false;
+    
+    /* Generate a unique RequestID for this request so that any data
+     * can be referenced later and set the ID in the response headers
+     */     
+    $FirePHP->setRequestID(md5(uniqid(rand(), true)));
+
+    /* Set the primary content type for the response data.
+     * This is only applicable if the multipart/mixed response
+     * type is used
+     */
+    $FirePHP->setPrimaryContentType('text/html');   
+    
+    /* Set the response protocol to the default header option */
+    $FirePHP->setProtocolMode('Header');
+    
+    /* Set the ID of the application */
+    $FirePHP->setApplicationID('Default');
+    
+    /* Set the Inspector target which groups the requests */
+    $FirePHP->setInspectorTarget('Default');
+    
+    /* Register a shutdown function to send FirePHP at the end of the request */
+    register_shutdown_function('FirePHP_Shutdown');
+    
+    /* Start output buffering */
+    ob_start();
+    
+    /* Indicate to FirePHP that the content will now start */
+    $FirePHP->startContent();
+    
+    /* Record some default variables */
+    FirePHP::SetVariable(true,array('REQUEST','$_GET'),$_GET);
+    FirePHP::SetVariable(true,array('REQUEST','$_POST'),$_POST);
+    FirePHP::SetVariable(true,array('REQUEST','$_COOKIE'),$_COOKIE);
+    FirePHP::SetVariable(true,array('REQUEST','$_SERVER'),$_SERVER);
+  }
+  
+  function Shutdown() {
+    global $FirePHP;
+
+    $FirePHP->endContent();
+    $FirePHP->dumpFirePHPData();
+  }
+
+  
+  function SetAccessKey($Key) {
+    global $FirePHP;
+    $FirePHP->setAccessKey($Key);
+  }
+
+  function SetVariable($Options, $ID, $Value) {
+    global $FirePHP;
+    $FirePHP->setVariable($Options, $ID, $Value);
+  }
+
+  function resolveVariables() {
+    if(!$this->variables) return;
+    foreach( $this->variables as $variable_id => $variable_info ) {
+      for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
+        $options = $variable_info[$i][0];
+        $id = $variable_info[$i][1];
  
-$FirePHP->setRequestID(md5(uniqid(rand(), true)));
+        $this->variables[$variable_id][$i][3] = $id[0];   /* Scope */
+        $this->variables[$variable_id][$i][4] = $id[2].($id[3])?'('.$id[3].')':'';  /* Label & Sub-Label */
+      }
+    }
+  }
+}
 
-/* Check if browser accepts multipart/firephp responses */
-
-if($FirePHP->doesBrowserAccept()) {
-  
-  $FirePHP->enableMultipartData();
-  
-  /* Set the primary content type.
-   * This can be overwritten by the user
-   */
-
-  $FirePHP->setPrimaryContentType('text/html');   
+function FirePHP_Shutdown() {
+  FirePHP::Shutdown();
 }
 
 ?>
