@@ -52,6 +52,12 @@ var FirePHP = top.FirePHP = {
       this.preferencesService = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch2);
     } catch (err) {}
 
+
+    /* Set the FirePHP Extension version for the FirePHP Service Component */  
+    try {
+      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setExtensionVersion(this.version);
+    } catch (err) {}
+
     FirePHP.Handlers.initialize();
 
     FirePHP.FirePHPCapabilitiesHandler.initialize();
