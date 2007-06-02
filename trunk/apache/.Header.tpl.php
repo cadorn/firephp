@@ -79,7 +79,7 @@ $LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp
 			<tr>
 
         <td nowrap bgcolor="#000000" align="center" style="padding-bottom:3px; padding-left: 10px; padding-right: 10px; font-family:verdana, arial, helvetica, sans-serif; font-size:11px">
-        <a target="_top" class="menulink" href="http://www.firephp.org/"><font color="#bbbbbb">Back to FirePHP Site</a></font></td>
+        <a target="_top" class="menulink" href="<?php print $PROPERTIES['App']['ProjectSiteURL']; ?>"><font color="#bbbbbb">Back to FirePHP Site</a></font></td>
       
 				<td nowrap bgcolor="#000000" width="100%">&nbsp;</td>
 			</tr>

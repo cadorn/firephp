@@ -12,6 +12,23 @@ if(!$_COOKIE['FirePHP-AccessKey']) {
 
 
 /* Load properties for this companion app */
-$PROPERTIES = parse_ini_file('PINFApp.properties',true);
+$PROPERTIES = array();
+
+$properties = @parse_ini_file('PINFApp.properties',true);
+if($properties) {
+  foreach( $properties as $group_name => $group_info ) {
+    foreach( $group_info as $name => $value ) {
+      $PROPERTIES[$group_name][$name] = $value;
+    }
+  }
+} 
+$properties = @parse_ini_file('PINFApp.rt.properties',true);
+if($properties) {
+  foreach( $properties as $group_name => $group_info ) {
+    foreach( $group_info as $name => $value ) {
+      $PROPERTIES[$group_name][$name] = $value;
+    }
+  }
+} 
 
 ?>
