@@ -11,6 +11,7 @@ $LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="keywords" content="php, firefox, pear, firebug, extension, developer, debug, tool" />
   <meta name="description" content="FirePHP is a Firefox Extension that adds a panel to Firebug and provides a PEAR package to allow you to debug your PHP server code." />
+  <base href="<?php print substr($_SERVER['REQUEST_URI'],0,strpos($_SERVER['REQUEST_URI'],'/',1)+1); ?>"/>
 </head>
 
 <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" marginwidth="0" marginheight="0">
@@ -108,28 +109,29 @@ $LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp
 	    		print run_LeftContentMenu();
 	    	  } else { ?>
 	    	  	<ul style="margin-left: 20px; padding-left: 0px;">
-	    	  		<li><a target="content" href="/Pages/QuickstartIntegration.php">Quickstart Integration</a></li>
-	    	  		<li><a target="content" href="/Pages/APIReference.php">API Reference</a></li>
-	    	  		<li><a target="content" href="/Pages/DefaultAPIWrapper.php">Default API Wrapper</a></li>
+	    	  		<li><a target="content" href="Pages/QuickstartIntegration.php">Quickstart Integration</a></li>
+	    	  		<li><a target="content" href="Pages/APIReference.php">API Reference</a></li>
+	    	  		<li><a target="content" href="Pages/DefaultAPIWrapper.php">Default API Wrapper</a></li>
 	    	  	</ul>
 	    	  	<p><b>In-Depth</b></p>
 	    	  	<ul style="margin-left: 20px; padding-left: 0px;">
-	    	  		<li><a target="content" href="/Pages/RequestHeaders.php">Request Headers</a></li>
-	    	  		<li><a target="content" href="/Pages/ServerProcessing.php">Server Processing</a></li>
-	    	  		<li><a target="content" href="/Pages/Responses.php">Responses</a></li>
+	    	  		<li><a target="content" href="Pages/RequestHeaders.php">Request Headers</a></li>
+	    	  		<li><a target="content" href="Pages/ServerProcessing.php">Server Processing</a></li>
+	    	  		<li><a target="content" href="Pages/Responses.php">Responses</a></li>
 	    	  		<ul style="margin-left: 20px; padding-left: 0px;">
-	    	  		<li><a target="content" href="/Pages/ResponsesMultipart.php">Multipart</a></li>
-	    	  		<li><a target="content" href="/Pages/ResponsesHeader.php">Header</a></li>
-	    	  		<li><a target="content" href="/Pages/ResponsesSecondaryRequest.php">Secondary Request</a></li>
+              <li><a target="content" href="Pages/ResponsesHeader.php">Header</a></li>
+	    	  		<li><a target="content" href="Pages/ResponsesMultipart.php">Multipart</a></li>
+	    	  		<li><a target="content" href="Pages/ResponsesSecondaryRequest.php">Secondary Request</a></li>
 	    	  		</ul>
 	    	  	</ul>
 	    	  	<br><br><br>
 	    	  	<p><b>Development</b></p>
 	    	  	<ul style="margin-left: 20px; padding-left: 0px;">
-	    	  		<li><a target="content" href="/Pages/SourceCode.php">Source Code</a></li>
-	    	  		<li><a target="content" href="/Pages/DesiredContributions.php">Desired Contributions</a></li>
+	    	  		<li><a target="content" href="Pages/SourceCode.php">Source Code</a></li>
+              <li><a target="content" href="Pages/DesiredContributions.php">Desired Contributions</a></li>
+              <li><a target="content" href="Pages/Companion.php">This Companion</a></li>
 	    	  	</ul>
 	    	  <?php } ?>
 	  </td>
 	<td width="100%" valign="top" height="100%" style="padding: 25px; padding-top: 15px; font-family: verdana, arial, helvetica, sans-serif; font-size: 11px">
-    	<iframe name="content" src="/Pages/Welcome.php" style="width: 100%; height: 100%; border: none;" border="0"></iframe>
+    	<iframe name="content" src="Pages/Welcome.php" style="width: 100%; height: 100%; border: none;" border="0"></iframe>
