@@ -84,17 +84,17 @@ class FirePHP {
     /* Register a shutdown function to send FirePHP at the end of the request */
     register_shutdown_function('FirePHP_Shutdown');
     
-    /* Start output buffering */
-    ob_start();
-    
-    /* Indicate to FirePHP that the content will now start */
-    $FirePHP->startContent();
-    
     /* Record some default variables */
     FirePHP::SetVariable(true,array('REQUEST','$_GET'),$_GET);
     FirePHP::SetVariable(true,array('REQUEST','$_POST'),$_POST);
     FirePHP::SetVariable(true,array('REQUEST','$_COOKIE'),$_COOKIE);
     FirePHP::SetVariable(true,array('REQUEST','$_SERVER'),$_SERVER);
+
+    /* Indicate to FirePHP that the content will now start */
+    $FirePHP->startContent();
+
+    /* Start output buffering */
+    ob_start();
   }
   
   function Shutdown() {

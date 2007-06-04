@@ -26,7 +26,7 @@ Cookie: FirePHP-AccessKey=j8938jghh383hh383ghihgkk93rd3kde;
 
 </div>
 
-<p><a name="YourHeaders"></a><font size="2"><b>Your Headers for this Request</b></font></p>
+<p><a name="YourRequestHeaders"></a><font size="2"><b>Your Headers for this Request</b></font></p>
 <div style="padding-left: 10px;">
 <?php
 $found_agent = false;

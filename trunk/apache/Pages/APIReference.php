@@ -2,6 +2,34 @@
       include('.Header.tpl.php'); ?>
 
 
+<div style="padding: 5px; padding-left: 15px; background-color: #EEEEEE;">void FirePHP::<b>SetAccessKey</b> ( string $Key )</div>
+<div style="padding: 15px;">
+Sets the access key that will be compared to the <i>FirePHP-AccessKey</i> cookie by default. You must set this cookie from your application.
+</div>
+<div style="padding: 15px; padding-top: 0px;">
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding-right: 15px; vertical-align: top;">$Key</td>
+    <td style="vertical-align: top;">A unique MD5 hash you need to generate for each developer that is using FirePHP.</td>
+  </tr>
+</table>
+</div>
+
+<div style="padding: 15px; padding-top: 0px;">
+<p>Example:</p>
+
+<?php ob_start(); ?>
+
+FirePHP::SetAccessKey('<?php print $_COOKIE['FirePHP-AccessKey']; ?>');
+
+<?php
+print highlight_string('<?php '."\n".ob_get_clean().'?>',true);
+?>
+
+</div>
+
+<br>
+
 <div style="padding: 5px; padding-left: 15px; background-color: #EEEEEE;">void FirePHP::<b>SetVariable</b> ( int $Options , mixed $Name , mixed $Value )</div>
 <div style="padding: 15px;">
 Sets the <i>$Value</i> for the given variable <i>$Name</i> in the intelligence data set that will be sent to the client at the end of the request.
@@ -31,7 +59,7 @@ Sets the <i>$Value</i> for the given variable <i>$Name</i> in the intelligence d
 </table>
 </div>
 
-<div style="padding: 15px;">
+<div style="padding: 15px; padding-top: 0px;">
 <p>Example:</p>
 
 <?php ob_start(); ?>

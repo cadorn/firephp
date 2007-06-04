@@ -9,7 +9,7 @@
 <p><a name="Code"></a><font size="2"><b>The Code</b></font></p>
 <div style="padding-left: 10px;">
 <p>Place the following few lines of code at the very beginning of your application before ANY other output.</p>
-<p>Security is important as FirePHP can expose a lot of information that others can use to hack your application. So lets get used to being careful right away. Make sure you change the security key to something unique (I recommend a MD5 hash). You must also set this same key as the value to a cookie called <b>FirePHP-AccessKey</b> in your firefox browser. If you don't know how to set this cookie with the SetCookie() PHP function in an authenticated way then I am not sure if you should use FirePHP as you will probably not be able to keep it secure.</p>
+<p>Security is important as FirePHP can expose a lot of information that others can use to hack your application. So lets get used to being careful right away. Make sure you change the security key to something unique (I recommend a MD5 hash). Ideally it should be a different key for each FirePHP user. You must also set this same key as the value to a cookie called <b>FirePHP-AccessKey</b> in your firefox browser. If you don't know how to set this cookie with the SetCookie() PHP function in an authenticated way then I am not sure if you should use FirePHP as you will probably not be able to keep it secure.</p>
 <?php ob_start(); ?>
 
 /* Initialize the FirePHP API */
@@ -41,7 +41,7 @@ function runExample1() {
 <p><a name="Expectations"></a><font size="2"><b>What to Expect</b></font></p>
 <div style="padding-left: 10px;">
 <p>When you now load a page in your application, the cookie has been set and the FirePHP code is called properly you should see the request appear in the FirePHP tab of your Firebug extension. When selecting the request you should see a few variables and when you click on a variable it's value should also show.</p>
-<p>Note that the <i>Default FirePHP API Wrapper</i> uses output buffering for the entire server response. If this is a problem for your application you can customize the default wrapper. See the <a href="/Pages/DefaultAPIWrapper.php">Default API Wrapper</a> Reference.</p>
+<p>Note that the <i>Default FirePHP API Wrapper</i> uses output buffering for the entire server response. If this is a problem for your application you can customize the default wrapper. See the <a href="DefaultAPIWrapper.php">Default API Wrapper</a> Reference.</p>
 </div>
 
 <p><a name="NotWorking"></a><font size="2"><b>Not Working?</b></font></p>
@@ -63,10 +63,8 @@ FirePHP::SetVariable(true,'VariableName','VariableValue');
 print highlight_string('<?php '."\n".ob_get_clean().'?>',true);
 ?>
 <p>The <i>VariableValue</i> can be any PHP type (string, integer, array, etc...) but keep in mind that it must be serializable and should not contain too much data as it will be sent over the internet to the client.</p>
-<p>For all available API methods see the <a href="/Pages/APIReference.php">API Reference</a>.</p>
-<p>To customize the default API wrapper (to disable output buffering or the default variables for example) see the <a href="/Pages/DefaultAPIWrapper.php">Default API Wrapper</a> Reference.</p>
+<p>For all available API methods see the <a href="APIReference.php">API Reference</a>.</p>
+<p>To customize the default API wrapper (to disable output buffering or the default variables for example) see the <a href="DefaultAPIWrapper.php">Default API Wrapper</a> Reference.</p>
 </div>
-
-
 
 <?php include('.Footer.tpl.php'); ?>

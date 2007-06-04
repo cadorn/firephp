@@ -14,18 +14,29 @@
       <p>The default options list is as follows:</p>
 <?php ob_start(); ?>
 
-array( 'DefaultVariables' =>
+array( 'ApplicationID' => 'Default',
+       'RequestID' => md5(uniqid(rand(), true)),
+       'AccessKeyValue' => $_COOKIE['FirePHP-AccessKey'],
+       'InspectorTarget' => 'Default',
+       'ContentType' => 'text/html',
+       'ProtocolMode' => 'Header',
+       'RegisterShutdown' => true,
+       'StartContent' => true,
+       'BufferOutput' => true,
+       'SetCacheControlHeaders' => true,
+       'DefaultVariables' =>
           array(array(true,array('REQUEST','$_GET'),$_GET),
                 array(true,array('REQUEST','$_POST'),$_POST),
                 array(true,array('REQUEST','$_COOKIE'),$_COOKIE),
                 array(true,array('REQUEST','$_SERVER'),$_SERVER)),
+        
      );
 
 <?php
 print highlight_string('<?php '."\n".ob_get_clean().'?>',true);
 ?>
 
-      <p>There is no detailed documentation for these options available yet. You can check the <a target="_blank" href="http://www.firephp.com/SVNHighlightSource?file=/trunk/PEARPackage/FirePHP/Init.inc.php">wrapper source file</a> to see the available options.</p>
+      <p>There is no detailed documentation for these options available yet. You can check the <a target="_blank" href="http://www.firephp.org/SVNHighlightSource.php?file=/trunk/PEARPackage/FirePHP/Init.inc.php">wrapper source file</a> to see how the options are used.</p>
 
     </td>
   </tr>

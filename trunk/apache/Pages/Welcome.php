@@ -23,7 +23,7 @@
 
 <p><font size="2" color="red"><b>NOTE:</b></font></p>
 <div style="padding-left: 10px;">
-<p>The information and tools are intended to be used with the latest <font color="#FF6600"><b>BUILD</b></font> version of the extension and API which can be downloaded <a target="_blank" href="http://www.firephp.org/Downloads/#LatestBuildRelease">here</a>. It is assumed that you have the PHP PEAR package installed and in your include path.</font></p>
+<p>The information and tools are intended to be used with the latest <font color="#FF6600"><b>BUILD</b></font> version of the extension and API which can be downloaded <a target="_blank" href="http://www.firephp.org/Downloads/#LatestBuildRelease">here</a>. It is assumed you have the PHP PEAR package installed and in your include path.</font></p>
 </div>
 
 <?php include('.Footer.tpl.php'); ?>
