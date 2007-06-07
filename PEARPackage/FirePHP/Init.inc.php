@@ -52,49 +52,79 @@ $FirePHP =& new org__firephp__Core_class();
 class FirePHP {
   
   
-  function Init() {
+  function Init($Options=null) {
     global $FirePHP;
+    
+    if($Options===null) {
+      $Options = array('ApplicationID' => 'Default',
+                       'RequestID' => md5(uniqid(rand(), true)),
+                       'AccessKeyValue' => $_COOKIE['FirePHP-AccessKey'],
+                       'InspectorTarget' => 'Default',
+                       'ContentType' => 'text/html',
+                       'ProtocolMode' => 'Header',
+                       'RegisterShutdown' => true,
+                       'StartContent' => true,
+                       'BufferOutput' => true,
+                       'SetCacheControlHeaders' => true,
+                       'DefaultVariables' =>
+                          array(array(true,array('REQUEST','$_GET'),$_GET),
+                                array(true,array('REQUEST','$_POST'),$_POST),
+                                array(true,array('REQUEST','$_COOKIE'),$_COOKIE),
+                                array(true,array('REQUEST','$_SERVER'),$_SERVER)
+                               )
+                      );    
+    }
 
     /* First check if FirePHP is supported by the client */
     if(!$FirePHP->doesClientAccept()) return false;
 
     /* Then check if the client is authorized */
-    if(!$FirePHP->isClientAuthorized($_COOKIE['FirePHP-AccessKey'])) return false;
+    if(!$FirePHP->isClientAuthorized($Options['AccessKeyValue'])) return false;
     
     /* Generate a unique RequestID for this request so that any data
      * can be referenced later and set the ID in the response headers
      */     
-    $FirePHP->setRequestID(md5(uniqid(rand(), true)));
+    $FirePHP->setRequestID($Options['RequestID']);
 
     /* Set the primary content type for the response data.
      * This is only applicable if the multipart/mixed response
      * type is used
      */
-    $FirePHP->setPrimaryContentType('text/html');   
+    $FirePHP->setPrimaryContentType($Options['ContentType']);   
     
     /* Set the response protocol to the default header option */
-    $FirePHP->setProtocolMode('Header');
+    $FirePHP->setProtocolMode($Options['ProtocolMode']);
     
     /* Set the ID of the application */
-    $FirePHP->setApplicationID('Default');
+    $FirePHP->setApplicationID($Options['ApplicationID']);
     
     /* Set the Inspector target which groups the requests */
-    $FirePHP->setInspectorTarget('Default');
+    $FirePHP->setInspectorTarget($Options['InspectorTarget']);
+    
+    /* Set cache control header flag */
+    $FirePHP->setCacheControlHeaders($Options['SetCacheControlHeaders']);
     
     /* Register a shutdown function to send FirePHP at the end of the request */
-    register_shutdown_function('FirePHP_Shutdown');
-    
+    if($Options['RegisterShutdown']) {
+      register_shutdown_function('FirePHP_Shutdown');
+    }
+      
     /* Record some default variables */
-    FirePHP::SetVariable(true,array('REQUEST','$_GET'),$_GET);
-    FirePHP::SetVariable(true,array('REQUEST','$_POST'),$_POST);
-    FirePHP::SetVariable(true,array('REQUEST','$_COOKIE'),$_COOKIE);
-    FirePHP::SetVariable(true,array('REQUEST','$_SERVER'),$_SERVER);
+    if($Options['DefaultVariables']) {
+      foreach( $Options['DefaultVariables'] as $variable ) {
+        FirePHP::SetVariable($variable[0],$variable[1],$variable[2]);
+      }
+    }
 
     /* Indicate to FirePHP that the content will now start */
-    $FirePHP->startContent();
+    if($Options['StartContent']) {
+      $FirePHP->startContent();
+    }
 
     /* Start output buffering */
-    ob_start();
+    if($Options['BufferOutput']) {
+      ob_start();
+    }
   }
   
   function Shutdown() {
