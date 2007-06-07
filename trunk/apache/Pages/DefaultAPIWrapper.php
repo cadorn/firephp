@@ -28,8 +28,8 @@ array( 'ApplicationID' => 'Default',
           array(array(true,array('REQUEST','$_GET'),$_GET),
                 array(true,array('REQUEST','$_POST'),$_POST),
                 array(true,array('REQUEST','$_COOKIE'),$_COOKIE),
-                array(true,array('REQUEST','$_SERVER'),$_SERVER)),
-        
+                array(true,array('REQUEST','$_SERVER'),$_SERVER)
+               )
      );
 
 <?php
