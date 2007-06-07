@@ -259,7 +259,7 @@ class org__firephp__Core_class {
   }
 
 
-  function setVariable($Options, $ID, $Value) {
+  function setVariable($Options, $ID, $Value, $Scope, $Label) {
     
     if($Options===true) {
       /* Use the default options */
@@ -282,16 +282,7 @@ class org__firephp__Core_class {
 
     /* TODO: Look at options to gather additional data */
     
-    $this->variables[md5(serialize($ID))][] = array($options,$ID,$Value); 
-  }
-
-
-  /* Internal method used to resolve the variable ID's
-   * to standard keys, scope and labels used within the
-   * FirePHP Extension.
-   */
-  function resolveVariables() {
-    /* Must be subclassed */
+    $this->variables[md5(serialize($ID))] = array($options,$ID,$Value,$Scope,$Label); 
   }
 
 
@@ -303,9 +294,6 @@ class org__firephp__Core_class {
       $Data = 'Execution Time: '.$this->getTimeSpan('org.cadorn.projects.FirePHP','StartPrimaryContent','EndPrimaryContent',4);
     }
 
-    /* Resolve any variables that have been set */
-    $this->resolveVariables();
-
     /* Generate the XML payload */
     $payload = array();
     $payload[] = '<firephp version="0.2">';        
@@ -315,14 +303,12 @@ class org__firephp__Core_class {
     if($this->variables) {
       $json_service = new Services_JSON();
       foreach( $this->variables as $variable_id => $variable_info ) {
-        for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
-          $payload[] = '<variable id="'.$variable_id.
-                            //   '" key="'.$variable_info[$i][2].
-                               '" scope="'.$variable_info[$i][3].
-                               '" label="'.$variable_info[$i][4].
-                               '" options="'.$variable_info[$i][0].
-                        '"><![CDATA['.$json_service->encode($variable_info[$i][2]).']]></variable>';
-        }
+                            //   '" key="'.$variable_info[$i][2].'"'.
+          $payload[] = '<variable id="'.$variable_id.'"'.
+                               ' scope="'.$variable_info[3].'"'.
+                               ' label="'.$variable_info[4].'"'.
+                               ' options="'.$variable_info[0].'"'.
+                        '><![CDATA['.$json_service->encode($variable_info[2]).']]></variable>';
       }
     }
     $payload[] = '</request>';        

@@ -142,19 +142,11 @@ class FirePHP {
 
   function SetVariable($Options, $ID, $Value) {
     global $FirePHP;
-    $FirePHP->setVariable($Options, $ID, $Value);
-  }
-
-  function resolveVariables() {
-    if(!$this->variables) return;
-    foreach( $this->variables as $variable_id => $variable_info ) {
-      for( $i=0 ; $i<sizeof($variable_info) ; $i++ ) {
-        $options = $variable_info[$i][0];
-        $id = $variable_info[$i][1];
- 
-        $this->variables[$variable_id][$i][3] = $id[0];   /* Scope */
-        $this->variables[$variable_id][$i][4] = $id[2].($id[3])?'('.$id[3].')':'';  /* Label & Sub-Label */
-      }
+    
+    if(is_array($ID)) {
+      $FirePHP->setVariable($Options, $ID, $Value,$ID[0],($ID[1].(($ID[2])?'('.$ID[2].')':'')));
+    } else {
+      $FirePHP->setVariable($Options, $ID, $Value,'REQUEST',$ID);
     }
   }
 }
