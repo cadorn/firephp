@@ -9,6 +9,8 @@
 	- Implemented new Default FirePHP API Wrapper
 	- Implemented verification of FirePHP/x.x.x in User-Agent Request header
 	- Implemented the "header" method of the FirePHP protocol
+  - Implemented $Options array to Init method in default API wrapper
+  - Implemented flag to disable sending of cache control headers
 
 2007-02-01 - Release Version: 0.0.1
 

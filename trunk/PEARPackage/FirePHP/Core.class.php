@@ -49,6 +49,7 @@ class org__firephp__Core_class {
   var $request_id = null;
   var $primary_content_type = 'text/html';
   var $time_markers = array();
+  var $set_cache_control_headers = true;
 
   var $multipart_requested = false;
   var $multipart_enabled = false;
@@ -79,6 +80,11 @@ class org__firephp__Core_class {
   function setProtocolMode($Mode) {
     $this->protocol_mode = $Mode;
   }
+  
+  function setCacheControlHeaders($Flag) {
+    $this->set_cache_control_headers = $Flag;
+  }
+  
   
   function setTemporaryDirpath($Dirpath) {
     if($this->content_started) {
@@ -202,12 +208,14 @@ class org__firephp__Core_class {
     } else { 
       
       /* Ensure that the request is never cached by the browser */
-      header('Last-Modified: '.gmdate('r', time()));
-      header('Expires: '.gmdate('r', time()-86400));
-      header('Pragma: no-cache');
-      header('Cache-Control: no-cache, no-store, must-revalidate, max_age=0');
-      header('Cache-Control: post-check=0, pre-check=0'); 
-      
+      if($this->set_cache_control_headers) {
+        header('Last-Modified: '.gmdate('r', time()));
+        header('Expires: '.gmdate('r', time()-86400));
+        header('Pragma: no-cache');
+        header('Cache-Control: no-cache, no-store, must-revalidate, max_age=0');
+        header('Cache-Control: post-check=0, pre-check=0'); 
+      }
+          
       switch($this->protocol_mode) {
         case 'Multipart':
           /* Set the multipart mixed header */
