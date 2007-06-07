@@ -1,0 +1,17 @@
+
+	- Changed PINF-org.firephp-* headers to X-PINF-org.firephp-*
+	- Added support for an application ID
+	- Added support to set variables
+	- Encoding of variables in JSON format to send to client
+  - Introduced versioning for the FirePHP XML protocol and set to 0.2
+  - Implemented support for build version
+	- Renamed main FirePHP class to org__firephp__Core_class
+	- Implemented new Default FirePHP API Wrapper
+	- Implemented verification of FirePHP/x.x.x in User-Agent Request header
+	- Implemented the "header" method of the FirePHP protocol
+  - Implemented $Options array to Init method in default API wrapper
+  - Implemented flag to disable sending of cache control headers
+
+2007-02-01 - Release Version: 0.0.1
+
+	- Initial release to support FirefoxExtension Version 0.0.4
