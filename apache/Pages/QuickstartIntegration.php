@@ -13,7 +13,7 @@
 <?php ob_start(); ?>
 
 /* Initialize the FirePHP API */
-require_once('FirePHP/Init.inc.php');
+require_once('FirePHP_Build/Init.inc.php');
 
 /* Set the FirePHP-AccessKey which will be compared to the cookie */
 FirePHP::SetAccessKey('<?php print $_COOKIE['FirePHP-AccessKey']; ?>');
