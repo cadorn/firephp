@@ -1,0 +1,16 @@
+
+This file documents all supported events along with their corresponding grups.
+
+
+Group		Name										Values			Description
+
+UI			SelectRequest						RequestID		Triggered to select a request in the Request Viewer
+State		SelectedRequestChanged	RequestID		Triggered when the selected request has changed
+
+Capabilities	LoadDefinition		CapabilitiesURL		Loads a capabilities definition from the given URL
+Capabilities	ReloadDefinition	CapabilitiesURL		Re-loads the currently loaded capabilities definition for the PrimaryContentWindow
+Capabilities	DefinitionChanged	CapabilitiesURL		Triggered when a capabilities definition has changed
+
+UI						FirefoxMenuCommand	Name					Triggered when a Firefox menu item is clicked
+
+Internal			OpenAllowedCapabilityHostsWindow	URL					Opens the FirePHP capabilities hosts permission window

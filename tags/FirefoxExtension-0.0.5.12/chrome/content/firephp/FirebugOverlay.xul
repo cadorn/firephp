@@ -1,0 +1,169 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet type="text/css" href="chrome://global/skin/"?>
+<?xml-stylesheet type="text/css" href="chrome://firebug/content/firebug.css"?>
+<?xml-stylesheet type="text/css" href="chrome://firephp/skin/style.css"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHPChrome.js"/>
+  
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/Toolbar.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/ContentWindowTopToolbarContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/FirePHPWindowResourceToolbarContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/Slideout.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/ContentWindowTopSlideoutContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/WidgetContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/FirePHPWindowResourceWidgetContainer.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/Widget.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/UI/FirePHPResourceViewerWidget.js"/>
+
+  
+  <script type="application/x-javascript" src="chrome://firephp/content/WindowTopToolbar/FirePHPWindowTopToolbar.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBottomToolbar.js"/>
+
+  <script type="application/x-javascript" src="chrome://firephp/content/BottomToolbar/FirePHPBrowserWatcher.js"/>
+
+  <script type="application/x-javascript" src="chrome://firephp/content/Console.js"/>
+
+  <script>
+		
+		/* Initialize FirePHPChrome */
+//		FirePHPChrome.initialize();		
+		
+  </script>
+
+	<commandset id="mainCommandSet"> 
+    <command id="cmdFirePHP_RequestsToggle" oncommand="FirePHPChrome.togglePanel('RequestInspector')"/> 
+  	<command id="cmdFirePHP_VariablesToggle" oncommand="FirePHPChrome.togglePanel('VariableInspector')"/> 
+  	<command id="cmdFirePHP_ConsoleToggle" oncommand="FirePHPChrome.togglePanel('Console')"/> 
+  	<command id="cmdFirePHP_ApplicationToolbarToggle" oncommand="FirePHPChrome.togglePanel('ApplicationToolbar')"/> 
+	</commandset> 
+	
+	<broadcasterset id="mainBroadcasterSet">
+  	<broadcaster id="idFirePHPRequestsToggleBroadcaster" checked="true"/>
+  	<broadcaster id="idFirePHPVariablesToggleBroadcaster" checked="true"/>
+  	<broadcaster id="idFirePHPConsoleToggleBroadcaster" checked="true"/>
+  	<broadcaster id="idFirePHPApplicationToolbarBroadcaster" checked="true"/>
+	</broadcasterset>	
+
+  <toolbar id="fbToolbar" align="center">
+		<hbox id="fbToolbarInner" insertbefore="fbDetachButton" flex="1" align="center">            
+
+    	<hbox id="fbFirePHPButtons" insertafter="fbNetButtons">
+
+				<image id="FirePHPPanelMenuIcon" class="firephp-panel-menu-icon-disabled" onclick="Firebug.FirePHP.triggerMenuToggle('StatusIndicator')"/>
+				
+				<toolbarbutton label="Requests" class="toolbar-text-button"
+        							tooltiptext="Request Inspector" command="cmdFirePHP_RequestsToggle"> 
+					<observes element="idFirePHPRequestsToggleBroadcaster" attribute="checked"/>
+        </toolbarbutton>							
+
+				<toolbarbutton label="Variables" class="toolbar-text-button"
+        							tooltiptext="Variable Inspector" command="cmdFirePHP_VariablesToggle">
+					<observes element="idFirePHPVariablesToggleBroadcaster" attribute="checked"/>
+        </toolbarbutton>							
+                                          
+				<toolbarbutton label="Console" class="toolbar-text-button"
+        							tooltiptext="Console" command="cmdFirePHP_ConsoleToggle"> 
+					<observes element="idFirePHPConsoleToggleBroadcaster" attribute="checked"/>
+        </toolbarbutton>							
+                                          
+				<toolbarbutton label="Application Toolbar" class="toolbar-text-button"
+        							tooltiptext="Application Toolbar" command="cmdFirePHP_ApplicationToolbarToggle"> 
+					<observes element="idFirePHPApplicationToolbarBroadcaster" attribute="checked"/>
+        </toolbarbutton>
+      </hbox>
+    </hbox>            
+	</toolbar>
+
+
+<!--
+	<box id="fbPanelBox">
+		<splitter resizebefore="farthest" insertafter="fbSidePanelDeck">
+			<grippy/>
+		</splitter>
+		<label value="yup"/>
+	</box>        
+-->
+
+  <vbox id="fbContentBox">
+
+	  <splitter id="idFirePHPSplitter" class="FirePHPSplitter" resizebefore="closest" insertafter="fbCommandBox" hidden="true" orient="vertical">
+	  	<html:div flex="1" style="height: 6px;">
+				<html:div id="idFirePHPSplitterRequestFlowBox"></html:div>
+	  	</html:div>
+	  </splitter>
+
+		<vbox flex="1" id="idFirePHPPanel" hidden="true" persist="height">
+
+			<hbox flex="1" id="idFirePHPVariableConsoleBox">
+	  
+	  	<vbox flex="1">
+	  
+			<hbox flex="1" id="idFirePHPVariableBox">
+			
+				<vbox id="idFirePHPVariableApplicationBox" persist="width">
+				  <label value="Application" class="FirePHP-VariablePanelLabel"/>
+				  <iframe flex="1" id="idFirePHPVariableApplicationFrame" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
+				</vbox>
+				  
+			  <splitter resizeafter="farthest" class="FirePHPSplitter" orient="horizontal">
+			    <grippy/>
+			  </splitter>
+
+				<vbox id="idFirePHPVariableSessionBox" persist="width">
+				  <label value="Session" class="FirePHP-VariablePanelLabel"/>
+				  <iframe flex="1" id="content-2" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
+				</vbox>
+
+			  <splitter id="idFirePHPVariableSessionRequestSplitter" class="FirePHPSplitter" resizebefore="closest" resizeafter="farthest" orient="horizontal">
+			    <grippy/>
+			  </splitter>
+
+				<vbox id="idFirePHPVariableRequestBox" persist="width">
+				  <label id="idFirePHPVariableRequestLabel" value="Request" class="FirePHP-VariablePanelLabel"/>
+				  <iframe id="idFirePHPVariableRequestFrame" flex="1" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
+				</vbox>
+
+			  <splitter resizeafter="closest" class="FirePHPSplitter" orient="horizontal">
+			    <grippy/>
+			  </splitter>
+
+				<vbox id="idFirePHPVariableWatchBox" flex="1">
+<!--
+				  <label value="Watch" class="FirePHP-VariablePanelLabel"/>
+-->
+				  <iframe id="idFirePHPVariableWatchFrame" flex="1" src="chrome://firephp/content/VariableInspector/WatchListPanel.htm"/>
+				</vbox>
+
+			</hbox>
+
+		  <splitter id="idFirePHPConsoleSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
+		  <browser id="idFirePHPConsoleFrame" flex="1" src="chrome://firephp/content/Console/Panel.htm"/>
+
+	  	</vbox>
+
+			  <splitter id="idFirePHPVariableViewerSplitter" class="FirePHPSplitter" resizebefore="closest" resizeafter="farthest" width="8" orient="horizontal">
+			    <grippy/>
+			  </splitter>
+			  
+			  <browser id="idFirePHPVariableViewerFrame" type="content" flex="1" src="chrome://firephp/content/VariableInspector/VariableViewerPanel.htm" persist="width"/>
+	  	
+	  	</hbox>
+		  
+		  
+<!--
+		  <splitter id="idFirePHPApplicationSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
+
+			<deck id="idFirePHPWindowResourceWidgetContainer" flex="1" persist="height">
+      </deck>
+			
+			<tagFirePHPUIToolbar id="idFirePHPWindowResourceToolbarContainer"/>
+-->			
+		</vbox>
+
+  </vbox>
+
+</overlay>
