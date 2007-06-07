@@ -67,11 +67,13 @@ FirePHP.FirePHPRequestData = function FirePHPRequestData() {
   this.setAnchor = function(Anchor) {
     this.anchor = Anchor;
   }
-  this.setVariable = function(Key, ID, Scope, Label, Options, Value ) {
-    if(!this.variables[Key]) {
-      this.variables[Key] = new Array();
+  this.setVariable = function(ID, Scope, Label, Options, Value ) {
+    if(!this.variables[ID]) {
+      this.variables[ID] = new Array();
     }
-    var data = this.variables[Key][this.variables[Key].length] = new Array(Key, ID, Scope, Label, Options, Value);
+    var data = this.variables[ID] = new Array(ID, Scope, Label, Options, Value);
+
+        FirePHPLib.dump(Scope,'Scope');      
 
     if(Scope=='SESSION') {
       FirePHP.FirePHPSessionHandler.setVariable(this.applicationID,this,data);
@@ -183,8 +185,6 @@ FirePHP.FirePHPRequestHandler = {
 
 		/* If we found a X-PINF-org.firephp-Data header lets parse it and see if it contains data for this request */
 		if(ServerVars['Data']) {
-		
-dump(FirePHPLib.urlDecode(ServerVars['Data']));		
 			this.parseAndSetXMLDataForRequest(FirePHPLib.urlDecode(ServerVars['Data']));		
 		}
 
@@ -246,8 +246,7 @@ dump(FirePHPLib.urlDecode(ServerVars['Data']));
             nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
             if(nodes) {
               while (res = nodes.iterateNext()) {
-                requestData.setVariable(res.getAttribute('key'),
-                                        res.getAttribute('id'),
+                requestData.setVariable(res.getAttribute('id'),
                                         res.getAttribute('scope'),
                                         res.getAttribute('label'),
                                         res.getAttribute('options'),

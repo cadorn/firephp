@@ -132,8 +132,10 @@
 			  </splitter>
 
 				<vbox id="idFirePHPVariableWatchBox" flex="1">
+<!--
 				  <label value="Watch" class="FirePHP-VariablePanelLabel"/>
-				  <iframe id="idFirePHPVariableWatchFrame" flex="1" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
+-->
+				  <iframe id="idFirePHPVariableWatchFrame" flex="1" src="chrome://firephp/content/VariableInspector/WatchListPanel.htm"/>
 				</vbox>
 
 			</hbox>
@@ -152,14 +154,14 @@
 	  	</hbox>
 		  
 		  
-
+<!--
 		  <splitter id="idFirePHPApplicationSplitter" class="FirePHPSplitter" resizeafter="closest" orient="vertical"></splitter>
 
 			<deck id="idFirePHPWindowResourceWidgetContainer" flex="1" persist="height">
       </deck>
 			
 			<tagFirePHPUIToolbar id="idFirePHPWindowResourceToolbarContainer"/>
-			
+-->			
 		</vbox>
 
   </vbox>

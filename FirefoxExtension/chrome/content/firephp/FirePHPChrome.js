@@ -300,11 +300,12 @@ dump('FirePHPChrome:initialize()'+"\n");
     this.$('idFirePHPConsoleFrame').hidden = !consoleFlag;
     
     this.$('idFirePHPVariableConsoleBox').hidden = (!variableFlag && !consoleFlag);
-    this.$('idFirePHPApplicationSplitter').hidden = (!variableFlag && !consoleFlag);
+//2    this.$('idFirePHPApplicationSplitter').hidden = (!variableFlag && !consoleFlag);
     
     this.$('idFirePHPApplicationToolbarBroadcaster').setAttribute('checked',(applicationFlag = FirePHP.getPreference('showApplicationToolbar')));
 
-    this.$('idFirePHPApplicationSplitter').hidden = ((!variableFlag && !consoleFlag) || !applicationFlag);
+//2    this.$('idFirePHPApplicationSplitter').hidden = ((!variableFlag && !consoleFlag) || !applicationFlag);
+
 //    this.$('idFirePHPApplicationDeck').hidden = !applicationFlag;
 //    this.$('idFirePHPBottomToolbar').hidden = !applicationFlag;
 
@@ -395,15 +396,15 @@ FirePHPChrome.RequestListListener = {
       if(requestData) {
       
         /* Update session variable list */
-        var sessionVariables = FirePHP.FirePHPSessionHandler.getVariables(requestData.getApplicationID());
-        FirePHPLib.dump(sessionVariables,'sessionVariables');      
+//        var sessionVariables = FirePHP.FirePHPSessionHandler.getVariables(requestData.getApplicationID());
+//        FirePHPLib.dump(sessionVariables,'sessionVariables');      
         
         
         
               
         /* Update request variable list */
         var data = requestData.getData();
-        if(data) {
+        if(false && data) {
           var newRow = table.insertRow(table.rows.length)
           newRow.id = 'DATA';
           newRow.addEventListener('click',FirePHPChrome.VariableListListener,true);
@@ -411,19 +412,18 @@ FirePHPChrome.RequestListListener = {
           newCell.innerHTML = 'DATA';
         }
         var variables = requestData.getVariables();
+        
         if(variables) {
           for( var key in variables ) {
-            for( var i=0 ; i<variables[key].length ; i++ ) {
-              
-              if(variables[key][i][2]=='REQUEST') {
+        
+              if(variables[key][1]=='REQUEST') {
                 var newRow = table.insertRow(table.rows.length)
-                newRow.id = variables[key][i][0];
+                newRow.id = variables[key][0];
                 newRow.addEventListener('click',FirePHPChrome.VariableListListener,true);
   
                 var newCell = newRow.insertCell(0);
-                newCell.innerHTML = variables[key][i][3];
+                newCell.innerHTML = variables[key][2];
               }
-            }
           }
         }
       }
@@ -470,8 +470,12 @@ FirePHPChrome.VariableListListener = {
           div.innerHTML = requestData.getData();
         } else {
           var variables = requestData.getVariables(event.currentTarget.id);
+                    
           if(variables) {
-            div.innerHTML = variables[0][5];
+          
+          	
+          	var value = eval('(' + variables[4] + ')');
+            div.innerHTML = FirePHPLib.renderJSONString(value);
           }
         }
       }
