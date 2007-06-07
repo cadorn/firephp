@@ -162,6 +162,14 @@ var FirePHP = top.FirePHP = {
     }
   },
   getPreference: function(Name) {
+  	
+  	/* Disable some preferences and send back defaults for now */
+  	switch(Name) {
+//  		case 'showConsole':
+  		case 'showApplicationToolbar':
+  			return false;
+  	}
+  
     Name = "extensions.firephp."+Name;
     switch(this.preferencesService.getPrefType(Name)) {
       case Components.interfaces.nsIPrefBranch.PREF_STRING:
