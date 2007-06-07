@@ -4,7 +4,6 @@
 include('../.Init.php');
 
 
-
 /* Initialize the FirePHP API */
 require_once('FirePHP/Init.inc.php');
 
