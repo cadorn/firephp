@@ -72,9 +72,6 @@ FirePHP.FirePHPRequestData = function FirePHPRequestData() {
       this.variables[ID] = new Array();
     }
     var data = this.variables[ID] = new Array(ID, Scope, Label, Options, Value);
-
-        FirePHPLib.dump(Scope,'Scope');      
-
     if(Scope=='SESSION') {
       FirePHP.FirePHPSessionHandler.setVariable(this.applicationID,this,data);
     }
@@ -186,6 +183,15 @@ FirePHP.FirePHPRequestHandler = {
 		/* If we found a X-PINF-org.firephp-Data header lets parse it and see if it contains data for this request */
 		if(ServerVars['Data']) {
 			this.parseAndSetXMLDataForRequest(FirePHPLib.urlDecode(ServerVars['Data']));		
+			
+/*
+var console = new ConsolePanel();
+console.document = FirePHPChrome.$("idFirePHPConsoleFrame").contentDocument;
+console.panelNode = console.document.getElementById("panelNode");
+console.warn("Yup1");
+console.info("Yup2");
+*/
+			
 		}
 
     /* If we found FirePHP multipart data lets trigger a capabilities detection */

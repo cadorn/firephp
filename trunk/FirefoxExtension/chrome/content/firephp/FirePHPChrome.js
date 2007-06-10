@@ -384,11 +384,18 @@ FirePHPChrome.RequestListListener = {
       }
       event.currentTarget.className = 'SelectedRow';
 
+
+      var FirePHPVariableSessionFrame = FirePHPChrome.$("idFirePHPVariableSessionFrame");
+      var sessionTable = FirePHPVariableSessionFrame.contentDocument.getElementById('table');
+      while( sessionTable.rows.length > 0 ) {
+        sessionTable.deleteRow(0);
+      }
+
       
       var FirePHPVariableRequestFrame = FirePHPChrome.$("idFirePHPVariableRequestFrame");
-      var table = FirePHPVariableRequestFrame.contentDocument.getElementById('table');
-      while( table.rows.length > 0 ) {
-        table.deleteRow(0);
+      var requestTable = FirePHPVariableRequestFrame.contentDocument.getElementById('table');
+      while( requestTable.rows.length > 0 ) {
+        requestTable.deleteRow(0);
       }
 
       /* Get Request Variables */
@@ -396,16 +403,24 @@ FirePHPChrome.RequestListListener = {
       if(requestData) {
       
         /* Update session variable list */
-//        var sessionVariables = FirePHP.FirePHPSessionHandler.getVariables(requestData.getApplicationID());
-//        FirePHPLib.dump(sessionVariables,'sessionVariables');      
+        var sessionVariables = FirePHP.FirePHPSessionHandler.getVariables(requestData.getApplicationID());
+        if(sessionVariables) {
+          for( var key in sessionVariables ) {
         
-        
+                var newRow = sessionTable.insertRow(sessionTable.rows.length)
+                newRow.id = key;
+                newRow.addEventListener('click',FirePHPChrome.VariableListListener,true);
+
+                var newCell = newRow.insertCell(0);
+                newCell.innerHTML = sessionVariables[key][1][2];
+          }
+        }
         
               
         /* Update request variable list */
         var data = requestData.getData();
         if(false && data) {
-          var newRow = table.insertRow(table.rows.length)
+          var newRow = requestTable.insertRow(requestTable.rows.length)
           newRow.id = 'DATA';
           newRow.addEventListener('click',FirePHPChrome.VariableListListener,true);
           var newCell = newRow.insertCell(0);
@@ -417,8 +432,8 @@ FirePHPChrome.RequestListListener = {
           for( var key in variables ) {
         
               if(variables[key][1]=='REQUEST') {
-                var newRow = table.insertRow(table.rows.length)
-                newRow.id = variables[key][0];
+                var newRow = requestTable.insertRow(requestTable.rows.length)
+                newRow.id = key;
                 newRow.addEventListener('click',FirePHPChrome.VariableListListener,true);
   
                 var newCell = newRow.insertCell(0);

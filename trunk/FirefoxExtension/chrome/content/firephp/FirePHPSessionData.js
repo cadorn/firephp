@@ -47,7 +47,7 @@ FirePHP.FirePHPSessionData = function FirePHPSessionData() {
     if(!this.variables[VariableData[0]]) {
       this.variables[VariableData[0]] = new Array();
     }
-    this.variables[VariableData[0]][this.variables[VariableData[0]].length] = new Array(RequestData,VariableData[3]);
+    this.variables[VariableData[0]] = new Array(RequestData,VariableData);
   }
   this.getVariables = function(Key) {
     if(Key) {
