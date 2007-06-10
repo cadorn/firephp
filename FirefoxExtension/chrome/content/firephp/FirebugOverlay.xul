@@ -115,7 +115,7 @@
 
 				<vbox id="idFirePHPVariableSessionBox" persist="width">
 				  <label value="Session" class="FirePHP-VariablePanelLabel"/>
-				  <iframe flex="1" id="content-2" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
+				  <iframe flex="1" id="idFirePHPVariableSessionFrame" src="chrome://firephp/content/VariableInspector/VariableListPanel.htm"/>
 				</vbox>
 
 			  <splitter id="idFirePHPVariableSessionRequestSplitter" class="FirePHPSplitter" resizebefore="closest" resizeafter="farthest" orient="horizontal">

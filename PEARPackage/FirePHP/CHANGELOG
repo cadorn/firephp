@@ -11,6 +11,7 @@
 	- Implemented the "header" method of the FirePHP protocol
   - Implemented $Options array to Init method in default API wrapper
   - Implemented flag to disable sending of cache control headers
+  - Implemented SESSION variables list
 
 2007-02-01 - Release Version: 0.0.1
 
