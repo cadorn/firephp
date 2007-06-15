@@ -15,7 +15,7 @@
   - Added FirePHP/x.x.x to User-Agent Request header
   - Implemented fetching of intelligence data from X-PINF-org.firephp-Data header
   - Fixed bug to display application ID if label is not found
-	- Fixed variable list loading
+  - Fixed variable list loading
   - Fixed variable selection and display
   - Implemented basic javascript array renderer
   - Implemented SESSION variables list
