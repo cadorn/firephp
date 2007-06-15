@@ -134,4 +134,4 @@ $LatestFirefoxExtensionBuildVersion = trim(file_get_contents('http://www.firephp
 	    	  <?php } ?>
 	  </td>
 	<td width="100%" valign="top" height="100%" style="padding: 25px; padding-top: 15px; font-family: verdana, arial, helvetica, sans-serif; font-size: 11px">
-    	<iframe name="content" src="Pages/Welcome.php" style="width: 100%; height: 100%; border: none;" border="0"></iframe>
+    	<iframe name="content" src="<?php if($_GET['ContentURI'] && file_exists(realpath('Pages/'.$_GET['ContentURI']))) { print 'Pages/'.$_GET['ContentURI']; } else { print 'Pages/Welcome.php'; } ?>" style="width: 100%; height: 100%; border: none;" border="0"></iframe>

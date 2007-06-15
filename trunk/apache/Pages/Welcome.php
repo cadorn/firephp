@@ -1,6 +1,13 @@
 <?php include('../.Init.php');
       include('.Header.tpl.php'); ?>
 
+
+<div style="padding: 5px; border: 2px solid #FF6600; background-color: #FFD3B7;">
+The FirePHP Developer Companion applies to the latest <font color="#FF6600"><b>BUILD</b></font> Release! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a target="_blank" href="http://www.firephp.org/Downloads/#LatestBuildRelease">Download Now!</a>
+</div>
+<br>
+
+
 <p><font size="2"><b>Welcome to the FirePHP Developer Companion!</b></font></p>
 <div style="padding-left: 10px;">
 <p>The developer companion acts as an interactive documentation and reference resource as well as test suite for the FirePHP PHP API and Firefox Extension. It is updated with each release of FirePHP and you can always find the latest version at <a target="_blank" href="http://companion.firephp.org/">http://companion.firephp.org/</a>.</p>
