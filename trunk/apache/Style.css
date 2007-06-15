@@ -182,3 +182,16 @@ A.menulink2:hover {
   text-decoration: underline;
   color: #0000FF;
 }
+
+
+LI.menulink {
+  padding-left: 3px;
+}
+LI.menulink-active {
+  padding-left: 3px;
+  background-color: #E68326;
+}
+LI.menulink-active A {
+  text-decoration: none;
+  color: #000000;
+}
