@@ -11,23 +11,29 @@
 <p>This companion has been tested with PHP5 and the Apache webserver.</p>
 </div>
 
+<p><font size="2"><b>Download</b></font></p>
+<div style="padding-left: 10px;">
+<p>The companion is available via SVN only at this time. It is located at:<br>
+<a target="_blank" href="http://firephp.googlecode.com/svn/trunk/apache/">http://firephp.googlecode.com/svn/trunk/apache/</a></p>
+</div>
+
 <p><font size="2"><b>Install</b></font></p>
 <div style="padding-left: 10px;">
 <p>I am assuming you are using Apache as your webserver. If you are using a different webserver you can translate the instructions below.</p>
-<p>This companion reveals internal information about your FirePHP integration and should be protected from public access. Only developers that work in integrating FirePHP into your application need access to this companion. To avoid unauthorized access you can limit request to specific IP's as well as prompt the user for a password using the Apache basic authentication features.</p>
+<p>This companion reveals internal information about your FirePHP integration and should be protected from public access. Only developers that work on integrating FirePHP into applications need access to this companion. To avoid unauthorized access you can limit requests to specific IP's as well as prompt the user for a password using the Apache basic authentication features.</p>
+<p>The companion must run on the same domain as your application. You can place the code for the companion anywhere and setup an alias from your application vhost.</p>
 <p>A typical apache configuration looks something like this:</p>
 
 <div style="margin: 10px; padding: 5px; padding-left: 15px; padding-right: 15px; background-color:#F9F9F9; overflow: auto;"><pre style="font-family: Courier;">
 <?php ob_start(); ?>
 <VirtualHost *:80>
-  ServerAdmin christoph@christophdorn.com
-  ServerName www.firephp.org
-  ServerAlias www.firephp.org firephp.org
-  DocumentRoot /www/www.firephp.org
+  ServerName www.YourDomain.com
+  ServerAlias www.YourDomain.org YourDomain.com
+  DocumentRoot /www/www.YourDomain.com
   
-  Alias /FirePHPCompanion/  $php_dir/FirePHP/apache/
+  Alias /FirePHPCompanion/  [CompanionPath]
 
-  <Directory $php_dir/FirePHP/apache/>
+  <Directory [CompanionPath]>
 
     AuthName "FirePHP Developer Companion"
     AuthUserFile /etc/httpd/conf/.passwd
@@ -47,7 +53,7 @@
   ErrorLog /wwwlogs/apache/svn.cadorn.com.err
 </VirtualHost>
 <?php print htmlentities(ob_get_clean()); ?></pre></div>
-<p>You need to replace the <i>$php_dir</i> variable with the path to your PEAR repository. You can look for the <i>php_dir</i> variable when you run the <i>pear config-show</i> command from the command line. Update the IP, you can also add more. Use the <i>htpasswd</i> command to create a password file for a username you choose.</p>
+<p>You need to replace <i>[CompanionPath]</i> with the path to your working copy of the companion source (e.g. /php/lib/FirePHPCompanion/). Update the IP and add more if needed. Use the <i>htpasswd</i> command to create a password file for a username you choose.</p>
 <p>After restarting Apache you should be able to access the companion at <i>http://www.YourDomain.com/FirePHPCompanion/</i> depending on the alias you have setup.</p>
 </div>
 
