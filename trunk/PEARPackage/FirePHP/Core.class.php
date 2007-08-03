@@ -35,7 +35,15 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-require_once('JSON.php');
+/* Only include the JSON class if it does not already exist and only if
+ * the json_encode() function is not already available.
+ * ASSUMPTION: If a class is defined with the name "Services_JSON" it is the same
+ *             class as implemented in ./JSON.php
+ */
+if(!function_exists('json_encode') && !class_exists("Services_JSON")) {
+  require_once('JSON.php');
+}
+
 
 class org__firephp__Core_class {
 
@@ -301,14 +309,13 @@ class org__firephp__Core_class {
     $payload[] = '<request id="'.$this->request_id.'" anchor="'.$this->inspector_target.'">';        
     $payload[] = '<data type="html"><![CDATA['.trim($Data).']]></data>';        
     if($this->variables) {
-      $json_service = new Services_JSON();
       foreach( $this->variables as $variable_id => $variable_info ) {
                             //   '" key="'.$variable_info[$i][2].'"'.
           $payload[] = '<variable id="'.$variable_id.'"'.
                                ' scope="'.$variable_info[3].'"'.
                                ' label="'.$variable_info[4].'"'.
                                ' options="'.$variable_info[0].'"'.
-                        '><![CDATA['.$json_service->encode($variable_info[2]).']]></variable>';
+                        '><![CDATA['.$this->_json_encode($variable_info[2]).']]></variable>';
       }
     }
     $payload[] = '</request>';        
@@ -339,6 +346,19 @@ class org__firephp__Core_class {
     }
   }
   
+  
+  function _json_encode($Data) {
+    
+    /* If the json_encode() function is available use it
+     * instead of the Services_JSON class.
+     */
+    if(function_exists('json_encode')) {
+      return json_encode($Data);
+    } else {    
+      $json_service = new Services_JSON();
+      return $json_service->encode($Data);
+    }    
+  }
   
   
   function stampTime($Group,$Marker) {
