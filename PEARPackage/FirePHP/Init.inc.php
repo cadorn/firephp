@@ -104,12 +104,7 @@ class FirePHP {
     
     /* Set cache control header flag */
     $FirePHP->setCacheControlHeaders($Options['SetCacheControlHeaders']);
-    
-    /* Register a shutdown function to send FirePHP at the end of the request */
-    if($Options['RegisterShutdown']) {
-      register_shutdown_function('FirePHP_Shutdown');
-    }
-      
+          
     /* Record some default variables */
     if($Options['DefaultVariables']) {
       foreach( $Options['DefaultVariables'] as $variable ) {
@@ -122,10 +117,59 @@ class FirePHP {
       $FirePHP->startContent();
     }
 
+
+    /* This wrapper supports automatic sending of the FirePHP data at the end of the
+     * request without requiring the developer to call a finalization method directly.
+     * This is specified by the $Options['RegisterShutdown'] option.
+     * It is accomplished by registering a shutdown function or output buffer
+     * callback function that the PHP engine calls at the end of the request.
+     * Due to changes in behaviour of the shutdown function and output buffer callback
+     * function between PHP versions we need to do some finer-grained control of
+     * when each different method is used.
+     */
+
+    $callback_method = false;
+    
+    /* Since PHP version 5.2.0 an output buffer callback function cannot reference global
+     * variables. Consequently we need to finalize FirePHP by using the register_shutdown
+     * function instead of an output buffer callback function. The global variable is
+     * required to gain access to all the debug data that was tracked during the execution
+     * of the request.
+     */
+    if(version_compare (phpversion(),'5.2.0','>=')) {
+      $callback_method = 'shutdown';
+    }
+    /* In all other cases we use the output buffer callback function which however will
+     * only work if the $Options['BufferOutput'] option is set to true. This means
+     * for PHP verions prior to 5.2.0, the automatic finalization of FirePHP will only
+     * work if the output buffering option is used. If output buffering cannot be used
+     * the developer must call FirePHP::Shutdown() manually at the end of the request.
+     */
+    else {
+      if($Options['RegisterShutdown']) {
+        if($Options['BufferOutput']) {
+          $callback_method = 'output';
+        } else {
+          trigger_error('The "RegisterShutdown" option may only be enabled if the "BufferOutput" option is also enabled for PHP < 5.2.0. To finalize FirePHP yourself you must call FirePHP::Shutdown(); at the end of your application.');
+        }
+      }
+    }
+
     /* Start output buffering */
     if($Options['BufferOutput']) {
-      ob_start();
+      if($callback_method == 'output') {
+        ob_start('FirePHP_OutputBufferCallback');
+      } else {
+        ob_start();
+      }
     }
+    /* Register shutdown function if requested and we are not using an output buffer
+     * callback function.
+     */
+    if($callback_method == 'shutdown') {
+      register_shutdown_function('FirePHP_Shutdown');
+    }
+
   }
   
   function Shutdown() {
@@ -154,6 +198,11 @@ class FirePHP {
 
 function FirePHP_Shutdown() {
   FirePHP::Shutdown();
+}
+
+function FirePHP_OutputBufferCallback($Output) {
+  FirePHP::Shutdown();
+  return $Output;
 }
 
 ?>
