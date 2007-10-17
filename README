@@ -76,6 +76,9 @@ Server Side:
 	TODO
 ------------------------------------------------------
 
+	- Release new version of FirebugTestExtension to allow it to load under Linux
+	  http://groups.google.com/group/FirePHP/browse_frm/thread/541b0b3633edfd9f/98bc9db67cbcf3b9#98bc9db67cbcf3b9
+
 	- Information on how the extension works
 	- Documentation for the PHP API
 	- Add ability for server to store request information in a separate data store
