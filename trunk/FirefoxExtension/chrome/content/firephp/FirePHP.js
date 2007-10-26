@@ -33,6 +33,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+
 var FirePHP = top.FirePHP = {
 
   version: '0.0.5',
@@ -66,6 +67,7 @@ var FirePHP = top.FirePHP = {
     /* Lets listen to all UI and Internal events */
     FirePHP.FirePHPChannel.addHandler("UI", this);
     FirePHP.FirePHPChannel.addHandler("Internal", this);
+		
   },
   	
 	

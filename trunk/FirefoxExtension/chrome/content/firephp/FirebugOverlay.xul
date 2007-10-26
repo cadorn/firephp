@@ -27,6 +27,8 @@
 
   <script type="application/x-javascript" src="chrome://firephp/content/Console.js"/>
 
+  <script type="application/x-javascript" src="chrome://firephp/content/FirebugNetOverride.js"/>
+
   <script>
 		
 		/* Initialize FirePHPChrome */
