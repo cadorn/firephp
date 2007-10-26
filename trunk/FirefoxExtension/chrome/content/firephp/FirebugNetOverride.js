@@ -158,13 +158,118 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 
 						for( var index in file.responseHeaders ) {
 							if(file.responseHeaders[index].name=='X-PINF-org.firephp-Data') {
-		            insertWrappedText(FirePHPLib.urlDecode(file.responseHeaders[index].value), responseTextBox);
+		            parseAndPrintData(FirePHPLib.urlDecode(file.responseHeaders[index].value), responseTextBox);
 							}
 						}
             
         }				
     }	
 });
+
+
+function parseAndPrintData(Data,responseTextBox) {
+        
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(Data, "text/xml");
+				
+        if(doc) {
+        
+          var applicationID = null;
+          var requestID = null;
+          var anchor = null;
+        
+          var findPattern = "//firephp[attribute::version=\"0.2\"]/application";
+          var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
+          if(nodes) {
+            while (res = nodes.iterateNext()) {
+              applicationID = res.getAttribute('id');
+            }
+          }
+          findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request";
+          nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
+          if(nodes) {
+            while (res = nodes.iterateNext()) {
+              requestID = res.getAttribute('id');
+              anchor = res.getAttribute('anchor');
+              if(!anchor) anchor = '';
+            }
+          }
+          if(requestID) {
+
+            var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
+            /* Create the request data object if we dont already have one for this request */
+            if(!requestData) {
+              requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
+              requestData.setRequestID(requestID);
+            }
+            requestData.setApplicationID(applicationID);
+        
+            var findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
+            var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
+            if(node) {
+              if(node.singleNodeValue.textContent) {
+                //requestData.setData(node.singleNodeValue.textContent);
+              }
+            }
+            
+            findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
+            nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
+            if(nodes) {
+							var html = "";
+
+//							html = html + '<script type="application/x-javascript" src="chrome://firephp/content/ServerNetPanelRenderer.js"/>';
+							
+							//html = html + '<script type="application/x-javascript">';
+							
+							//html = html + '</script>';
+							
+//							dump(html);
+							
+//							responseTextBox.innerHTML = html;
+							
+		    try {
+		  
+		      var callback =
+		      {
+		        success: function(Response) {
+//					      	alert(Response.responseText);
+							responseTextBox.innerHTML = Response.responseText;
+									
+					  },
+		        failure: function(Response) {
+							
+							eval(Response.responseText);
+							
+							
+              while (res = nodes.iterateNext()) {
+								
+								//html = html + "renderLine('[ "+res.getAttribute('label')+"]');\n";
+								if(res.textContent) {
+									setVar(res.textContent);
+								//	html = html + "document.write('"+res.textContent+"');\n";
+								}
+              }
+							
+							responseTextBox.innerHTML = renderServerData();
+					  },
+		        argument: 'chrome://firephp/content/ServerNetPanelRenderer.js',
+		        timeout: 5000,
+		        scope: this
+		      }
+		  
+		      YAHOO.util.Connect.asyncRequest('GET', 'chrome://firephp/content/ServerNetPanelRenderer.js', callback, null);
+		  
+		    } catch(err) {
+		      /* The detection request failed. Lets try again as the request should not fail here */
+		      dump('Error trying to detect FirePHPServer at ['+url+']. We will try again!');
+		    }							
+							
+							
+            }
+          }
+        }  	
+  	
+  }
 
 
 
