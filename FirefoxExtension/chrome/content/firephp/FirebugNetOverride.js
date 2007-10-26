@@ -148,26 +148,20 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
             }
         }
 				
-        if (hasClass(tab, "netInfoServerTab") && file.loaded && !netInfoBox.responsePresented)
+        if (hasClass(tab, "netInfoServerTab") && file.loaded && !netInfoBox.serverPresented)
         {
-            netInfoBox.responsePresented = true;
+            netInfoBox.serverPresented = true;
 
-            var responseTextBox = getChildByClass(netInfoBox, "netInfoResponseText");
-            if (file.category == "image")
-            {
-                var responseImage = netInfoBox.ownerDocument.createElement("img");
-                responseImage.src = file.href;
-                responseTextBox.replaceChild(responseImage, responseTextBox.firstChild);
-            }
-            else if (!(file.category in binaryCategoryMap))
-            {
-                var text = file.responseText
-                    ? file.responseText
-                    : context.sourceCache.loadText(file.href);
-                
-                if (text)
-                    insertWrappedText(text, responseTextBox);
-            }
+
+//alert(file.href);
+            var responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
+
+						for( var index in file.responseHeaders ) {
+							if(file.responseHeaders[index].name=='X-PINF-org.firephp-Data') {
+		            insertWrappedText(FirePHPLib.urlDecode(file.responseHeaders[index].value), responseTextBox);
+							}
+						}
+            
         }				
     }	
 });
