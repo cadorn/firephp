@@ -5,8 +5,12 @@
 
 FBL.ns(function() { with (FBL) {
 
-//alert(Firebug.NetMonitor.NetInfoBody.tag);		
-		
+
+/* Only override the net code for firebug version 1.01 */
+
+if(top.Firebug.version=='1.01') {
+	
+			
 const binaryCategoryMap =
 {
     "image": 1,
@@ -152,124 +156,60 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
         {
             netInfoBox.serverPresented = true;
 
-
-//alert(file.href);
             var responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
 
+						var data = '';
+						var mask = '';
+						
 						for( var index in file.responseHeaders ) {
-							if(file.responseHeaders[index].name=='X-PINF-org.firephp-Data') {
-		            parseAndPrintData(FirePHPLib.urlDecode(file.responseHeaders[index].value), responseTextBox);
+							
+							if(file.responseHeaders[index].name=='FirePHP-Data') {
+								data += file.responseHeaders[index].value;
+							} else
+							if(file.responseHeaders[index].name.substr(0,13)=='FirePHP-Data-') {
+								data += file.responseHeaders[index].value;
+							} else							
+							if(file.responseHeaders[index].name=='FirePHP-Mask') {
+								/* Ensure that mask is from same domain as file for security reasons */
+								if(FirebugLib.getDomain(file.href) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
+									mask = file.responseHeaders[index].value;
+								}
 							}
 						}
             
+            parseAndPrintData(data, mask, responseTextBox);
         }				
     }	
 });
 
 
-function parseAndPrintData(Data,responseTextBox) {
+function parseAndPrintData(Data, Mask, responseTextBox) {
         
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(Data, "text/xml");
-				
-        if(doc) {
-        
-          var applicationID = null;
-          var requestID = null;
-          var anchor = null;
-        
-          var findPattern = "//firephp[attribute::version=\"0.2\"]/application";
-          var nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
-          if(nodes) {
-            while (res = nodes.iterateNext()) {
-              applicationID = res.getAttribute('id');
-            }
-          }
-          findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request";
-          nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null ); 
-          if(nodes) {
-            while (res = nodes.iterateNext()) {
-              requestID = res.getAttribute('id');
-              anchor = res.getAttribute('anchor');
-              if(!anchor) anchor = '';
-            }
-          }
-          if(requestID) {
-
-            var requestData = FirePHP.FirePHPRequestHandler.getData(requestID);
-            /* Create the request data object if we dont already have one for this request */
-            if(!requestData) {
-              requestData = FirePHP.FirePHPRequestHandler.data[requestID] = new FirePHP.FirePHPRequestData();
-              requestData.setRequestID(requestID);
-            }
-            requestData.setApplicationID(applicationID);
-        
-            var findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/data[attribute::type=\"html\"]";
-            var node = document.evaluate( findPattern, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE , null ); 
-            if(node) {
-              if(node.singleNodeValue.textContent) {
-                //requestData.setData(node.singleNodeValue.textContent);
-              }
-            }
-            
-            findPattern = "//firephp[attribute::version=\"0.2\"]/application[attribute::id=\""+applicationID+"\"]/request[attribute::id=\""+requestID+"\"]/variable";
-            nodes = document.evaluate( findPattern, doc, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE , null ); 
-            if(nodes) {
-							var html = "";
-
-//							html = html + '<script type="application/x-javascript" src="chrome://firephp/content/ServerNetPanelRenderer.js"/>';
-							
-							//html = html + '<script type="application/x-javascript">';
-							
-							//html = html + '</script>';
-							
-//							dump(html);
-							
-//							responseTextBox.innerHTML = html;
-							
-		    try {
-		  
-		      var callback =
-		      {
-		        success: function(Response) {
-//					      	alert(Response.responseText);
-							responseTextBox.innerHTML = Response.responseText;
-									
-					  },
-		        failure: function(Response) {
-							
-							eval(Response.responseText);
-							
-							
-              while (res = nodes.iterateNext()) {
-								
-								//html = html + "renderLine('[ "+res.getAttribute('label')+"]');\n";
-								if(res.textContent) {
-									setVar(res.textContent);
-								//	html = html + "document.write('"+res.textContent+"');\n";
-								}
-              }
-							
-							responseTextBox.innerHTML = renderServerData();
-					  },
-		        argument: 'chrome://firephp/content/ServerNetPanelRenderer.js',
-		        timeout: 5000,
-		        scope: this
-		      }
-		  
-		      YAHOO.util.Connect.asyncRequest('GET', 'chrome://firephp/content/ServerNetPanelRenderer.js', callback, null);
-		  
-		    } catch(err) {
-		      /* The detection request failed. Lets try again as the request should not fail here */
-		      dump('Error trying to detect FirePHPServer at ['+url+']. We will try again!');
-		    }							
-							
-							
-            }
-          }
-        }  	
-  	
-  }
+	if(!Mask) {
+		Mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
+	}
+	
+	jQuery.ajax({
+		type: "GET",
+		url: Mask,
+		success: function(ReturnData){
+			var html = '';
+			var data = Data;
+			eval(ReturnData);
+			responseTextBox.innerHTML = html;
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown){
+			if(Mask.substr(0,9)=='chrome://') {
+				var html = '';
+				var data = Data;
+				eval(XMLHttpRequest.responseText);
+				responseTextBox.innerHTML = html;
+			} else {
+				responseTextBox.innerHTML = 'Error[1] loading mask from: '+Mask;
+			}
+		}
+	});
+}
 
 
 
@@ -302,6 +242,8 @@ function insertWrappedText(text, textBox)
     }
 
     textBox.innerHTML = html.join("");    
+}
+
 }
 
 }});

@@ -1,3 +1,4 @@
+<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,35 +34,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-FirePHPChrome.UI.Toolbar = {
+$data = $_SERVER;
 
-	name: null,
-	definition: null,
-	container_element: null,
+$data_str = json_encode($data);
 
-	_buildUI: function(Name,Definition,ContainerElement) {
-		this.name = Name;
-		this.definition = Definition;
-		this.container_element = ContainerElement;
+header('FirePHP-Data: '.substr($data_str,0,strlen($data_str)/2));
+header('FirePHP-Data-1: '.substr($data_str,strlen($data_str)/2));
 
-    /* Remove any old items already present in the bar */
-    try {
-      if(this.container_element.itemMap) {
-        for( var name in this.container_element.itemMap ) {
-          this.container_element.removeChild(this.container_element.itemMap[name]);
-        	this.container_element.itemMap = FirePHPLib.removeKey(this.container_element.itemMap,name);
-        }
-      }    
-    } catch(err) {}
+//header('FirePHP-Mask: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-3).'js');
 
-		if(!this.definition.item[0]) {
-			this.definition.item = new Array(this.definition.item);
-		}
-		for( var index in this.definition.item ) {
-			var info = FirePHPLib.getXMLTreeNodeAttributes(this.definition.item[index]);
-			info['group'] = this.name;
-			this.container_element.addItem(info);
-		}
-	}
+var_dump($data);
 
-};
+?>
