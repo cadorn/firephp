@@ -1,4 +1,8 @@
 
+  - Implemented data rendering in Server tab where data is fetched from response headers
+	- Added "Server" tab to Firebug's Net panel requests
+	- Abandoned previous idea in favor of simplicity
+
   - Changed PINF-org.firephp-* headers to X-PINF-org.firephp-*
   - Updated UI design
   - Added variable inspector and viewer
