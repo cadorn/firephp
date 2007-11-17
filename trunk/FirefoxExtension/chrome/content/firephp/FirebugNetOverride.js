@@ -177,7 +177,11 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 							}
 						}
             
-            parseAndPrintData(data, mask, responseTextBox);
+						if(data) {
+	            parseAndPrintData(data, mask, responseTextBox);
+						} else {
+							responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response!';
+						}
         }				
     }	
 });
