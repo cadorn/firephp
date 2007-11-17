@@ -36,6 +36,8 @@
 
 $data = $_SERVER;
 
+$data = array('VarName'=>'VarValue');
+
 $data_str = json_encode($data);
 
 header('FirePHP-Data: '.substr($data_str,0,strlen($data_str)/2));
