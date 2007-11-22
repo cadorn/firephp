@@ -1,2 +1,0 @@
-#labels Featured
-You can find a demo of FirePHP here: http://www.firephp.org/Demo/
