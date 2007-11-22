@@ -8,7 +8,7 @@ FBL.ns(function() { with (FBL) {
 
 /* Only override the net code for firebug version 1.01 */
 
-if(top.Firebug.version=='1.01') {
+if(top.Firebug.version=='1.05') {
 	
 			
 const binaryCategoryMap =
