@@ -1,6 +1,0 @@
-Options +FollowSymLinks -MultiViews
-RewriteEngine on
-
-RewriteBase /
-
-RewriteRule		^PINF/org.firephp/Capabilities$		FirePHPCapabilities.php [QSA,L]
