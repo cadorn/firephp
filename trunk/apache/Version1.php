@@ -36,12 +36,15 @@
 
 $data = $_SERVER;
 
-$data = array('VarName'=>'VarValue');
+$data = array('VarName'=>'VarValue22');
 
 $data_str = json_encode($data);
 
-header('FirePHP-Data: '.substr($data_str,0,strlen($data_str)/2));
-header('FirePHP-Data-1: '.substr($data_str,strlen($data_str)/2));
+header('Firephp-data: '.$data_str);
+
+
+//header('FirePHP-data: '.substr($data_str,0,strlen($data_str)/2));
+//header('FirePHP-data-1: '.substr($data_str,strlen($data_str)/2));
 
 //header('FirePHP-Mask: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-3).'js');
 

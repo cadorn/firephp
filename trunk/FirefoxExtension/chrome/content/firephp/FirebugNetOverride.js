@@ -160,16 +160,19 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 
 						var data = '';
 						var mask = '';
+						var name = '';
 						
 						for( var index in file.responseHeaders ) {
 							
-							if(file.responseHeaders[index].name=='FirePHP-Data') {
+							name = file.responseHeaders[index].name.toLowerCase();
+							
+							if(name=='firephp-data') {
 								data += file.responseHeaders[index].value;
 							} else
-							if(file.responseHeaders[index].name.substr(0,13)=='FirePHP-Data-') {
+							if(name.substr(0,13)=='firephp-data-') {
 								data += file.responseHeaders[index].value;
 							} else							
-							if(file.responseHeaders[index].name=='FirePHP-Mask') {
+							if(name=='firephp-mask') {
 								/* Ensure that mask is from same domain as file for security reasons */
 								if(FirebugLib.getDomain(file.href) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
 									mask = file.responseHeaders[index].value;
