@@ -1,4 +1,6 @@
 
+
+	- Updated to ignore case of header names
   - Implemented data rendering in Server tab where data is fetched from response headers
 	- Added "Server" tab to Firebug's Net panel requests
 	- Abandoned previous idea in favor of simplicity
