@@ -1,0 +1,10 @@
+
+
+- Allow enable/disable of FirePHP per domain for security reasons
+- Only send FirePHP accept headers when Firebug and FirePHP are enabled for the domain
+
+- Introduce FirePHP-Parser header with URL to javascript that parses FirePHP data after every request.
+  This can then insert data into Firebug console automatically and also work with the mask to set specific variables
+  to watch so they are automatically inserted into Firebug console under their own PHP/Server log type.
+  
+  
