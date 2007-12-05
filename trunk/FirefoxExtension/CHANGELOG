@@ -1,4 +1,5 @@
 
+	- Only send FirePHP accept and user agent headers when firebug is enabled
 	- Changed header name from FirePHP-Mask to FirePHP-RendererURL
 	- Added support for javascript in the rendered HTML
 	- Updated to ignore case of header names
