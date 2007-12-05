@@ -1,5 +1,5 @@
 
-	- Implemented explicit enable for FirePHP for each host and allowed sites menu & dialog
+	- Implemented explicit enable for each host and allowed sites menu & dialog
 	- Only send FirePHP accept and user agent headers when firebug is enabled
 	- Changed header name from FirePHP-Mask to FirePHP-RendererURL
 	- Added support for javascript in the rendered HTML
