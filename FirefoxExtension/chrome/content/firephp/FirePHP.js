@@ -65,3 +65,26 @@ var FirePHP = top.FirePHP = {
     } catch (err) {}
   }
 }
+
+
+
+FBL.ns(function() { with (FBL) {
+
+Firebug.FirePHP = extend(Firebug.Module,
+{
+  enable: function()
+  {
+		FirePHP.enable();
+  },
+  
+  disable: function()
+  {
+		FirePHP.disable();
+  }		
+		   
+});
+
+Firebug.registerModule(Firebug.FirePHP);
+
+}});
+    
