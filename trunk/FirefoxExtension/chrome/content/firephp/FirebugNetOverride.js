@@ -182,10 +182,14 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 						
 						var hash = hex_md5(file.href);
 						
-						if(data) {
-	            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+						if(top.FirePHP.isURIAllowed(FirebugLib.getDomain(file.href))) {
+							if(data) {
+		            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+							} else {
+								responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response! Visit <a target="_blank" href="http://www.firephp.org/">http://www.firephp.org/</a> for more information.';
+							}
 						} else {
-							responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response!';
+							responseTextBox.innerHTML = '<br><br><a class="dialogLink" onclick="top.FirePHP.enableSite(\''+FirebugLib.getDomain(file.href)+'\'); this.innerHTML=\'Enabled! Will start working with next request.\';" href="#">Enable FirePHP for host: '+FirebugLib.getDomain(file.href)+'</a><br><br><br>';
 						}
         }				
     }	

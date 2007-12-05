@@ -33,6 +33,21 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+
+const nsIPrefBranch2 = FirebugLib.CI("nsIPrefBranch2");
+const nsIPermissionManager = FirebugLib.CI("nsIPermissionManager");
+
+const PrefService = FirebugLib.CC("@mozilla.org/preferences-service;1");
+const PermManager = FirebugLib.CC("@mozilla.org/permissionmanager;1");
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+const prefs = PrefService.getService(nsIPrefBranch2);
+const pm = PermManager.getService(nsIPermissionManager);
+
+const DENY_ACTION = nsIPermissionManager.DENY_ACTION;
+const ALLOW_ACTION = nsIPermissionManager.ALLOW_ACTION;
+
 var FirePHP = top.FirePHP = {
 
   version: '0.0.5',
@@ -63,7 +78,37 @@ var FirePHP = top.FirePHP = {
     try {
       Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
     } catch (err) {}
-  }
+  },
+	
+  openPermissions: function()
+  {
+      var params = {
+          permissionType: "firephp",
+          windowTitle: "FirePHP Allowed Sites",
+          introText: "Choose which web sites are allowed to be used with FirePHP.",
+          blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
+      };
+
+      FirebugLib.openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",
+          "", params);
+  },
+	
+  isURIAllowed: function(host)
+  {
+    var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
+    var uri = ioService.newURI('http://'+host, null, null);
+    return uri && 
+        (pm.testPermission(uri, "firephp") == ALLOW_ACTION);
+  },
+
+  enableSite: function(host)
+  {
+    var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
+
+    var uri = ioService.newURI('http://'+host, null, null);
+    pm.add(uri, "firephp", ALLOW_ACTION);
+  }	
+	
 }
 
 
