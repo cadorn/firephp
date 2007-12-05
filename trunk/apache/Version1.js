@@ -1,14 +1,17 @@
 
+data = eval('(' + data + ')');
 
-html = '<div id="'+key+'-script-div"></div>'+data+'<br><br><p id="testP" onclick="yup(\''+key+'\')">Click Me!</p>';
+html = '<div id="'+key+'-message-div"></div>';
+html += '<p onclick="showMessage(\''+key+'\')">Click Me ['+key+']!</p>';
+html += '<br>';
 
-
+for( var index in data ) {
+    html += index+" = "+data[index]+"<br>";
+}
 
 FirePHPRenderer.Init = function() {
-
-	document.yup = function(Key) {
-		$(Key+'-script-div',document).innerHTML += 'Yes!!!';
+	document.showMessage = function(Key) {
+		$(Key+'-message-div',document).innerHTML = 'You clicked me :)';
 	}
-
 }
 
