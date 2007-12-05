@@ -1,9 +1,14 @@
 
 
-
-html = data;
-
-Firebug.Console.log(data);
+html = '<div id="'+key+'-script-div"></div>'+data+'<br><br><p id="testP" onclick="yup(\''+key+'\')">Click Me!</p>';
 
 
-//html = '<iframe width="100%" height="200" src="http://www.google.com/"></iframe>';
+
+FirePHPRenderer.Init = function() {
+
+	document.yup = function(Key) {
+		$(Key+'-script-div',document).innerHTML += 'Yes!!!';
+	}
+
+}
+
