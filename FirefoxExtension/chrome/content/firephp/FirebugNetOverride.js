@@ -189,7 +189,13 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 								responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response! Visit <a target="_blank" href="http://www.firephp.org/">http://www.firephp.org/</a> for more information.';
 							}
 						} else {
-							responseTextBox.innerHTML = '<br><br><a class="dialogLink" onclick="top.FirePHP.enableSite(\''+FirebugLib.getDomain(file.href)+'\'); this.innerHTML=\'Enabled! Will start working with next request.\';" href="#">Enable FirePHP for host: '+FirebugLib.getDomain(file.href)+'</a><br><br><br>';
+							responseTextBox.innerHTML = '<p>FirePHP is disabled for host <b>'+FirebugLib.getDomain(file.href)+'</b>!</p>'+
+																					'<p>To enable FirePHP for this host <a onclick="top.FirePHP.enableSite(\''+FirebugLib.getDomain(file.href)+'\'); alert(\'FirePHP has been enabled for '+FirebugLib.getDomain(file.href)+' and will start working with the next request from this host!\');" href="#">click here</a>.</p>'+
+																					'<p><font color="red"><b>WARNING:</b> FirePHP works by allowing a server script to insert code into your browser. <b>Only enable FirePHP for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>'+
+																					'<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>'+
+																					'<b>WITHOUT WARRANTY NOR LIABILITY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>'+
+																					'You can view the License here: <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a></p>';
+																					
 						}
         }				
     }	
