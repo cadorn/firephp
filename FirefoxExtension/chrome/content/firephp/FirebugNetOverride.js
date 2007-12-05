@@ -161,43 +161,72 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 						var data = '';
 						var mask = '';
 						var name = '';
+						var url = '';
+						var item_index = 0;
 						
-						for( var index in file.responseHeaders ) {
-							
-							name = file.responseHeaders[index].name.toLowerCase();
-							
-							if(name=='firephp-data') {
-								data += file.responseHeaders[index].value;
-							} else
-							if(name.substr(0,13)=='firephp-data-') {
-								data += file.responseHeaders[index].value;
-							} else							
-							if(name=='firephp-rendererurl' || name=='firephp-mask') {
-								/* Ensure that mask is from same domain as file for security reasons */
-								if(FirebugLib.getDomain(file.href) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
-									mask = file.responseHeaders[index].value;
+						/* Net Panel */
+						if(file.href) {
+							url = file.href;
+							for( var i=0 ; i<file.row.parentNode.childNodes.length ; i++ ) {
+								if(file.row.parentNode.childNodes[i]==file.row) {
+									item_index = 'n'+i;
+									break;
+								}
+							}
+						} else
+						/* Console Panel */
+						if(file.request && file.request.channel && file.request.channel.name) {
+							url = file.request.channel.name;							
+							for( var i=0 ; i<file.logRow.parentNode.childNodes.length ; i++ ) {
+								if(file.logRow.parentNode.childNodes[i]==file.logRow) {
+									item_index = 'c'+i;
+									break;
 								}
 							}
 						}
 						
-						var hash = hex_md5(file.href);
-						
-						if(top.FirePHP.isURIAllowed(FirebugLib.getDomain(file.href))) {
-							if(data) {
-		            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
-							} else {
-								responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response! Visit <a target="_blank" href="http://www.firephp.org/">http://www.firephp.org/</a> for more information.';
+						if(url) {
+
+							for( var index in file.responseHeaders ) {
+								
+								name = file.responseHeaders[index].name.toLowerCase();
+								
+								if(name=='firephp-data') {
+									data += file.responseHeaders[index].value;
+								} else
+								if(name.substr(0,13)=='firephp-data-') {
+									data += file.responseHeaders[index].value;
+								} else							
+								if(name=='firephp-rendererurl' || name=='firephp-mask') {
+									/* Ensure that mask is from same domain as file for security reasons */
+									if(FirebugLib.getDomain(url) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
+										mask = file.responseHeaders[index].value;
+									}
+								}
 							}
-						} else {
-							responseTextBox.innerHTML = '<p>FirePHP is disabled for host <b>'+FirebugLib.getDomain(file.href)+'</b>.</p>'+
-																					'<p>To enable FirePHP for this host <a onclick="top.FirePHP.enableSite(\''+FirebugLib.getDomain(file.href)+'\'); alert(\'FirePHP has been enabled for '+FirebugLib.getDomain(file.href)+' and will start working with the next request from this host!\');" href="#">click here</a>.</p>'+
-																					'<p><font color="red"><b>WARNING:</b> FirePHP works by allowing a server script to insert code into your browser. <b>Only enable FirePHP for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>'+
-																					'<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>'+
-																					'<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>'+
-																					'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>'+
-																					'By using FirePHP you agree to all terms of the Mozilla Public License.<br>'+
-																					'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
-																					
+							
+							var domain = FirebugLib.getDomain(url);
+							var hash = hex_md5(item_index+':'+url);
+							
+dump(item_index+':'+url+' = '+hash+"\n");							
+							
+							if(top.FirePHP.isURIAllowed(domain)) {
+								if(data) {
+			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+								} else {
+									responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response! Visit <a target="_blank" href="http://www.firephp.org/">http://www.firephp.org/</a> for more information.';
+								}
+							} else {
+								responseTextBox.innerHTML = '<p>FirePHP is disabled for host <b>'+domain+'</b>.</p>'+
+																						'<p>To enable FirePHP for this host <a onclick="top.FirePHP.enableSite(\''+domain+'\'); alert(\'FirePHP has been enabled for '+domain+' and will start working with the next request from this host!\');" href="#">click here</a>.</p>'+
+																						'<p><font color="red"><b>WARNING:</b> FirePHP works by allowing a server script to insert code into your browser. <b>Only enable FirePHP for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>'+
+																						'<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>'+
+																						'<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>'+
+																						'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>'+
+																						'By using FirePHP you agree to all terms of the Mozilla Public License.<br>'+
+																						'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
+																						
+							}
 						}
         }				
     }	

@@ -10,7 +10,7 @@
 
 	<script>
 
-		FirePHP.initialize();
+		top.FirePHP.initialize();
 	
 	</script>
 
@@ -23,7 +23,7 @@
         <menu id="menu_firephp" class="menuitem-iconic" image="chrome://firephp/skin/firephp16.png"
               label="FirePHP" insertafter="menu_firebug">
             <menupopup>
-                <menuitem label="AllowedSites" command="cmd_openFirephpPermissions"/>
+                <menuitem label="Allowed Sites..." command="cmd_openFirephpPermissions"/>
             </menupopup>
         </menu>
     </menupopup>

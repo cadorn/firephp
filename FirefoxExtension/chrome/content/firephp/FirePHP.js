@@ -45,9 +45,6 @@ const PermManager = FirebugLib.CC("@mozilla.org/permissionmanager;1");
 const prefs = PrefService.getService(nsIPrefBranch2);
 const pm = PermManager.getService(nsIPermissionManager);
 
-const DENY_ACTION = nsIPermissionManager.DENY_ACTION;
-const ALLOW_ACTION = nsIPermissionManager.ALLOW_ACTION;
-
 var FirePHP = top.FirePHP = {
 
   version: '0.0.5',
@@ -98,7 +95,7 @@ var FirePHP = top.FirePHP = {
     var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
     var uri = ioService.newURI('http://'+host, null, null);
     return uri && 
-        (pm.testPermission(uri, "firephp") == ALLOW_ACTION);
+        (pm.testPermission(uri, "firephp") == nsIPermissionManager.ALLOW_ACTION);
   },
 
   enableSite: function(host)
@@ -106,7 +103,7 @@ var FirePHP = top.FirePHP = {
     var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
 
     var uri = ioService.newURI('http://'+host, null, null);
-    pm.add(uri, "firephp", ALLOW_ACTION);
+    pm.add(uri, "firephp", nsIPermissionManager.ALLOW_ACTION);
   }	
 	
 }
