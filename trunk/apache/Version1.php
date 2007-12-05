@@ -46,7 +46,7 @@ header('Firephp-data: '.$data_str);
 //header('FirePHP-data: '.substr($data_str,0,strlen($data_str)/2));
 //header('FirePHP-data-1: '.substr($data_str,strlen($data_str)/2));
 
-header('FirePHP-Mask: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-3).'js');
+header('FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-3).'js');
 
 var_dump($data);
 

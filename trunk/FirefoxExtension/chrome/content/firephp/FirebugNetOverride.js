@@ -172,7 +172,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 							if(name.substr(0,13)=='firephp-data-') {
 								data += file.responseHeaders[index].value;
 							} else							
-							if(name=='firephp-renderer' || name=='firephp-mask') {
+							if(name=='firephp-rendererurl' || name=='firephp-mask') {
 								/* Ensure that mask is from same domain as file for security reasons */
 								if(FirebugLib.getDomain(file.href) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
 									mask = file.responseHeaders[index].value;

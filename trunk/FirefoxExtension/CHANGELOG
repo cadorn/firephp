@@ -1,4 +1,5 @@
 
+	- Changed header name from FirePHP-Mask to FirePHP-RendererURL
 	- Added support for javascript in the rendered HTML
 	- Updated to ignore case of header names
   - Implemented data rendering in Server tab where data is fetched from response headers
