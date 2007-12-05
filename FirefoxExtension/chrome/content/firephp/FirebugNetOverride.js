@@ -172,16 +172,18 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 							if(name.substr(0,13)=='firephp-data-') {
 								data += file.responseHeaders[index].value;
 							} else							
-							if(name=='firephp-mask') {
+							if(name=='firephp-renderer' || name=='firephp-mask') {
 								/* Ensure that mask is from same domain as file for security reasons */
 								if(FirebugLib.getDomain(file.href) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
 									mask = file.responseHeaders[index].value;
 								}
 							}
 						}
-            
+						
+						var hash = hex_md5(file.href);
+						
 						if(data) {
-	            parseAndPrintData(data, mask, responseTextBox);
+	            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
 						} else {
 							responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response!';
 						}
@@ -190,27 +192,50 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 });
 
 
-function parseAndPrintData(Data, Mask, responseTextBox) {
+function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
         
 	if(!Mask) {
 		Mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
 	}
 	
+	if(!document.FirePHPRenderer) {
+		document.FirePHPRenderer = function() {
+			var initialized = false;
+			return {
+				_Init: function() {
+					if(this.initialized) return;
+					this.Init();
+					this.initialized = true;
+				},
+				Init : function() {
+				}
+			}
+		}();
+	}
+	
+	var context = {document:doc,window:doc.defaultView,key:'k'+hash,FirePHPRenderer:document.FirePHPRenderer};
+	
 	jQuery.ajax({
 		type: "GET",
 		url: Mask,
 		success: function(ReturnData){
-			var html = '';
-			var data = Data;
-			eval(ReturnData);
-			responseTextBox.innerHTML = html;
+			context.html = '';
+			context.data = Data;
+			with(context) {
+				eval(ReturnData);
+			}
+			responseTextBox.innerHTML = context.html;
+			context.FirePHPRenderer._Init();
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
 			if(Mask.substr(0,9)=='chrome://') {
-				var html = '';
-				var data = Data;
-				eval(XMLHttpRequest.responseText);
-				responseTextBox.innerHTML = html;
+				context.html = '';
+				context.data = Data;
+				with(context) {
+					eval(XMLHttpRequest.responseText);
+				}
+				responseTextBox.innerHTML = context.html;
+				context.FirePHPRenderer._Init();
 			} else {
 				responseTextBox.innerHTML = 'Error[1] loading mask from: '+Mask;
 			}
