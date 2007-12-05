@@ -131,6 +131,13 @@ var FirePHPLib = top.FirePHPLib = {
   },
   
   
+getProtocol: function(url)
+{
+    var m = /([^:]+):\/{1,3}/.exec(url);
+    return m ? m[1] : "";
+},
+	
+	
   
 /**
 *

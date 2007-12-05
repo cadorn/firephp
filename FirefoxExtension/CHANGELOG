@@ -1,7 +1,11 @@
 
+	- Implemented explicit enable for FirePHP for each host and allowed sites menu & dialog
 	- Only send FirePHP accept and user agent headers when firebug is enabled
 	- Changed header name from FirePHP-Mask to FirePHP-RendererURL
 	- Added support for javascript in the rendered HTML
+
+2007-12-04 - Release Version: 0.0.5.22
+
 	- Updated to ignore case of header names
   - Implemented data rendering in Server tab where data is fetched from response headers
 	- Added "Server" tab to Firebug's Net panel requests

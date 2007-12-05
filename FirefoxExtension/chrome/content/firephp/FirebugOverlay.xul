@@ -14,4 +14,18 @@
 	
 	</script>
 
+    <commandset id="mainCommandSet">
+        <command id="cmd_openFirephpPermissions" oncommand="FirePHP.openPermissions()"/>
+    </commandset>
+
+
+    <menupopup id="menu_ToolsPopup">
+        <menu id="menu_firephp" class="menuitem-iconic" image="chrome://firephp/skin/firephp16.png"
+              label="FirePHP" insertafter="menu_firebug">
+            <menupopup>
+                <menuitem label="AllowedSites" command="cmd_openFirephpPermissions"/>
+            </menupopup>
+        </menu>
+    </menupopup>
+
 </overlay>
