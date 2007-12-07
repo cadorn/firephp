@@ -208,8 +208,6 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 							var domain = FirebugLib.getDomain(url);
 							var hash = hex_md5(item_index+':'+url);
 							
-dump(item_index+':'+url+' = '+hash+"\n");							
-							
 							if(top.FirePHP.isURIAllowed(domain)) {
 								if(data) {
 			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
