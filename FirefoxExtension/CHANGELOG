@@ -1,5 +1,5 @@
 
-2007-12-05 - Release Version: 0.0.5.25
+2007-12-07 - Release Version: 0.0.5.26
 
 	- Finished full jQuery support for renderer
 	- Bugfix to make FirePHP work when Firebug is detached in its own window
