@@ -36,6 +36,7 @@
 
 $data = $_SERVER;
 
+
 $data = array('VarName'=>'VarValue22','var2'=>'val2');
 
 $data_str = json_encode($data);
