@@ -34,6 +34,19 @@
  * ***** END LICENSE BLOCK ***** */
 
 
+var externalMode = (window.location == "chrome://firebug/content/firebug.xul");
+
+
+if(externalMode) {
+	var detachArgs = window.arguments[0];
+	var FBL = detachArgs.FBL;            
+	var Firebug = detachArgs.Firebug;
+}
+
+
+FBL.ns(function() { with (FBL) {
+
+
 const nsIPrefBranch2 = FirebugLib.CI("nsIPrefBranch2");
 const nsIPermissionManager = FirebugLib.CI("nsIPermissionManager");
 
@@ -110,7 +123,6 @@ var FirePHP = top.FirePHP = {
 
 
 
-FBL.ns(function() { with (FBL) {
 
 Firebug.FirePHP = extend(Firebug.Module,
 {
