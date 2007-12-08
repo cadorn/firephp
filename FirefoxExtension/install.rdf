@@ -14,7 +14,7 @@
                    em:description="PHP Developer Tool"
                    em:creator="Christoph Dorn"
                    em:homepageURL="http://www.firephp.org/"
-                   em:updateURL="http://www.firephp.org/FirefoxExtensionUpdateCheck?id=%ITEM_ID%&reqversion=%REQ_VERSION%&version=%ITEM_VERSION%&maxappversion=%ITEM_MAXAPPVERSION%&status=%ITEM_STATUS%&appid=%APP_ID%&appversion=%APP_VERSION%&appos=%APP_OS%&appabi=%APP_ABI%">
+                   em:updateURL="http://www.firephp.org/FirefoxExtensionUpdateCheck?id=%ITEM_ID%">
     <em:targetApplication RDF:resource="rdf:#$U.OeR"/>
   </RDF:Description>
 </RDF:RDF>
