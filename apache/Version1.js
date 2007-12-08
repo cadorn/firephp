@@ -23,14 +23,16 @@ for( var index in data ) {
 
 html += '</div>';
 
+/* Called once when FirePHP initializes */
 FirePHPRenderer.Init = function() {
 }
 
+/* Called once for each request when "Server" tab is selected */
 FirePHPRenderer.InitRequest = function(Key) {
-	$('#'+Key+' DIV.name').bind("click", function(e) {
-		var obj = $('#'+Key+' #'+Key+$(this).attr('key'));
-		obj.css('display',
+  $('#'+Key+' DIV.name').bind("click", function(e) {
+    var obj = $('#'+Key+' #'+Key+$(this).attr('key'));
+    obj.css('display',
             (obj.css('display')=='none')?
-						'inline':'none');
-	});
+            'inline':'none');
+  });
 }
