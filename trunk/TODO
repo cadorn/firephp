@@ -1,10 +1,12 @@
 
 
-- Allow enable/disable of FirePHP per domain for security reasons
-- Only send FirePHP accept headers when Firebug and FirePHP are enabled for the domain
+- Refactor FirePHPRenderer API to introduce:
+	 - ProcessRequest - to be called automatically after every request load
+	 - RenderRequest - to be called when "Server" tab is clicked
+	 - SetRequestHTML - to be called by renderer to make the rendered HTML visible for the request
+	 
+- Initialize a new Renderer object for every unique renderer URL. When the requests
+  are handled call the appropriate renderer. Allow different renderers to exist
+  at the same time for different request URL's.
 
-- Introduce FirePHP-Parser header with URL to javascript that parses FirePHP data after every request.
-  This can then insert data into Firebug console automatically and also work with the mask to set specific variables
-  to watch so they are automatically inserted into Firebug console under their own PHP/Server log type.
-  
-  
+- Allow the ProcessRequest method to render debug data in dedicated FirePHP panel.
