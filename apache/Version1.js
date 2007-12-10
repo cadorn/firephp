@@ -13,7 +13,7 @@ html = '<style>                                  '+
        '  #'+key+' DIV.hide { display: none;   } '+
        '</style>                                 '+
        '<div id="'+key+'">                       ';
-			 
+             
 for( var index in data ) {
   html += '<div class="name" key="'+index+'">'+index+'</div>';
   html += '<div class="hide" id="'+key+''+index+'">         '+
@@ -23,14 +23,20 @@ for( var index in data ) {
 
 html += '</div>';
 
-/* Called once when FirePHP initializes */
+/* 
+ * Called once when FirePHP initializes
+ */
 FirePHPRenderer.Init = function() {
 }
 
-/* Called once for each request when "Server" tab is selected */
+/* 
+ * Called once for each request when "Server" tab is clicked
+ */
 FirePHPRenderer.InitRequest = function(Key) {
+	Firebug.Console.log('sdfsdfsdfsdfsd');
   $('#'+Key+' DIV.name').bind("click", function(e) {
-    var obj = $('#'+Key+' #'+Key+$(this).attr('key'));
+    
+		$('#'+Key+' #'+Key+$(this).attr('key')).toggle();
     obj.css('display',
             (obj.css('display')=='none')?
             'inline':'none');

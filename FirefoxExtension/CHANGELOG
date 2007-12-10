@@ -1,4 +1,7 @@
 
+	
+	- Added current FirePHP version and OS info to update URL
+
 2007-12-07 - Release Version: 0.0.5.26
 
 	- Finished full jQuery support for renderer
