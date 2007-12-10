@@ -10,3 +10,9 @@
   at the same time for different request URL's.
 
 - Allow the ProcessRequest method to render debug data in dedicated FirePHP panel.
+
+
+- Test suite to allow testing of Renderers outside of Firebug (in main browser)
+  and thus allow debugging of renderer code using firebug.
+  
+ 
