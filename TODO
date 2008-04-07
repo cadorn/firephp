@@ -1,6 +1,4 @@
 
-- Add support for Firebug 1.1
-
 - Refactor FirePHPRenderer API to introduce:
 	 - ProcessRequest - to be called automatically after every request load
 	 - RenderRequest - to be called when "Server" tab is clicked
