@@ -25,6 +25,6 @@ FirePHPProcessor.ProcessRequest = function() {
       }
     }	
 
-    Firebug.Console.closeGroup(this.context);
+    Firebug.Console.closeGroup();
   } 	
 }
