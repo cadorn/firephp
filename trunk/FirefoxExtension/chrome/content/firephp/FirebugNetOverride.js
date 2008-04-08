@@ -456,13 +456,13 @@ function netInfoServerTab(netInfoBox, file, context) {
 								
 								name = file.responseHeaders[index].name.toLowerCase();
 								
-								if(name=='firephp-data') {
+								if(name=='x-firephp-data' || name=='firephp-data') {
 									data += file.responseHeaders[index].value;
 								} else
-								if(name.substr(0,13)=='firephp-data-') {
+								if(name.substr(0,15)=='x-firephp-data-' || name.substr(0,13)=='firephp-data-') {
 									data += file.responseHeaders[index].value;
 								} else							
-								if(name=='firephp-rendererurl' || name=='firephp-mask') {
+								if(name=='x-firephp-rendererurl' || name=='firephp-rendererurl' || name=='firephp-mask') {
 									/* Ensure that mask is from same domain as file for security reasons */
 									if(FirebugLib.getDomain(url) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
 										mask = file.responseHeaders[index].value;
@@ -477,7 +477,7 @@ function netInfoServerTab(netInfoBox, file, context) {
 								if(data) {
 			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
 								} else {
-									responseTextBox.innerHTML = '"FirePHP-Data" response header not found in request response! Visit <a target="_blank" href="http://www.firephp.org/">http://www.firephp.org/</a> for more information.';
+									responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response! Visit <a target="_blank" href="http://www.firephp.org/">http://www.firephp.org/</a> for more information.';
 								}
 							} else {
 								responseTextBox.innerHTML = '<p>FirePHP is disabled for host <b>'+domain+'</b>.</p>'+
@@ -599,7 +599,7 @@ function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
 					FirePHPRenderer.InitRequest(key);
 				}
 			} else {
-				responseTextBox.innerHTML = 'Error[1] loading mask from: '+Mask;
+				responseTextBox.innerHTML = 'Error loading renderer from: '+Mask;
 			}
 		}
 	});

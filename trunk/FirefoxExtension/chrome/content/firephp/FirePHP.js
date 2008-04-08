@@ -53,6 +53,23 @@ const nsIPermissionManager = FirebugLib.CI("nsIPermissionManager");
 const PrefService = FirebugLib.CC("@mozilla.org/preferences-service;1");
 const PermManager = FirebugLib.CC("@mozilla.org/permissionmanager;1");
 
+const observerService = CCSV("@mozilla.org/observer-service;1", "nsIObserverService");
+
+
+
+const nsIHttpChannel = CI("nsIHttpChannel")
+const nsIWebProgress = CI("nsIWebProgress")
+const nsIWebProgressListener = CI("nsIWebProgressListener")
+const nsISupportsWeakReference = CI("nsISupportsWeakReference")
+const nsISupports = CI("nsISupports")
+const STATE_TRANSFERRING = nsIWebProgressListener.STATE_TRANSFERRING;
+const STATE_IS_DOCUMENT = nsIWebProgressListener.STATE_IS_DOCUMENT;
+const STATE_STOP = nsIWebProgressListener.STATE_STOP;
+const STATE_IS_REQUEST = nsIWebProgressListener.STATE_IS_REQUEST;
+const NOTIFY_ALL = nsIWebProgress.NOTIFY_ALL;
+
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 const prefs = PrefService.getService(nsIPrefBranch2);
@@ -126,6 +143,8 @@ var FirePHP = top.FirePHP = {
 
 Firebug.FirePHP = extend(Firebug.Module,
 {
+	context: null,
+	
   enable: function()
   {
 		FirePHP.enable();
@@ -134,9 +153,234 @@ Firebug.FirePHP = extend(Firebug.Module,
   disable: function()
   {
 		FirePHP.disable();
-  }		
+  },		
+	
+
+  initContext: function(context)
+  {
+		this.context = context;
+    monitorContext(context);
+  },
+  destroyContext: function(context)
+  {
+    unmonitorContext(context);
+		this.context = null;
+  },
+	
+	
+	processRequest: function(Request) {
+	
+		var data = '';
+		var mask = '';
+		var name = '';
+		var url = Request.name;
+
+
+		var http = QI(Request, nsIHttpChannel);
+		
+    http.visitResponseHeaders({
+      visitHeader: function(name, value)
+      {
+				name = name.toLowerCase();
+
+				if(name=='x-firephp-data' || name=='firephp-data') {
+					data += value;
+				} else
+				if(name.substr(0,15)=='x-firephp-data-' || name.substr(0,13)=='firephp-data-') {
+					data += value;
+				} else							
+				if(name=='x-firephp-processurl') {
+					/* Ensure that mask is from same domain as file for security reasons */
+					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
+						mask = value;
+					}
+				}
+      }
+    });						
+			
+		var domain = FirebugLib.getDomain(url);
+
+		
+		if(data && (data = eval('(' + data + ')'))) {
+			
+			if(FirePHP.isURIAllowed(domain)) {
+					
+				if(!mask) {
+					mask = 'chrome://firephp/content/RequestProcessor.js';
+				}
+				
+				if(!this.FirePHPProcessor) {
+					this.FirePHPProcessor = function() {
+						var initialized = false;
+						return {
+							_Init: function() {
+								if(this.initialized) return;
+								this.Init();
+								this.initialized = true;
+							},
+							Init : function() {
+							},
+							ProcessRequest: function() {
+							},
+							logToFirebug: function(Type, Data) {
+								Firebug.FirePHP.logFormatted([Data], Type);
+							}
+						}
+					}();
+				}
+				
+				var proecessor_context = {FirePHPProcessor: this.FirePHPProcessor,
+											 Firebug: Firebug,
+											 data: data,
+											 context: this.context,
+											 url: url};
+
+				jQuery.ajax({
+					type: "GET",
+					url: mask,
+					success: function(ReturnData){
+
+						with (proecessor_context) {							
+							FirePHPProcessor.url = url;
+							FirePHPProcessor.data = data;
+							FirePHPProcessor.context = proecessor_context.context;
+
+							eval(ReturnData);
+
+							FirePHPProcessor._Init();
+							FirePHPProcessor.ProcessRequest();
+						}	
+			
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						if(mask.substr(0,9)=='chrome://') {
+	
+							with (proecessor_context) {
+								FirePHPProcessor.url = url;
+								FirePHPProcessor.data = data;
+								FirePHPProcessor.context = proecessor_context.context;
+
+								eval(XMLHttpRequest.responseText);
+							
+								FirePHPProcessor._Init();
+								FirePHPProcessor.ProcessRequest();
+							}	
+
+						} else {
+							
+							this.logFormatted(['Error loading processor from: '+mask], "warn");
+							
+						}
+					}
+				});		
+		
+			} else {
+			
+				this.logFormatted(['FirePHP is disabled for host ' + domain + '. Please enable it using the "Server" tab for a request from the same domain on the "Net" panel.'], "warn");
+			
+			}
+		}
+		
+	},
+
+  logFormatted: function(args, className)
+  {
+	  return Firebug.Console.logFormatted(args, this.context, className, null, null);
+  }	
 		   
 });
+
+
+
+function FirePHPProgress(context)
+{
+    this.context = context;
+}
+
+
+
+FirePHPProgress.prototype =
+{
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // nsISupports
+
+    QueryInterface: function(iid)
+    {
+        if (iid.equals(nsIWebProgressListener)
+            || iid.equals(nsISupportsWeakReference)
+            || iid.equals(nsISupports))
+        {
+            return this;
+        }
+
+        throw Components.results.NS_NOINTERFACE;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // nsIObserver
+
+    observe: function(request, topic, data)
+    {
+        request = QI(request, nsIHttpChannel);
+
+				Firebug.FirePHP.processRequest(request);
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // nsIWebProgressListener
+
+    onStateChange: function(progress, request, flag, status)
+    {
+        if (flag & STATE_TRANSFERRING && flag & STATE_IS_DOCUMENT)
+        {
+//						dump('FILE 3: '+request+"\n");
+        }
+        else if (flag & STATE_STOP && flag & STATE_IS_REQUEST)
+        {
+//						dump('FILE 4: '+request+"\n");
+        }
+    },
+
+    onProgressChange : function(progress, request, current, max, total, maxTotal)
+    {
+//			dump('FILE 5: '+request+"\n");
+    },
+
+    stateIsRequest: false,
+    onLocationChange: function() {},
+    onStatusChange : function() {},
+    onSecurityChange : function() {},
+    onLinkIconAvailable : function() {}
+};
+
+
+
+function monitorContext(context)
+{
+    if (!context.firephpProgress)
+    {
+        var listener = context.firephpProgress = new FirePHPProgress(context);
+
+//        context.browser.addProgressListener(listener, NOTIFY_ALL);
+//        observerService.addObserver(listener, "http-on-modify-request", false);
+        observerService.addObserver(listener, "http-on-examine-response", false);
+    }
+}
+
+function unmonitorContext(context)
+{
+    if (context.firephpProgress)
+    {
+//        if (context.browser.docShell)
+//            context.browser.removeProgressListener(context.firephpProgress, NOTIFY_ALL);
+
+//        observerService.removeObserver(context.firephpProgress, "http-on-modify-request", false);
+        observerService.removeObserver(context.firephpProgress, "http-on-examine-response", false);
+
+        delete context.firephpProgress;
+    }
+}
 
 Firebug.registerModule(Firebug.FirePHP);
 

@@ -39,15 +39,29 @@ $data = $_SERVER;
 
 //$data = array('VarName'=>'VarValue22','var2'=>'val2');
 
+if($_GET['var']==1) {
+	
+	$data = array('FirePHP.Firebug.Console'=>array(
+		array('log','This is a test log message'),
+		array('info','This is a test info message'),
+		array('warn','This is a test warn message'),
+		array('error','This is a test error message')
+		));
+	
+}
+
+
 $data_str = json_encode($data);
 
-header('Firephp-data: '.$data_str);
+header('X-Firephp-data: '.$data_str);
 
 
 //header('FirePHP-data: '.substr($data_str,0,strlen($data_str)/2));
 //header('FirePHP-data-1: '.substr($data_str,strlen($data_str)/2));
 
-header('FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-3).'js');
+header('X-FirePHP-ProcessURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Processor.js');
+
+header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
 
 var_dump($data);
 

@@ -33,12 +33,8 @@ FirePHPRenderer.Init = function() {
  * Called once for each request when "Server" tab is clicked
  */
 FirePHPRenderer.InitRequest = function(Key) {
-	Firebug.Console.log('sdfsdfsdfsdfsd');
   $('#'+Key+' DIV.name').bind("click", function(e) {
-    
 		$('#'+Key+' #'+Key+$(this).attr('key')).toggle();
-    obj.css('display',
-            (obj.css('display')=='none')?
-            'inline':'none');
   });
 }
+
