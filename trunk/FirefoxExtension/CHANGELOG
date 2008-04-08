@@ -1,5 +1,5 @@
 
-2008-04-07 - Release Version: 0.0.5.28
+2008-04-07 - Release Version: 0.0.5.29
 
 	- Implemented request processor that is called for every request in the background
 	- Renamed headers to start with X-...
