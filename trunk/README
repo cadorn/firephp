@@ -10,34 +10,11 @@ Client Side:
 
 
 ------------------------------------------------------
-	Sample Server Code (PHP)
-------------------------------------------------------
-
-<?php
-
-header('FirePHP-Data: [JSON String]');
-header('FirePHP-RendererURL: URL');
-
-?>
-
-
-------------------------------------------------------
-	Sample Mask File
-------------------------------------------------------
-
-/*
- * Variable: data		Contains data from FirePHP-Data header
- * Variable: html		Will be displayed in the panel
- */
-
-html = data;
-
-
-------------------------------------------------------
 	Help
 ------------------------------------------------------
 
-http://groups.google.com/group/FirePHP
+	- http://www.firephp.org/
+	- http://groups.google.com/group/FirePHP
 	
 	
 ------------------------------------------------------
