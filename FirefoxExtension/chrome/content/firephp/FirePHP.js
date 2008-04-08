@@ -77,7 +77,7 @@ const pm = PermManager.getService(nsIPermissionManager);
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.0.5',
+  version: '0.0.6',
 
   initialize: function() {
 
