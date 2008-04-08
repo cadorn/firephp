@@ -1,5 +1,8 @@
 
+2008-04-07 - Release Version: 0.0.5.27
 
+	- Implemented request processor that is called for every request in the background
+	- Renamed headers to start with X-...
 	- Added support for Firebug 1.1 (based on 1.1.0b12)	
 	- Added current FirePHP version and OS info to update URL
 

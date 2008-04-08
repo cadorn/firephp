@@ -16,7 +16,7 @@ Client Side:
 <?php
 
 header('FirePHP-Data: [JSON String]');
-header('FirePHP-Mask: URL');
+header('FirePHP-RendererURL: URL');
 
 ?>
 
