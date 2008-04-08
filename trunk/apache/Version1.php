@@ -59,7 +59,7 @@ header('X-Firephp-data: '.$data_str);
 //header('FirePHP-data: '.substr($data_str,0,strlen($data_str)/2));
 //header('FirePHP-data-1: '.substr($data_str,strlen($data_str)/2));
 
-header('X-FirePHP-ProcessURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Processor.js');
+header('X-FirePHP-ProcessorURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Processor.js');
 
 header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
 
