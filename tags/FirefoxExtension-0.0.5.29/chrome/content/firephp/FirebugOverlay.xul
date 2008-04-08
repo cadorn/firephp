@@ -1,0 +1,33 @@
+<?xml version="1.0"?> 
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <script type="application/x-javascript" src="chrome://firephp/content/jquery.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/md5.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHPLib.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHP.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirebugNetOverride.js"/>
+
+	<script>
+FBL.ns(function() { with (FBL) {
+
+		top.FirePHP.initialize();
+}});
+	</script>
+
+    <commandset id="mainCommandSet">
+        <command id="cmd_openFirephpPermissions" oncommand="FirePHP.openPermissions()"/>
+    </commandset>
+
+
+    <menupopup id="menu_ToolsPopup">
+        <menu id="menu_firephp" class="menuitem-iconic" image="chrome://firephp/skin/firephp16.png"
+              label="FirePHP" insertafter="menu_firebug">
+            <menupopup>
+                <menuitem label="Allowed Sites..." command="cmd_openFirephpPermissions"/>
+            </menupopup>
+        </menu>
+    </menupopup>
+
+</overlay>
