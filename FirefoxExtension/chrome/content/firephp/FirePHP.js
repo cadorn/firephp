@@ -189,7 +189,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 				if(name.substr(0,15)=='x-firephp-data-' || name.substr(0,13)=='firephp-data-') {
 					data += value;
 				} else							
-				if(name=='x-firephp-processurl') {
+				if(name=='x-firephp-processorurl') {
 					/* Ensure that mask is from same domain as file for security reasons */
 					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
 						mask = value;
