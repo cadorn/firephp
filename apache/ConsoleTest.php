@@ -39,50 +39,23 @@
 require_once('./../FirefoxExtension/chrome/content/firephp/fb.php');
 
 
-//fb('Sample log message skjadfhg sakjhdfg ahjksdgf hjsad fgjhkasgfdja sdfhjk sdfhj sdafhj sadhjfg sahkjdf hjsadfg ahjksd fgjkhasdg fkjhasdfg',FB_LOG);
+fb('Hello World');
 
-//fb(array('server'=>$_SERVER),FB_LOG);
+fb('Log message',FB_LOG);
+fb('Info message',FB_INFO);
+fb('Warn message',FB_WARN);
+fb('Error message',FB_ERROR);
 
-$t = array();
-for( $i=0 ; $i<10 ; $i++ ) {
-  $t['key'.$i] = $_SERVER;
-}
+fb('Message with label','Label',FB_LOG);
 
-//fb($t,FB_LOG);
-
-
-//fb("Hello \n World",FB_LOG);
-
-//fb("This is a <b>BOLD</b> test!",FB_LOG);
-
-fb('Sample info message',FB_INFO);
-
-fb('Sample info message');
-
-fb($_SERVER,'$_SERVER',FB_LOG);
-fb($_SERVER,'$_SERVER');
-
-
-
-fb($_SERVER,'$_SERVER',FB_DUMP);
-
-
-
-
-/*
-fb('Sample log message',FB_LOG);
-fb('Sample info message',FB_INFO);
-fb('Sample warn message',FB_WARN);
-fb('Sample error message',FB_ERROR);
-*/
-//fb('Sample error message',FB_ERROR);
+fb(array('key1'=>'val1','key2'=>array(array('v1','v2'),'v3')),'TestArray',FB_LOG);
 
 try {
-  
   throw new Exception('Test Exception');
-  
 } catch(Exception $e) {
-//  fb($e);
+  fb($e);
 }
+
+fb(apache_request_headers(),'RequestHeaders',FB_DUMP);
 
 ?>
