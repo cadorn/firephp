@@ -59,7 +59,8 @@ fb('Sample info message',FB_INFO);
 
 fb('Sample info message');
 
-fb($_SERVER,'$_SERVER',FB_INFO);
+fb($_SERVER,'$_SERVER',FB_LOG);
+fb($_SERVER,'$_SERVER');
 
 
 
