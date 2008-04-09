@@ -54,7 +54,18 @@ function fb($Object) {
     $Type = null;
   } else
   if(func_num_args()==2) {
-    $Type = func_get_arg(1);
+    switch(func_get_arg(1)) {
+      case FB_LOG:
+      case FB_INFO:
+      case FB_WARN:
+      case FB_ERROR:
+      case FB_DUMP:
+        $Type = func_get_arg(1);
+        break;
+      default:
+        $Object = array(func_get_arg(1),$Object);
+        break;
+    }
   } else
   if(func_num_args()==3) {
     $Type = func_get_arg(2);
