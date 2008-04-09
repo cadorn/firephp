@@ -97,6 +97,28 @@ var FirePHPLib = top.FirePHPLib = {
   	return attributes;
   },
   
+	
+	sortSecondByFirstNumeric: function(keys,values) {
+
+		var decisions = [];
+
+		/* Sort the keys and remember the decisions */
+		keys.sort( function (a,b) {
+			decisions[decisions.length] = a-b;
+			return a-b; 
+		});
+
+		/* Now sort the values based on the decisions */
+		var index = 0;
+		values.sort( function (a,b) {
+			index++;
+			return decisions[index-1];
+		});
+		
+		return values;
+	},
+	
+	
   /* Prints the given object to the console */
   dump: function(Object,Name,Filter,IncludeValues) {
     dump('Var: '+Name+' ['+Object+']'+"\n");
