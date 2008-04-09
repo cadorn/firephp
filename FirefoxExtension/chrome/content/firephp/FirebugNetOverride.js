@@ -39,6 +39,7 @@
 
 FBL.ns(function() { with (FBL) {
 
+
 const binaryCategoryMap =
 {
     "image": 1,
@@ -423,8 +424,6 @@ function netInfoServerTab(netInfoBox, file, context) {
 
             var responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
 
-						var data = '';
-						var mask = '';
 						var name = '';
 						var url = '';
 						var item_index = 0;
@@ -451,24 +450,11 @@ function netInfoServerTab(netInfoBox, file, context) {
 						}
 						
 						if(url) {
-
-							for( var index in file.responseHeaders ) {
-								
-								name = file.responseHeaders[index].name.toLowerCase();
-								
-								if(name=='x-firephp-data' || name=='firephp-data') {
-									data += file.responseHeaders[index].value;
-								} else
-								if(name.substr(0,15)=='x-firephp-data-' || name.substr(0,13)=='firephp-data-') {
-									data += file.responseHeaders[index].value;
-								} else							
-								if(name=='x-firephp-rendererurl' || name=='firephp-rendererurl' || name=='firephp-mask') {
-									/* Ensure that mask is from same domain as file for security reasons */
-									if(FirebugLib.getDomain(url) == FirebugLib.getDomain(file.responseHeaders[index].value)) {
-										mask = file.responseHeaders[index].value;
-									}
-								}
-							}
+              
+              var info = FirePHP.parseHeaders(url,file.responseHeaders,'array');
+              var mask = info['rendererurl'];
+              var data = info['data'];
+              
 							
 							var domain = FirebugLib.getDomain(url);
 							var hash = hex_md5(item_index+':'+url);
@@ -589,6 +575,7 @@ function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
 			if(Mask.substr(0,9)=='chrome://') {
 				context.html = '';
 				context.data = Data;
+        
 				with(context) {
 					eval(XMLHttpRequest.responseText);
 				}
@@ -604,7 +591,6 @@ function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
 		}
 	});
 }
-
 
 
 }});

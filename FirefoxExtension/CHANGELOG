@@ -1,4 +1,11 @@
 
+  - Misc bug fixes to improve reliability
+  - Updated default renderer for server tab
+  - Updated data parsing and default renderer and processor to work with new fb() PHP function
+  - Implemented sorting of data headers based on numeric index
+  - The default processor will now fail gracefully if there is a problem logging the data
+	- The log mode string for console messages in the default processor is now case-insensitive
+
 2008-04-07 - Release Version: 0.0.6.3
 
 	- Implemented request processor that is called for every request in the background

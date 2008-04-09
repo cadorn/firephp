@@ -34,7 +34,10 @@ FirePHPRenderer.Init = function() {
  */
 FirePHPRenderer.InitRequest = function(Key) {
   $('#'+Key+' DIV.name').bind("click", function(e) {
-		$('#'+Key+' #'+Key+$(this).attr('key')).toggle();
+    var obj = $('#'+Key+' #'+Key+$(this).attr('key'));
+    obj.css('display',
+            (obj.css('display')=='none')?
+            'inline':'none');
   });
 }
 

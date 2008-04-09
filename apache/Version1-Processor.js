@@ -12,16 +12,19 @@ FirePHPProcessor.ProcessRequest = function() {
 			
 			var item = this.data['FirePHP.Firebug.Console'][index];
 			
-			if (item[0] == 'log' || item[0] == 'info' || item[0] == 'warn') {
+      if (item) {
 	  
-	  		this.logToFirebug(item[0], 'TEST: '+item[1]);
-	  	
-			} else 
-	  	if (item[0] == 'error') {
+		  	if (item[0] == 'log' || item[0] == 'info' || item[0] == 'warn') {
+		  	
+		  		this.logToFirebug(item[0], 'TEST: ' + item[1]);
+		  		
+		  	} else 
+	  		if (item[0] == 'error') {
 	  		
-				Firebug.Errors.increaseCount(this.context);
-	  		this.logToFirebug(item[0], 'TEST: '+item[1]);
-			}
+	  			Firebug.Errors.increaseCount(this.context);
+	  			this.logToFirebug(item[0], 'TEST: ' + item[1]);
+        }
+      }
 		}	
 	
 		Firebug.Console.closeGroup(this.context);

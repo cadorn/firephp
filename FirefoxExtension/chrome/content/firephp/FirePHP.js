@@ -134,6 +134,82 @@ var FirePHP = top.FirePHP = {
 
     var uri = ioService.newURI('http://'+host, null, null);
     pm.add(uri, "firephp", nsIPermissionManager.ALLOW_ACTION);
+  },
+  
+  
+  parseHeaders: function(url,headers_in,parser) {
+    
+ 		var info = [];
+   
+		var header_indexes = [];
+		var header_values = [];
+		var data = '';
+    
+    function parseHeader(name,value) {
+				name = name.toLowerCase();
+
+				if(name.substr(0,15)=='x-firephp-data-' && name.length==27) {
+
+					header_indexes[header_indexes.length] = name.substr(15);
+					header_values[header_values.length] = value;
+
+				} else							
+				if(name=='x-firephp-data' ||
+					 name=='firephp-data' || 
+					 name.substr(0,15)=='x-firephp-data-' ||
+					 name.substr(0,13)=='firephp-data-') {
+
+					data += value;
+				
+				} else
+				if(name=='x-firephp-processorurl') {
+					/* Ensure that mask is from same domain as file for security reasons */
+					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
+						info['processorurl'] = value;
+					}
+				} else
+				if(name=='x-firephp-rendererurl' ||
+           name=='firephp-rendererurl' ||
+           name=='firephp-mask') {
+					/* Ensure that mask is from same domain as file for security reasons */
+					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
+						info['rendererurl'] = value;
+					}
+				}      
+    }
+    
+    
+    if(parser=='visit') {
+
+      headers_in.visitResponseHeaders({
+        visitHeader: function(name, value)
+        {
+          parseHeader(name,value);
+        }
+      });						
+      
+    } else
+    if(parser=='array') {
+      
+      for( var index in headers_in ) {
+        parseHeader(headers_in[index].name,headers_in[index].value);
+      }
+    }
+    
+		/* Sort the header and create final data object */
+		
+		if(header_indexes.length>0) {
+			
+			var headers = FirePHPLib.sortSecondByFirstNumeric(header_indexes,header_values);
+			
+			for( var index in headers ) {
+				data += headers[index];
+			}
+      
+      info['data'] = data;
+		}    
+    
+    return info;
   }	
 	
 }
@@ -159,50 +235,34 @@ Firebug.FirePHP = extend(Firebug.Module,
   initContext: function(context)
   {
 		this.context = context;
+    FirePHPProgress.requests = [];
     monitorContext(context);
   },
   destroyContext: function(context)
   {
     unmonitorContext(context);
+    FirePHPProgress.requests = [];
 		this.context = null;
   },
 	
 	
 	processRequest: function(Request) {
 	
-		var data = '';
-		var mask = '';
 		var name = '';
 		var url = Request.name;
 
 
 		var http = QI(Request, nsIHttpChannel);
-		
-    http.visitResponseHeaders({
-      visitHeader: function(name, value)
-      {
-				name = name.toLowerCase();
 
-				if(name=='x-firephp-data' || name=='firephp-data') {
-					data += value;
-				} else
-				if(name.substr(0,15)=='x-firephp-data-' || name.substr(0,13)=='firephp-data-') {
-					data += value;
-				} else							
-				if(name=='x-firephp-processorurl') {
-					/* Ensure that mask is from same domain as file for security reasons */
-					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
-						mask = value;
-					}
-				}
-      }
-    });						
-			
+    var info = FirePHP.parseHeaders(url,http,'visit');
+    var mask = info['processorurl'];
+    var data = info['data'];
+
+		
 		var domain = FirebugLib.getDomain(url);
 
-		
 		if(data && (data = eval('(' + data + ')'))) {
-			
+
 			if(FirePHP.isURIAllowed(domain)) {
 					
 				if(!mask) {
@@ -285,7 +345,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   logFormatted: function(args, className)
   {
-	  return Firebug.Console.logFormatted(args, this.context, className, false, null);
+	  return Firebug.Console.logFormatted(args, Firebug.ConsolePanel.context, className, false, null);
   }	
 		   
 });
@@ -301,6 +361,7 @@ function FirePHPProgress(context)
 
 FirePHPProgress.prototype =
 {
+    requests: [],
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // nsISupports
@@ -320,11 +381,24 @@ FirePHPProgress.prototype =
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // nsIObserver
 
+
     observe: function(request, topic, data)
     {
         request = QI(request, nsIHttpChannel);
 
-				Firebug.FirePHP.processRequest(request);
+        /* 
+         * If multiple tabs are open we get multiple events for the same request.
+         * We keep a record of the request objects and only process the first one.
+         * We reset this request list when the context is created and destroyed.
+         */
+        
+        var index = this.requests.indexOf(request);
+        if (index == -1) {
+          
+          this.requests.push(request);
+          
+          Firebug.FirePHP.processRequest(request);
+        }
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -364,6 +438,7 @@ function monitorContext(context)
 
 //        context.browser.addProgressListener(listener, NOTIFY_ALL);
 //        observerService.addObserver(listener, "http-on-modify-request", false);
+
         observerService.addObserver(listener, "http-on-examine-response", false);
     }
 }
