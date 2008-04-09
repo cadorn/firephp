@@ -261,84 +261,80 @@ Firebug.FirePHP = extend(Firebug.Module,
 		
 		var domain = FirebugLib.getDomain(url);
 
-		if(data && (data = eval('(' + data + ')'))) {
-
-			if(FirePHP.isURIAllowed(domain)) {
-					
-				if(!mask) {
-					mask = 'chrome://firephp/content/RequestProcessor.js';
-				}
-				
-				if(!this.FirePHPProcessor) {
-					this.FirePHPProcessor = function() {
-						var initialized = false;
-						return {
-							_Init: function() {
-								if(this.initialized) return;
-								this.Init();
-								this.initialized = true;
-							},
-							Init : function() {
-							},
-							ProcessRequest: function() {
-							},
-							logToFirebug: function(Type, Data) {
-								Firebug.FirePHP.logFormatted([Data], Type);
-							}
+		if(data) {
+			if(!mask) {
+				mask = 'chrome://firephp/content/RequestProcessor.js';
+			} else {
+  			if(!FirePHP.isURIAllowed(domain)) {
+          this.logFormatted(['By default FirePHP is not allowed to load your custom processor "'+mask+'" from host "' + domain + '". You can allow this by going to the "Net" panel and clicking on the "Server" tab for a request from the same host.'], "warn");
+  				mask = 'chrome://firephp/content/RequestProcessor.js';
+        }
+      }
+			
+			if(!this.FirePHPProcessor) {
+				this.FirePHPProcessor = function() {
+					var initialized = false;
+					return {
+						_Init: function() {
+							if(this.initialized) return;
+							this.Init();
+							this.initialized = true;
+						},
+						Init : function() {
+						},
+						ProcessRequest: function() {
+						},
+						logToFirebug: function(Type, Data) {
+							Firebug.FirePHP.logFormatted([Data], Type);
 						}
-					}();
-				}
-				
-				var proecessor_context = {FirePHPProcessor: this.FirePHPProcessor,
-											 Firebug: Firebug,
-											 data: data,
-											 context: this.context,
-											 url: url};
+					}
+				}();
+			}
+			
+			var proecessor_context = {FirePHPProcessor: this.FirePHPProcessor,
+										 Firebug: Firebug,
+										 data: data,
+										 context: this.context,
+										 url: url};
 
-				jQuery.ajax({
-					type: "GET",
-					url: mask,
-					success: function(ReturnData){
+			jQuery.ajax({
+				type: "GET",
+				url: mask,
+				success: function(ReturnData){
 
-						with (proecessor_context) {							
+					with (proecessor_context) {							
+						FirePHPProcessor.url = url;
+						FirePHPProcessor.data = data;
+						FirePHPProcessor.context = proecessor_context.context;
+
+						eval(ReturnData);
+
+						FirePHPProcessor._Init();
+						FirePHPProcessor.ProcessRequest();
+					}	
+		
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					if(mask.substr(0,9)=='chrome://') {
+
+						with (proecessor_context) {
 							FirePHPProcessor.url = url;
 							FirePHPProcessor.data = data;
 							FirePHPProcessor.context = proecessor_context.context;
 
-							eval(ReturnData);
-
+							eval(XMLHttpRequest.responseText);
+						
 							FirePHPProcessor._Init();
 							FirePHPProcessor.ProcessRequest();
 						}	
-			
-					},
-					error: function(XMLHttpRequest, textStatus, errorThrown){
-						if(mask.substr(0,9)=='chrome://') {
-	
-							with (proecessor_context) {
-								FirePHPProcessor.url = url;
-								FirePHPProcessor.data = data;
-								FirePHPProcessor.context = proecessor_context.context;
 
-								eval(XMLHttpRequest.responseText);
-							
-								FirePHPProcessor._Init();
-								FirePHPProcessor.ProcessRequest();
-							}	
-
-						} else {
-							
-							this.logFormatted(['Error loading processor from: '+mask], "warn");
-							
-						}
+					} else {
+						
+						this.logFormatted(['Error loading processor from: '+mask], "warn");
+						
 					}
-				});		
-		
-			} else {
-			
-				this.logFormatted(['FirePHP is disabled for host ' + domain + '. Please enable it using the "Server" tab for a request from the same domain on the "Net" panel.'], "warn");
-			
-			}
+				}
+			});		
 		}
 		
 	},

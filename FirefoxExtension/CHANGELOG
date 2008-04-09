@@ -1,4 +1,6 @@
 
+	- Updated security model to allow default renderer and processor without explicit action by user
+  - Change json data parsing from eval() to json_parse()
   - Misc bug fixes to improve reliability
   - Updated default renderer for server tab
   - Updated data parsing and default renderer and processor to work with new fb() PHP function
