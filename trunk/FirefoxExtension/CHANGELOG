@@ -1,4 +1,6 @@
 
+2008-04-09 - Release Version: 0.0.6.4
+
 	- Updated security model to allow default renderer and processor without explicit action by user
   - Change json data parsing from eval() to json_parse()
   - Misc bug fixes to improve reliability
