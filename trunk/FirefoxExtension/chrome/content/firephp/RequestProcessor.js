@@ -4,6 +4,8 @@
  */
 FirePHPProcessor.ProcessRequest = function() {
 
+  this.data = json_parse(this.data);
+
   if (this.data['FirePHP.Firebug.Console']) {
 
     Firebug.Console.openGroup(this.url, null, "group", null, false);

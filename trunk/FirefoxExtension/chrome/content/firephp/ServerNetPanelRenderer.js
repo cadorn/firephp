@@ -180,7 +180,7 @@ function print_r(RequestKey,obj, indent, depth) {
  * Variable: FirePHPRenderer    The FirePHPRenderer object
  */
 
-data = eval('(' + data + ')');
+data = json_parse(data);
 
 html = '<style>                                  '+
        '  #'+key+' DIV      { display: inline; } '+

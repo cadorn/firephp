@@ -5,6 +5,7 @@
 
   <script type="application/x-javascript" src="chrome://firephp/content/jquery.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/md5.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/json_parse.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPLib.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHP.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirebugNetOverride.js"/>
