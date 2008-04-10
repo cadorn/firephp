@@ -122,6 +122,7 @@ var FirePHP = top.FirePHP = {
 	
   isURIAllowed: function(host)
   {
+    if(!host) return false;
     var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
     var uri = ioService.newURI('http://'+host, null, null);
     return uri && 
@@ -163,18 +164,12 @@ var FirePHP = top.FirePHP = {
 				
 				} else
 				if(name=='x-firephp-processorurl') {
-					/* Ensure that mask is from same domain as file for security reasons */
-					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
-						info['processorurl'] = value;
-					}
+					info['processorurl'] = value;
 				} else
 				if(name=='x-firephp-rendererurl' ||
            name=='firephp-rendererurl' ||
            name=='firephp-mask') {
-					/* Ensure that mask is from same domain as file for security reasons */
-					if(FirebugLib.getDomain(url) == FirebugLib.getDomain(value)) {
-						info['rendererurl'] = value;
-					}
+					info['rendererurl'] = value;
 				}      
     }
     
@@ -259,14 +254,14 @@ Firebug.FirePHP = extend(Firebug.Module,
     var data = info['data'];
 
 		
-		var domain = FirebugLib.getDomain(url);
-
+		var domain = FirebugLib.getDomain(mask);
+    
 		if(data) {
 			if(!mask) {
 				mask = 'chrome://firephp/content/RequestProcessor.js';
 			} else {
   			if(!FirePHP.isURIAllowed(domain)) {
-          this.logFormatted(['By default FirePHP is not allowed to load your custom processor "'+mask+'" from host "' + domain + '". You can allow this by going to the "Net" panel and clicking on the "Server" tab for a request from the same host.'], "warn");
+          this.logFormatted(['By default FirePHP is not allowed to load your custom processor from "'+mask+'". You can allow this by going to the "Net" panel and clicking on the "Server" tab for this request.'], "warn");
   				mask = 'chrome://firephp/content/RequestProcessor.js';
         }
       }

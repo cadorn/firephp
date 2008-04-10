@@ -456,7 +456,7 @@ function netInfoServerTab(netInfoBox, file, context) {
               var data = info['data'];
               
 							
-							var domain = FirebugLib.getDomain(url);
+							var domain = FirebugLib.getDomain(mask);
 							var hash = hex_md5(item_index+':'+url);
 							
               
@@ -465,7 +465,7 @@ function netInfoServerTab(netInfoBox, file, context) {
 			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
   							} else {
   								responseTextBox.innerHTML = '<p>By default FirePHP is not allowed to load custom renderers nor processors from host <b>'+domain+'</b>.</p>'+
-  																						'<p>To allow custom loading for this host <a onclick="top.FirePHP.enableSite(\''+domain+'\'); alert(\'FirePHP has been enabled for '+domain+' and will start working with the next request from this host!\');" href="#">click here</a>.</p>'+
+  																						'<p>To allow custom loading for this host <a onclick="top.FirePHP.enableSite(\''+domain+'\'); alert(\'FirePHP customizing has been enabled for host '+domain+' and will start working with the next request!\');" href="#">click here</a>.</p>'+
   																						'<p><font color="red"><b>WARNING:</b> FirePHP customizing works by allowing a server script to insert code into your browser. <b>Only enable this for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>'+
   																						'<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>'+
   																						'<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>'+

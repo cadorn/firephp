@@ -56,6 +56,12 @@ try {
   fb($e);
 }
 
+
 fb(apache_request_headers(),'RequestHeaders',FB_DUMP);
+
+
+//header('X-FirePHP-ProcessorURL: http://www.google.com/');
+//header('X-FirePHP-RendererURL: http://www.google.com/');
+
 
 ?>
