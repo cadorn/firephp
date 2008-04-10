@@ -455,28 +455,51 @@ function netInfoServerTab(netInfoBox, file, context) {
               var mask = info['rendererurl'];
               var data = info['data'];
               
-							
-							var domain = FirebugLib.getDomain(mask);
 							var hash = hex_md5(item_index+':'+url);
-							
+              
+              if(!mask) {
+            		mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
+              }
               
             	if(info['rendererurl'] || info['processorurl']) {
-  							if(top.FirePHP.isURIAllowed(domain)) {
+                
+                var rendererurl_domain = '';
+                var processorurl_domain = '';
+                var rendererurl_allowed = false;
+                var processorurl_allowed = false;
+
+                if(info['rendererurl']) {
+                  rendererurl_domain = FirebugLib.getDomain(info['rendererurl']);
+                  rendererurl_allowed = top.FirePHP.isURIAllowed(rendererurl_domain);
+                } else {
+                  rendererurl_allowed = true;
+                }
+                if(info['processorurl']) {
+                  processorurl_domain = FirebugLib.getDomain(info['processorurl']);
+                  processorurl_allowed = top.FirePHP.isURIAllowed(processorurl_domain);
+                } else {
+                  processorurl_allowed = true;
+                }
+                            
+  							if( rendererurl_allowed && processorurl_allowed ) {
 			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
   							} else {
-  								responseTextBox.innerHTML = '<p>By default FirePHP is not allowed to load custom renderers nor processors from host <b>'+domain+'</b>.</p>'+
-  																						'<p>To allow custom loading for this host <a onclick="top.FirePHP.enableSite(\''+domain+'\'); alert(\'FirePHP customizing has been enabled for host '+domain+' and will start working with the next request!\');" href="#">click here</a>.</p>'+
-  																						'<p><font color="red"><b>WARNING:</b> FirePHP customizing works by allowing a server script to insert code into your browser. <b>Only enable this for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>'+
-  																						'<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>'+
-  																						'<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>'+
-  																						'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>'+
-  																						'By using FirePHP you agree to all terms of the Mozilla Public License.<br>'+
-  																						'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
-  																						
+                  var msg = '<p>By default FirePHP is not allowed to load custom renderers nor processors.</p>';
+                  if(!rendererurl_allowed) {
+									  msg += '<p>To allow custom loading from host <b>'+rendererurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+rendererurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+rendererurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
+                  }
+                  if(!processorurl_allowed && processorurl_domain!=rendererurl_domain) {
+									  msg += '<p>To allow custom loading from host <b>'+processorurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+processorurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+processorurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
+                  }
+									msg += '<p><font color="red"><b>WARNING:</b> FirePHP customizing works by allowing a server script to insert code into your browser. <b>Only enable this for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>';
+									msg += '<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>';
+									msg += '<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>';
+									msg += 'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>';
+									msg += 'By using FirePHP you agree to all terms of the Mozilla Public License.<br>';
+									msg += 'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
+  								responseTextBox.innerHTML = msg;													
   							}                
             	} else {
-            		mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
-                
 								if(data) {
 			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
 								} else {
@@ -564,15 +587,25 @@ function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
 		success: function(ReturnData){
 			context.html = '';
 			context.data = Data;
-			with(context) {
-				eval(ReturnData);
-			}
-			responseTextBox.innerHTML = context.html;
-			with(context) {
-				FirePHPRenderer._Init();
-				$ = window.$;
-				FirePHPRenderer.InitRequest(key);
-			}
+      
+      try {
+      
+  			with(context) {
+					eval(ReturnData);
+  			}
+
+    		responseTextBox.innerHTML = context.html;
+
+    		with(context) {
+    			FirePHPRenderer._Init();
+    			$ = window.$;
+    			FirePHPRenderer.InitRequest(key);
+    		}
+
+      } catch(e) {
+        Firebug.FirePHP.logFormatted(['Error executing custom FirePHP renderer!',e],'warn');  
+        responseTextBox.innerHTML = '<font color="red"><b>Error executing custom FirePHP renderer!</b></font>';
+      }
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
 			if(Mask.substr(0,9)=='chrome://') {

@@ -1,3 +1,5 @@
+	
+	- Updated custom code loading verification to allow different hosts for renderer and processor URL's
 
 2008-04-09 - Release Version: 0.0.6.6
 

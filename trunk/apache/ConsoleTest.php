@@ -60,8 +60,10 @@ try {
 fb(apache_request_headers(),'RequestHeaders',FB_DUMP);
 
 
-//header('X-FirePHP-ProcessorURL: http://www.google.com/');
-//header('X-FirePHP-RendererURL: http://www.google.com/');
+//header('X-FirePHP-ProcessorURL: http://'.$_SERVER['HTTP_HOST'].'/Version1-Processor.js');
+//header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].'/Version1-Renderer.js');
 
+//header('X-FirePHP-ProcessorURL: http://www.google.com/');
+//header('X-FirePHP-RendererURL: http://www.msn.com/');
 
 ?>

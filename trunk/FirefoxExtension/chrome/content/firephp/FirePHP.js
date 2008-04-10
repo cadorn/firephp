@@ -302,10 +302,14 @@ Firebug.FirePHP = extend(Firebug.Module,
 						FirePHPProcessor.data = data;
 						FirePHPProcessor.context = proecessor_context.context;
 
-						eval(ReturnData);
-
-						FirePHPProcessor._Init();
-						FirePHPProcessor.ProcessRequest();
+            try {
+  						eval(ReturnData);
+              
+  						FirePHPProcessor._Init();
+  						FirePHPProcessor.ProcessRequest();
+            } catch(e) {
+              Firebug.FirePHP.logFormatted(['Error executing custom FirePHP processor!',e],'warn');  
+            }
 					}	
 		
 				},
