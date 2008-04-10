@@ -1,4 +1,8 @@
 
+2008-04-09 - Release Version: 0.0.6.6
+
+	- Enabled loading of custom renderers and processors from third part hosts if explicitly allowed by user
+
 2008-04-09 - Release Version: 0.0.6.5
 
 	- Bugfix for Firebug version 1.05
