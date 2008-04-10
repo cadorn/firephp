@@ -137,10 +137,10 @@ class Zend_Log_Writer_FirePHP extends Zend_Log_Writer_Abstract
        
       	foreach( explode("\n",chunk_split($msg, 5000, "\n")) as $part )
         {
-      		$mt = explode(' ',microtime());
-      		$mt = substr($mt[1],7).substr($mt[0],2);
+      		  $mt = explode(' ',microtime());
+      		  $mt = substr($mt[1],7).substr($mt[0],2);
       
-      		header('X-FirePHP-Data-3'.$mt.': '.$part);
+      		  header('X-FirePHP-Data-3'.$mt.': '.$part);
       	}
     }
 
