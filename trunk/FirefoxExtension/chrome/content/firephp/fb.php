@@ -44,11 +44,48 @@ define('FB_ERROR','ERROR');
 define('FB_DUMP','DUMP');
 
 /**
- * Logs the given object to the Firebug console in the specified
- * mode if the FirePHP extension is installed on the client.
+ * Sends the given data to FirePHP Firefox Extension.
+ * The data can be displayed in the Firebug Console or in the
+ * "Server" request tab.
+ * 
+ * Usage:
+ * 
+ * require('fb.php')
+ * 
+ * // NOTE: You must have Output Buffering enabled via
+ * //       ob_start() or output_buffering ini directive.
+ * 
+ * fb('Hello World'); // Defaults to FB_LOG
+ * 
+ * fb('Log message'  ,FB_LOG);
+ * fb('Info message' ,FB_INFO);
+ * fb('Warn message' ,FB_WARN);
+ * fb('Error message',FB_ERROR);
+ * 
+ * fb('Message with label','Label',FB_LOG);
+ * 
+ * fb(array('key1'=>'val1',
+ *          'key2'=>array(array('v1','v2'),'v3')),
+ *    'TestArray',FB_LOG);
+ * 
+ * try {
+ *   throw new Exception('Test Exception');
+ * } catch(Exception $e) {
+ *   fb($e);
+ * }
+ * 
+ * // Will show only in "Server" tab for the request
+ * fb(apache_request_headers(),'RequestHeaders',FB_DUMP);
+ * 
  * 
  * @param $Object Mixed  The message or object to be sent to FirePHP
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
+ * 
+ * @version     0.1
+ * @author      Christoph Dorn <christoph@christophdorn.com>
+ * @copyright   2008 Christoph Dorn
+ * @license     http://www.mozilla.org/MPL/
+ * @link        http://www.firephp.org/
  */
 function fb($Object) {
   
