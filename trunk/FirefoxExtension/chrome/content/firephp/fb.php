@@ -1,6 +1,6 @@
 <?php
 
-/* Version: 0.1 */
+/* Version: 0.1.1 */
 
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -81,14 +81,18 @@ define('FB_DUMP','DUMP');
  * @param $Object Mixed  The message or object to be sent to FirePHP
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
  * 
- * @version     0.1
+ * @version     0.1.1
  * @author      Christoph Dorn <christoph@christophdorn.com>
  * @copyright   2008 Christoph Dorn
  * @license     http://www.mozilla.org/MPL/
  * @link        http://www.firephp.org/
  */
 function fb($Object) {
-  
+
+  if (headers_sent($filename, $linenum)) {
+      throw new Exception('Headers already sent in '.$filename.' on line '.$linenum.'. Cannot send log data to FirePHP. You must have Output Buffering enabled via ob_start() or output_buffering ini directive.');
+  }
+
   if(func_num_args()==1) {
     $Type = null;
   } else
