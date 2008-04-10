@@ -341,7 +341,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   logFormatted: function(args, className)
   {
-	  return Firebug.Console.logFormatted(args, Firebug.ConsolePanel.context, className, false, null);
+	  return Firebug.Console.logFormatted(args, Firebug.Console.context, className, false, null);
   }	
 		   
 });
