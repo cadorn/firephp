@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Writer
- * @copyright  Copyright (c) 2008 Christoph Dorn (http://www.firephp.org)
+ * @copyright  Copyright (c) 2008 FirePHP (http://www.firephp.org)
  * @author     Christoph Dorn <christoph@christophdorn.com>
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    0.1
@@ -53,7 +53,7 @@ require_once 'Zend/Json.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Writer
- * @copyright  Copyright (c) 2008 Christoph Dorn (http://www.firephp.org)
+ * @copyright  Copyright (c) 2008 FirePHP (http://www.firephp.org)
  * @author     Christoph Dorn <christoph@christophdorn.com>
  */
 class Zend_Log_Writer_FirePHP extends Zend_Log_Writer_Abstract
