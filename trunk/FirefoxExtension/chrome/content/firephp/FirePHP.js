@@ -210,12 +210,13 @@ var FirePHP = top.FirePHP = {
 }
 
 
-
-
 Firebug.FirePHP = extend(Firebug.Module,
 {
-	context: null,
 	
+  activeContext: null,
+  activeBrowser: null,
+  
+  
   enable: function()
   {
 		FirePHP.enable();
@@ -229,18 +230,21 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   initContext: function(context)
   {
-		this.context = context;
-    FirePHPProgress.requests = [];
     monitorContext(context);
   },
   destroyContext: function(context)
   {
     unmonitorContext(context);
-    FirePHPProgress.requests = [];
-		this.context = null;
   },
-	
-	
+  
+  
+  showContext: function(browser, context)
+  {
+    this.activeBrowser = browser;
+    this.activeContext = context;
+  },
+	 
+  
 	processRequest: function(Request) {
 	
 		var name = '';
@@ -289,7 +293,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 			var proecessor_context = {FirePHPProcessor: this.FirePHPProcessor,
 										 Firebug: Firebug,
 										 data: data,
-										 context: this.context,
+										 context: this.activeContext,
 										 url: url};
 
 			jQuery.ajax({
@@ -340,7 +344,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   logFormatted: function(args, className)
   {
-	  return Firebug.Console.logFormatted(args, Firebug.Console.context, className, false, null);
+	  return Firebug.Console.logFormatted(args, this.activeContext, className, false, null);
   }	
 		   
 });
@@ -356,8 +360,7 @@ function FirePHPProgress(context)
 
 FirePHPProgress.prototype =
 {
-    requests: [],
-
+  
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // nsISupports
 
@@ -381,17 +384,9 @@ FirePHPProgress.prototype =
     {
         request = QI(request, nsIHttpChannel);
 
-        /* 
-         * If multiple tabs are open we get multiple events for the same request.
-         * We keep a record of the request objects and only process the first one.
-         * We reset this request list when the context is created and destroyed.
-         */
+        if(this.context==Firebug.FirePHP.activeContext &&
+           FirebugChrome.isFocused()) {
         
-        var index = this.requests.indexOf(request);
-        if (index == -1) {
-          
-          this.requests.push(request);
-          
           Firebug.FirePHP.processRequest(request);
         }
     },
@@ -429,6 +424,10 @@ function monitorContext(context)
 {
     if (!context.firephpProgress)
     {
+
+//FirePHPLib.dump(context,'context',null,true);
+
+
         var listener = context.firephpProgress = new FirePHPProgress(context);
 
 //        context.browser.addProgressListener(listener, NOTIFY_ALL);
@@ -442,6 +441,7 @@ function unmonitorContext(context)
 {
     if (context.firephpProgress)
     {
+
 //        if (context.browser.docShell)
 //            context.browser.removeProgressListener(context.firephpProgress, NOTIFY_ALL);
 
