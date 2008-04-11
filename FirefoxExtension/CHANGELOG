@@ -1,4 +1,5 @@
-	
+
+	- Bugfix - Console logging with different tabs and windows open and detached firebug window
 	- Updated custom code loading verification to allow different hosts for renderer and processor URL's
 
 2008-04-09 - Release Version: 0.0.6.6
