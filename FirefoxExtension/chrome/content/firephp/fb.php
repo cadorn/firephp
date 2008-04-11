@@ -82,8 +82,8 @@ define('FB_DUMP','DUMP');
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
  * 
  * @version     0.1.1
+ * @copyright   Copyright (c) 2008 FirePHP (http://www.firephp.org)
  * @author      Christoph Dorn <christoph@christophdorn.com>
- * @copyright   2008 Christoph Dorn
  * @license     http://www.mozilla.org/MPL/
  * @link        http://www.firephp.org/
  */
@@ -93,8 +93,9 @@ function fb($Object) {
       throw new Exception('Headers already sent in '.$filename.' on line '.$linenum.'. Cannot send log data to FirePHP. You must have Output Buffering enabled via ob_start() or output_buffering ini directive.');
   }
 
+  $Type = null;
+
   if(func_num_args()==1) {
-    $Type = null;
   } else
   if(func_num_args()==2) {
     switch(func_get_arg(1)) {
@@ -112,11 +113,7 @@ function fb($Object) {
   } else
   if(func_num_args()==3) {
     $Type = func_get_arg(2);
-    if($Type==FB_DUMP) {
-      $Object = array(func_get_arg(1)=>$Object);
-    } else {
-      $Object = array(func_get_arg(1),$Object);
-    }
+    $Object = array(func_get_arg(1),$Object);
   } else {
     throw new Exception('Wrong number of arguments to fb() function!');
   }
@@ -154,7 +151,7 @@ function fb($Object) {
   $json = new Services_JSON();
 
   if($Type==FB_DUMP) {
-  	$msg = '"'.key($Object).'":'.$json->encode(current($Object)).',';
+  	$msg = '"'.$Object[0].'":'.$json->encode($Object[1]).',';
   } else {
   	$msg = '["'.$Type.'",'.$json->encode($Object).'],';
   }
