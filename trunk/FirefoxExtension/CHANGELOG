@@ -1,4 +1,7 @@
 
+2008-04-11 - Release Version: 0.0.6.7
+
+  - New FirePHP client in form of jQuery plugin to be used in Jaxer server environment
 	- Bugfix - Console logging with different tabs and windows open and detached firebug window
 	- Updated custom code loading verification to allow different hosts for renderer and processor URL's
 
