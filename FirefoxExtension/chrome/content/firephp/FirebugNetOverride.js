@@ -460,7 +460,7 @@ function netInfoServerTab(netInfoBox, file, context) {
               if(!mask) {
             		mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
               }
-              
+                            
             	if(info['rendererurl'] || info['processorurl']) {
                 
                 var rendererurl_domain = '';
@@ -482,7 +482,13 @@ function netInfoServerTab(netInfoBox, file, context) {
                 }
                             
   							if( rendererurl_allowed && processorurl_allowed ) {
-			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+                  
+  								if(data) {
+  			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+  								} else {
+  									responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
+  								}
+                  
   							} else {
                   var msg = '<p>By default FirePHP is not allowed to load custom renderers nor processors.</p>';
                   if(!rendererurl_allowed) {

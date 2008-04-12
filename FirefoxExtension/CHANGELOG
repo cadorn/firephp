@@ -1,4 +1,9 @@
 
+2008-04-11 - Release Version: 0.0.6.8
+
+  - Bugfix - Parsing of header data in old format
+  - Bugfix - Adding and removing of FirePHP/X.X.X in User-Agent request header
+
 2008-04-11 - Release Version: 0.0.6.7
 
   - New FirePHP client in form of jQuery plugin to be used in Jaxer server environment
