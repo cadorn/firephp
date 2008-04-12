@@ -95,12 +95,14 @@ var FirePHP = top.FirePHP = {
    * At the moment this enables and disables the FirePHP accept header
    */ 
   enable: function() {
+dump('FirePHP.enable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
     try {
       Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
     } catch (err) {}
   },
   disable: function() {
+dump('FirePHP.disable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
     try {
       Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
@@ -202,11 +204,45 @@ var FirePHP = top.FirePHP = {
 			}
       
       info['data'] = data;
-		}    
+
+		} else {
+      
+      info['data'] = data;
+    }
     
     return info;
   }	
 	
+}
+
+
+function safeGetURI(browser)
+{
+    try
+    {
+        return browser.currentURI;
+    }
+    catch (exc)
+    {
+        return null;
+    }
+}
+
+
+function isEnabled(uri) {
+    if (Firebug.disabledAlways)
+    {
+        // Check if the whitelist makes an exception
+        if (!Firebug.isURIAllowed(uri))
+            return false;
+    }
+    else
+    {
+        // Check if the blacklist says no
+        if (Firebug.isURIDenied(uri))
+            return false;
+    }
+    return true;  
 }
 
 
@@ -219,31 +255,65 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   enable: function()
   {
+dump('Firebug.FirePHP.enable()'+"\n");    
 		FirePHP.enable();
   },
   
   disable: function()
   {
+dump('Firebug.FirePHP.disable()'+"\n");    
 		FirePHP.disable();
   },		
 	
 
   initContext: function(context)
   {
+dump('Firebug.FirePHP.initContext()'+"\n");    
     monitorContext(context);
   },
   destroyContext: function(context)
   {
+dump('Firebug.FirePHP.destroyContext()'+"\n");    
     unmonitorContext(context);
   },
+  
+  reattachContext: function(browser, context)
+  {
+dump('Firebug.FirePHP.reattachContext()'+"\n");    
+  },
+  
+  watchWindow: function(context, win)
+  {
+dump('Firebug.FirePHP.watchWindow()'+"\n");    
+  },
+  unwatchWindow: function(context, win)
+  {
+dump('Firebug.FirePHP.unwatchWindow()'+"\n");    
+  },
+  showPanel: function(browser, panel)
+  {
+dump('Firebug.FirePHP.showPanel()'+"\n");    
+  },
+  
   
   
   showContext: function(browser, context)
   {
+dump('Firebug.FirePHP.showContext()'+"\n");    
+    
+    if(isEnabled(safeGetURI(browser))) {
+  		FirePHP.enable();
+    } else {
+  		FirePHP.disable();
+    }
+
     this.activeBrowser = browser;
     this.activeContext = context;
   },
 	 
+   
+   
+   
   
 	processRequest: function(Request) {
 	
