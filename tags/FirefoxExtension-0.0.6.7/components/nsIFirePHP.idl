@@ -1,0 +1,16 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(ad233870-af2c-11db-abbd-0800200c9a66)]
+interface nsIFirePHP : nsISupports
+{
+  void setRequestHeaderEnabled(in boolean oo);
+  boolean getRequestHeaderEnabled();
+  void setExtensionVersion(in string version);
+  string getExtensionVersion();
+
+	void setResponseData(in string RequestID, in string Data);
+	string getRequestIDs();
+	string popResponseData(in string RequestID);
+	
+}; 
+
