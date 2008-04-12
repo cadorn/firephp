@@ -47,7 +47,7 @@ require_once 'Zend/Json.php';
  * $logger->log('Informational: informational messages', Zend_Log::INFO);
  * $logger->log('Debug: debug messages', Zend_Log::DEBUG);
  * 
- * $logger->log(array('$_SERVER',$_SERVER), Zend_Log::INFO);
+ * $logger->log(array('$_SERVER',$_SERVER), Zend_Log::DEBUG);
  * 
  * 
  * @category   Zend
