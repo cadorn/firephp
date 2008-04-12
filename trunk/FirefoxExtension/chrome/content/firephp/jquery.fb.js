@@ -55,22 +55,28 @@
  * 
  *   jQuery.fb('Hello World');
  * 
- *   jQuery.fb('Log message'  ,jQuery.FB_LOG);
- *   jQuery.fb('Info message' ,jQuery.FB_INFO);
- *   jQuery.fb('Warn message' ,jQuery.FB_WARN);
- *   jQuery.fb('Error message',jQuery.FB_ERROR);
+ *   /* Register the global fb() function to reduce typing
+ *      instead of always using jQuery.fb()
+ *   jQuery.fbRegisterGlobal();
  * 
- *   jQuery.fb('Message with label','Label',jQuery.FB_LOG);
+ *   fb('Hello World2');
  * 
- *   jQuery.fb(Jaxer.request,'Jaxer.request',jQuery.FB_LOG);
+ *   fb('Log message'  ,jQuery.FB_LOG);
+ *   fb('Info message' ,jQuery.FB_INFO);
+ *   fb('Warn message' ,jQuery.FB_WARN);
+ *   fb('Error message',jQuery.FB_ERROR);
+ * 
+ *   fb('Message with label','Label',jQuery.FB_LOG);
+ * 
+ *   fb(Jaxer.request,'Jaxer.request',jQuery.FB_LOG);
  * 
  *   try {
  *     throw new Error('Test Exception');
  *   } catch(e) {
- *     jQuery.fb(e);
+ *     fb(e);
  *   }
  * 
- *   jQuery.fb(Jaxer.session,'Jaxer.session',jQuery.FB_DUMP);
+ *   fb(Jaxer.session,'Jaxer.session',jQuery.FB_DUMP);
  * 
  * </script>
  * 
@@ -97,6 +103,21 @@
     FB_DUMP: 'dump',
     
     fb_index: 0,
+
+ 		fbRegisterGlobal: function() {
+      
+      window.fb = function(Object) {
+        if(arguments.length==1) {
+          return $.fb(Object);
+        } else
+        if(arguments.length==2) {
+          return $.fb(Object,arguments[1]);
+        } else
+        if(arguments.length==3) {
+          return $.fb(Object,arguments[1],arguments[2]);
+        }
+      }
+    },
     
  		fb: function(Object) {
     
