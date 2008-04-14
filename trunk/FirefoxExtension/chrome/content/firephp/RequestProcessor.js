@@ -27,7 +27,7 @@ FirePHPProcessor.ProcessRequest = function() {
             this.logToFirebug(mode, item[1]);
             
           } else 
-          if (mode == 'error') {
+          if (mode == 'error' || mode == 'trace') {
           
             Firebug.Errors.increaseCount(this.context);
             

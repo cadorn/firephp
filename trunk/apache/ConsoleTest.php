@@ -39,6 +39,17 @@
 require_once('./../FirefoxExtension/chrome/content/firephp/fb.php');
 
 
+
+require_once('ConsoleTest2.php');
+
+try {
+  funcA('Arg1');
+} catch(Exception $e) {
+  fb($e);
+}
+
+
+
 fb('Hello World');
 
 fb('Log message',FB_LOG);
@@ -50,8 +61,11 @@ fb('Message with label','Label',FB_LOG);
 
 fb(array('key1'=>'val1','key2'=>array(array('v1','v2'),'v3')),'TestArray',FB_LOG);
 
-try {
+function test($Arg1) {
   throw new Exception('Test Exception');
+}
+try {
+  test(array('Hello'=>'World'));
 } catch(Exception $e) {
   fb($e);
 }

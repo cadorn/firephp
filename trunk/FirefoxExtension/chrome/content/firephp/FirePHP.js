@@ -246,6 +246,8 @@ function isEnabled(uri) {
 }
 
 
+
+
 Firebug.FirePHP = extend(Firebug.Module,
 {
 	
@@ -414,11 +416,188 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 
   logFormatted: function(args, className)
   {
-	  return Firebug.Console.logFormatted(args, this.activeContext, className, false, null);
-  }	
-		   
+    if (className == 'trace') {
+      className = 'spy';
+      return Firebug.Console.logRow(this.appendObject, args[0], this.activeContext, className, FirePHP.Reps.PHPException, null, true);
+    } else {
+  	  return Firebug.Console.logFormatted(args, this.activeContext, className, false, null);
+    }
+  },
+  
+  appendObject: function(object, row, rep)
+  {
+      row.style.padding = '0px';
+      return rep.tag.append({object: object}, row);
+  }
+    		   
 });
 
+
+
+
+/*
+ * The section below implements the custom PHP Exception (with trace) log item representation.
+ * 
+ * The code works but could use some refactoring and cleaning up.
+ * 
+ * TODO: The CSS styles are defined inline. They should be defined in an external css file instead.
+ *       This can only be done once Firebug supports custom CSS files for the panel.html file.
+ */
+
+
+FirePHP.Reps = {
+}
+
+FirePHP.Reps.PHPException = domplate(Firebug.Rep,
+{
+  tag:
+      DIV({class: "spyHead", _repObject: "$object", style: 'padding-bottom: 1px;padding-top: 2px; padding-right: 10px; background-color: LightYellow;'},
+          A({class: "spyTitle", onclick: "$onToggleBody", style: 'padding-bottom: 0px; padding-top: 2px; font-family: Monaco, monospace; background-image: url(chrome://firebug/skin/errorIcon.png); background-repeat: no-repeat; background-position: 4px 2px;'},
+              SPAN({style:'padding-left: 4px; color: red; font-weight: normal; text-decoration: underline;'}, "$object|getCaption")
+          )
+      ),
+
+  getCaption: function(spy)
+  {
+    return spy.Class+': '+spy.Message;
+  },
+
+  onToggleBody: function(event)
+  {
+    var target = event.currentTarget;
+    var logRow = getAncestorByClass(target, "logRow-spy");
+    if (isLeftClick(event))
+    {
+      toggleClass(logRow, "opened");
+
+      if (hasClass(logRow, "opened"))
+      {
+        logRow.style.borderBottom = '1px solid #D7D7D7';
+
+        var spy = getChildByClass(logRow, "spyHead").repObject;
+        updatePHPException(logRow,spy);
+      }
+    }
+  }
+});
+
+
+FirePHP.PHPExceptionBody = domplate(Firebug.Rep,
+{
+  tag: DIV({class: "netInfoBody"},
+         TABLE({class: "netTable", cellpadding: 3, cellspacing: 0},
+          TBODY(
+            TR(
+                TD({style:'white-space:nowrap; font-weight: bold;'},'File'),
+                TD({style:'white-space:nowrap; font-weight: bold; text-align: right;'},'Line'),
+                TD({style:'white-space:nowrap; font-weight: bold; padding-left: 10px; width: 100%;'},'Instruction')
+            ),
+            FOR("call", "$object|getCallList",
+                TR({},
+                    TD({style:'border:1px solid #D7D7D7; padding-right: 10px;'},
+                        DIV({}, "$call.file")
+                    ),
+                    TD({style:'border:1px solid #D7D7D7; text-align: right;'},
+                        DIV({}, "$call.line")
+                    ),
+                    TD({style:'border:1px solid #D7D7D7; padding-left: 10px;'},
+                        DIV({style:'font-weight: bold;'},  "$call|getCallLabel(",
+                          FOR("arg", "$call|argIterator",
+                              TAG("$arg.tag", {object: "$arg.value"}),
+                              SPAN({class: "arrayComma", style:'font-weight: bold;'}, "$arg.delim")
+                          ),
+                          ")")
+                    )
+                  )
+                )
+              )
+            )
+          ),
+    
+  getCallList: function(call) {
+    var list = call.Trace;
+    list.unshift({'file':call.File,'line':call.Line,'class':call.Class,'type':'throw'});
+    /* Now that we have all call events, lets sew if we can shorten the filename.
+     * This only works for unif filepaths for now.
+     * TODO: Get this working for windows filepaths as well.
+     */
+    try {
+      if (list[0].file.substr(0, 1) == '/') {
+        var file_shortest = list[0].file.split('/');
+        var file_original_length = file_shortest.length;
+        for (var i = 1; i < list.length; i++) {
+          var file = list[i].file.split('/');
+          for (var j = 0; j < file_shortest.length; j++) {
+            if (file_shortest[j] != file[j]) {
+              file_shortest.splice(j, file_shortest.length - j);
+              break;
+            }
+          }
+        }
+        if (file_shortest.length > 2) {
+          if (file_shortest.length == file_original_length) {
+            file_shortest.pop();
+          }
+          file_shortest = file_shortest.join('/');
+          for (var i = 0; i < list.length; i++) {
+            list[i].file = '...' + list[i].file.substr(file_shortest.length);
+          }
+        }
+      }
+    } catch(e) {}
+    return list;
+  },
+  
+  getCallLabel: function(call) {
+    if(call['class']) {
+      if(call['type']=='throw') {
+       return 'throw '+call['class'];
+      } else {
+        return call['class']+call['type']+call['function'];
+      }
+    }
+    return call['function'];
+  },
+  
+  argIterator: function(call) {
+    if (!call.args) return [];
+    var items = [];
+    for (var i = 0; i < call.args.length; ++i)
+    {
+        var arg = call.args[i];
+        var rep = Firebug.getRep(arg);
+        var tag = rep.shortTag ? rep.shortTag : rep.tag;
+        var delim = (i == call.args.length-1 ? "" : ", ");
+        items.push({name: 'arg'+i, value: arg, tag: tag, delim: delim});
+    }
+    return items;
+  }
+
+});
+
+
+function updatePHPException(logRow,spy)
+{
+  if (!logRow || !hasClass(logRow, "opened")) {
+    return;
+  }
+  var template = FirePHP.PHPExceptionBody;
+  var netInfoBox = getChildByClass(logRow, "spyHead", "netInfoBody");
+  if (!netInfoBox)
+  {
+      var head = getChildByClass(logRow, "spyHead");
+      netInfoBox = template.tag.append({'object':spy}, head);
+      netInfoBox.style.marginTop = '2px';
+      netInfoBox.style.paddingBottom = '6px';
+  }
+} 
+
+
+
+
+/*
+ * Monitor all requests so we can parse the response header data.
+ */
 
 
 function FirePHPProgress(context)
