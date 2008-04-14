@@ -84,7 +84,7 @@ define('FB_DUMP','DUMP');
  * @param $Object Mixed  The message or object to be sent to FirePHP
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
  * 
- * @version     0.1.1
+ * @version     0.1.2
  * @copyright   Copyright (c) 2008 FirePHP (http://www.firephp.org)
  * @author      Christoph Dorn <christoph@christophdorn.com>
  * @license     http://www.mozilla.org/MPL/
