@@ -1,4 +1,7 @@
 
+	- Added feature to allow custom processors to define their own logging templates
+	- Moved trace logging template into default processor
+
 2008-04-13 - Release Version: 0.0.6.9
 
 	- Implemented full PHP stack trace logging with variable inspection for fb.php
