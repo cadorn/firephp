@@ -367,12 +367,14 @@ dump('Firebug.FirePHP.showContext()'+"\n");
                 }
               }
               var panel = this.context.getPanel('console');
-              var doc = panel.document;
-            	addStyleSheet(doc, createStyleSheet(doc, URL));
-              if(!this.context.customStylesheets) {
-                this.context.customStylesheets = [];
-              }          
-              this.context.customStylesheets.push(URL);
+              if (panel) {
+                var doc = panel.document;
+                addStyleSheet(doc, createStyleSheet(doc, URL));
+                if (!this.context.customStylesheets) {
+                  this.context.customStylesheets = [];
+                }
+                this.context.customStylesheets.push(URL);
+              }
             },
             RegisterConsoleTemplate: function(Name,Template) {
               consoleTemplates[Name] = Template;
