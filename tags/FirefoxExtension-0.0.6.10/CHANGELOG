@@ -1,0 +1,120 @@
+
+2008-04-16 - Release Version: 0.0.6.10
+
+	- Added feature to allow custom processors to define their own logging templates
+	- Moved trace logging template into default processor
+
+2008-04-13 - Release Version: 0.0.6.9
+
+	- Implemented full PHP stack trace logging with variable inspection for fb.php
+
+2008-04-12 - Release Version: 0.0.6.8
+
+  - Bugfix - Parsing of header data in old format
+  - Bugfix - Adding and removing of FirePHP/X.X.X in User-Agent request header
+
+2008-04-11 - Release Version: 0.0.6.7
+
+  - New FirePHP client in form of jQuery plugin to be used in Jaxer server environment
+	- Bugfix - Console logging with different tabs and windows open and detached firebug window
+	- Updated custom code loading verification to allow different hosts for renderer and processor URL's
+
+2008-04-09 - Release Version: 0.0.6.6
+
+	- Enabled loading of custom renderers and processors from third part hosts if explicitly allowed by user
+
+2008-04-09 - Release Version: 0.0.6.5
+
+	- Bugfix for Firebug version 1.05
+
+2008-04-09 - Release Version: 0.0.6.4
+
+	- Updated security model to allow default renderer and processor without explicit action by user
+  - Change json data parsing from eval() to json_parse()
+  - Misc bug fixes to improve reliability
+  - Updated default renderer for server tab
+  - Updated data parsing and default renderer and processor to work with new fb() PHP function
+  - Implemented sorting of data headers based on numeric index
+  - The default processor will now fail gracefully if there is a problem logging the data
+	- The log mode string for console messages in the default processor is now case-insensitive
+
+2008-04-07 - Release Version: 0.0.6.3
+
+	- Implemented request processor that is called for every request in the background
+	- Renamed headers to start with X-...
+	- Added support for Firebug 1.1 (based on 1.1.0b12)	
+	- Added current FirePHP version and OS info to update URL
+
+2007-12-07 - Release Version: 0.0.5.26
+
+	- Finished full jQuery support for renderer
+	- Bugfix to make FirePHP work when Firebug is detached in its own window
+
+2007-12-05 - Release Version: 0.0.5.24
+
+	- Fixed incompatibility with HTML Validator extension: http://users.skynet.be/mgueury/mozilla/
+	- Fixed unique renderer key to allow request scoping in generated HTML for Console and Net panels
+	- Bugfix to make FirePHP work in Console panel with Ajax requests
+
+2007-12-04 - Release Version: 0.0.5.23
+
+	- Implemented explicit enable for each host and allowed sites menu & dialog
+	- Only send FirePHP accept and user agent headers when firebug is enabled
+	- Changed header name from FirePHP-Mask to FirePHP-RendererURL
+	- Added support for javascript in the rendered HTML
+
+2007-11-26 - Release Version: 0.0.5.22
+
+	- Updated to ignore case of header names
+  - Implemented data rendering in Server tab where data is fetched from response headers
+	- Added "Server" tab to Firebug's Net panel requests
+	- Abandoned previous idea in favor of simplicity
+	
+----------
+
+  - Changed PINF-org.firephp-* headers to X-PINF-org.firephp-*
+  - Updated UI design
+  - Added variable inspector and viewer
+  - Added console viewer
+  - Added support for platform-specific CSS and added Mac look
+  - Introduced versioning for the FirePHP XML protocol and set to 0.2
+  - Added a FirePHPChannel object to the content windows that can be
+    used to communicate with/via FirePHP
+  - Added event/listener based communication of all components via FirePHPChannel
+  - Revised format of capabilities definition
+  - Revised how capability definitions are loaded
+  - Added support to allow and block capability definition loading for hosts
+  - Implemented support for build version
+  - Added FirePHP/x.x.x to User-Agent Request header
+  - Implemented fetching of intelligence data from X-PINF-org.firephp-Data header
+  - Fixed bug to display application ID if label is not found
+  - Fixed variable list loading
+  - Fixed variable selection and display
+  - Implemented basic javascript array renderer
+  - Implemented SESSION variables list
+  
+2007-02-02 - Release Version: 0.0.5
+
+	- Wrapped add progress listener into try/catch to prevent some console warnings
+	- Removed debug dump statements
+
+2007-02-01 - Release Version: 0.0.4
+
+	- New code structure
+	- Lots of feature enhancements
+
+2007-01-12 - Release Version: 0.0.3
+
+	- Set defaultPanelName preference to "console" if set to
+	  "FirePHP" to prevent Firebug from failing silently when
+	  extension is removed and "FirePHP" panel is still selected.
+	  Thanks to Matthieu Honel for the suggestion.
+	  A patch has been submitted to Firebug.
+	- Added updateURL to install.rdf
+
+2007-01-11
+	
+	- Added a sidebar and button to toggle sidebar.
+	  The sidebar currently contains one listbox that lists all
+	  events fired by Firebug as they occur. This will help
+	  during development to establish a clean order of events.
