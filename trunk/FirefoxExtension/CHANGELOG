@@ -1,4 +1,6 @@
 
+2008-04-16 - Release Version: 0.0.6.10
+
 	- Added feature to allow custom processors to define their own logging templates
 	- Moved trace logging template into default processor
 
