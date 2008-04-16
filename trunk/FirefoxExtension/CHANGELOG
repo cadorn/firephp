@@ -1,7 +1,8 @@
 
-2008-04-16 - Release Version: 0.0.6.12
+2008-04-16 - Release Version: 0.0.6.14
 	
 	- Bugfix - Re-initialize processor when console panel is not found
+	- Bugfix - Add custom stylesheet to console panel on showPanel()
 
 2008-04-16 - Release Version: 0.0.6.10
 

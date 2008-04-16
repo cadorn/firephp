@@ -295,6 +295,25 @@ dump('Firebug.FirePHP.unwatchWindow()'+"\n");
   showPanel: function(browser, panel)
   {
 dump('Firebug.FirePHP.showPanel()'+"\n");    
+
+    /* Add any stylesheets if not added yet */
+    
+    if(this.activeContext && this.FirePHPProcessor) {
+      if(!this.activeContext.customStylesheets) {
+        this.activeContext.customStylesheets = [];
+      }
+      var panel = this.activeContext.getPanel('console');
+      if(panel) {
+        for( var url in this.FirePHPProcessor.consoleStylesheets ) {
+          if(!this.activeContext.customStylesheets[url]) {
+            var doc = panel.document;
+            addStyleSheet(doc, createStyleSheet(doc, url));
+            this.activeContext.customStylesheets[url] = true;
+          }
+        }
+      }
+    } 
+
   },
   
   
@@ -344,9 +363,10 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 			
 			if(!this.FirePHPProcessor) {
 				this.FirePHPProcessor = function() {
-					var initialized = false;
-          var consoleTemplates = [];
 					return {
+					  initialized: false,
+            consoleStylesheets: [],
+            consoleTemplates: [],
 						_Init: function() {
 							if(this.initialized) return;
               try {
@@ -360,31 +380,17 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 						ProcessRequest: function() {
 						},
             RegisterConsoleStyleSheet: function(URL) {
-              /* Only add the stylesheet once */
-              if (this.context.customStylesheets) {
-                for (var i = 0; i < this.context.customStylesheets.length; i++) {
-                  if(this.context.customStylesheets[i]==URL) return;
-                }
-              }
-              var panel = this.context.getPanel('console');
-              if (panel) {
-                var doc = panel.document;
-                addStyleSheet(doc, createStyleSheet(doc, URL));
-                if (!this.context.customStylesheets) {
-                  this.context.customStylesheets = [];
-                }
-                this.context.customStylesheets.push(URL);
-              }
+              this.consoleStylesheets[URL] = true;
             },
             RegisterConsoleTemplate: function(Name,Template) {
-              consoleTemplates[Name] = Template;
+              this.consoleTemplates[Name] = Template;
             },
 						logToFirebug: function(TemplateName, Data) {
-              if (consoleTemplates[TemplateName]) {
+              if (this.consoleTemplates[TemplateName]) {
                 return Firebug.Console.logRow(function(object, row, rep)
                   {
                     return rep.tag.append({object: object}, row);
-                  }, Data, this.activeContext, consoleTemplates[TemplateName].className, consoleTemplates[TemplateName], null, true);
+                  }, Data, this.activeContext, this.consoleTemplates[TemplateName].className, this.consoleTemplates[TemplateName], null, true);
               } else {
             	  return Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
               }
