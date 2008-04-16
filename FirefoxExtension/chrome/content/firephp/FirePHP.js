@@ -349,8 +349,11 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 					return {
 						_Init: function() {
 							if(this.initialized) return;
-							this.Init();
-							this.initialized = true;
+              try {
+  							this.Init();
+  							this.initialized = true;
+              } catch(e) {
+              }           
 						},
 						Init : function() {
 						},
@@ -362,7 +365,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
                 for (var i = 0; i < this.context.customStylesheets.length; i++) {
                   if(this.context.customStylesheets[i]==URL) return;
                 }
-              }              
+              }
               var panel = this.context.getPanel('console');
               var doc = panel.document;
             	addStyleSheet(doc, createStyleSheet(doc, URL));
