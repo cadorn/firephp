@@ -1,0 +1,27 @@
+
+- Refactor FirePHPRenderer API to introduce:
+	 - ProcessRequest - to be called automatically after every request load (DONE)
+	 - RenderRequest - to be called when "Server" tab is clicked
+	 - SetRequestHTML - to be called by renderer to make the rendered HTML visible for the request
+	 
+- Initialize a new Renderer object for every unique renderer URL. When the requests
+  are handled call the appropriate renderer. Allow different renderers to exist
+  at the same time for different request URL's.
+
+
+- Allow the ProcessRequest method to render debug data in dedicated FirePHP panel.
+	=> Will log for firebug console for now.
+
+
+- Test suite to allow testing of Renderers outside of Firebug (in main browser)
+  and thus allow debugging of renderer code using firebug.
+  
+  
+
+
+--------------------------------------------------------------------------------  
+  Waitning for additional bug reports
+--------------------------------------------------------------------------------
+  
+- Bugfix for hostname check to correctly verify "localhost" and IP hostnames.
+	=> This should work.
