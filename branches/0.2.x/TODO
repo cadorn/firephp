@@ -15,8 +15,6 @@
 
 - Test suite to allow testing of Renderers outside of Firebug (in main browser)
   and thus allow debugging of renderer code using firebug.
-  
-  
 
 
 --------------------------------------------------------------------------------  
@@ -24,4 +22,4 @@
 --------------------------------------------------------------------------------
   
 - Bugfix for hostname check to correctly verify "localhost" and IP hostnames.
-	=> This should work.
+	=> This should work
