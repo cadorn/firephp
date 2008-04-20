@@ -1,4 +1,6 @@
 
+	- Added sub-sections to server tab with loading indicator
+
 2008-04-16 - Release Version: 0.0.6.14
 	
 	- Bugfix - Re-initialize processor when console panel is not found
