@@ -5,16 +5,25 @@ require_once('FirePHP.class.php');
 
 class FirePhp_Core extends FirePHP {
   
-  private static function setHeader($Name, $Value) {
-    $response = Zend_Controller_Front::getInstance()->getResponse();
-    $response->setHeader($Name, $Value, true);
+  private static $request = null;
+  private static $response = null;
+  
+  public static function init(Zend_Controller_Request_Abstract $request = null,
+                              Zend_Controller_Response_Abstract $response = null) {
+    self::$request = $request;
+    self::$response = $response;
+    self::$instance = new self();
+  }
+  
+  protected function setHeader($Name, $Value) {
+    return self::$response->setHeader($Name, $Value, true);
   }
 
-  private static function getUserAgent() {
-    return Zend_Controller_Front::getInstance()->getRequest()->getServer('HTTP_USER_AGENT');
+  protected function getUserAgent() {
+    return self::$request->getServer('HTTP_USER_AGENT');
   }
 
-  private static function newException($Message) {
+  protected function newException($Message) {
     require_once 'Zend/Exception.php';
     return new Zend_Exception($Message);
   }
