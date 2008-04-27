@@ -75,7 +75,7 @@ class FirePhp_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
      */
     public function __construct()
     {
-        $this->_firePhpDetected = FirePhp_Core::detectClientExtension();
+        $this->_firePhpDetected = FirePhp_Core::getInstance()->detectClientExtension();
     }
 
     /**
@@ -133,6 +133,6 @@ class FirePhp_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
           $type = FirePHP::EXCEPTION;
         }
         
-        FirePhp_Core::fb($event['message'],$type);
+        FirePhp_Core::getInstance()->fb($event['message'],$type);
     }
 }

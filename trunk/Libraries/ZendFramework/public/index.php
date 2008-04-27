@@ -15,14 +15,30 @@ require_once 'Zend/Log.php';
 require_once 'Zend/Log/Filter/Suppress.php';
 require_once 'FirePhp/Log/Writer/FirePhp.php';
 require_once 'Zend/Controller/Front.php';
+require_once 'Zend/Controller/Request/Http.php';
+require_once 'Zend/Controller/Response/Http.php';
+
+/*
+ * Initialize the HTTP Request and Response Objects
+ */
+ 
+$request = new Zend_Controller_Request_Http();
+$response = new Zend_Controller_Response_Http();
+
+
+/*
+ * Initialize FirePHP
+ */
+ 
+FirePhp_Core::init($request, $response); 
 
 
 /*
  * Optionally set custom processor and renderer
  */
 
-//FirePhp_Core::setProcessorURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/js/RequestProcessor.js');
-//FirePhp_Core::setRendererURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/js/ServerNetPanelRenderer.js');
+//FirePhp_Core::getInstance()->setProcessorURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/js/RequestProcessor.js');
+//FirePhp_Core::getInstance()->setRendererURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/js/ServerNetPanelRenderer.js');
 
 
 /*
@@ -42,6 +58,8 @@ Zend_Registry::set('logger',$logger);
 /*
  * Run the front controller
  */
-
-Zend_Controller_Front::run('../application/controllers');
+ 
+$controller = Zend_Controller_Front::getInstance();
+$controller->setControllerDirectory('../application/controllers');
+$controller->dispatch($request, $response);
 
