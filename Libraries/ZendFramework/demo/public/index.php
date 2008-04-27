@@ -67,8 +67,8 @@ FirePhp_Core::init($request, $response);
  * Optionally set custom processor and renderer
  */
 
-//FirePhp_Core::getInstance()->setProcessorURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/js/RequestProcessor.js');
-//FirePhp_Core::getInstance()->setRendererURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/js/ServerNetPanelRenderer.js');
+//FirePhp_Core::getInstance()->setProcessorURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/demo/js/RequestProcessor.js');
+//FirePhp_Core::getInstance()->setRendererURL('http://'.$_SERVER['HTTP_HOST'].'/Libraries/ZendFramework/demo/js/ServerNetPanelRenderer.js');
 
 
 /*
