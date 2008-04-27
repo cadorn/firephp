@@ -73,7 +73,7 @@
 (function($){
 
   if(typeof(Jaxer)=='undefined' || Jaxer.isOnServer!=true) {
-    throw new Error('The jquery.fb.js plugin may only be used in the Jaxer server environment!');    
+    throw new Error('The jquery.fb.js plugin will only work in the Jaxer server environment!');    
   }
   
   $.extend({
