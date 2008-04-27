@@ -64,10 +64,9 @@ require_once 'FirePHP.class.php';
  * 
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
  * 
- * @copyright   Copyright (c) 2007 FirePHP (http://www.firephp.org/)
+ * @copyright   Copyright (C) 2007 Christoph Dorn
  * @author      Christoph Dorn <christoph@christophdorn.com>
  * @license     http://www.gnu.org/licenses/lgpl.html
- * @link        http://www.firephp.org/
  */
 function fb() {
 
