@@ -20,9 +20,14 @@
  * along with FirePHP.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
  * 
  * ***** END LICENSE BLOCK ***** */
+
+
+/* NOTE: You must have the FirePHPCore library in your include path */
+
+set_include_path('./../lib/'.PATH_SEPARATOR.get_include_path());
  
- 
-require('./../lib/FirePHP.class.php');
+
+require('FirePHPCore/FirePHP.class.php');
 
 /* NOTE: You must have Output Buffering enabled via
          ob_start() or output_buffering ini directive. */

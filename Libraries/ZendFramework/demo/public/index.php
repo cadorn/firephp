@@ -35,9 +35,12 @@
 define('LIVE',false);
 
 
-/* NOTE: You must have the Zend Framework and FirePHP.class.php core class in your include path! */
+/* NOTE: You must have the Zend Framework, Zend Framework FirePHP library and
+         FirePHPCore library in your include path! */
 
-set_include_path(dirname(dirname(dirname(__FILE__))).'/lib'.PATH_SEPARATOR.get_include_path());
+set_include_path('./../../lib'.PATH_SEPARATOR.
+                 './../../../FirePHPCore/lib'.PATH_SEPARATOR.
+                 get_include_path());
 
 require_once 'FirePhp/Core.php';
 require_once 'Zend/Registry.php';

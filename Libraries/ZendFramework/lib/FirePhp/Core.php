@@ -25,8 +25,8 @@ require_once('Zend/Controller/Request/Abstract.php');
 /** Zend_Controller_Response_Abstract */
 require_once('Zend/Controller/Response/Abstract.php');
 
-/** FirePHP.class.php */
-require_once('FirePHP.class.php');
+/** FirePHPCore/FirePHP.class.php */
+require_once('FirePHPCore/FirePHP.class.php');
 
 /*
  * @category   FirePhp
