@@ -22,7 +22,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-require_once 'FirePHP.class.php';
+require_once dirname(__FILE__).'/FirePHP.class.php';
 
 /**
  * Sends the given data to FirePHP Firefox Extension.
