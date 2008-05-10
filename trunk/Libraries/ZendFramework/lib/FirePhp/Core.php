@@ -48,10 +48,16 @@ class FirePhp_Core extends FirePHP {
   }
   
   protected function setHeader($Name, $Value) {
+    if(self::$response===null) {
+      return parent::setHeader($Name, $Value);
+    }
     return self::$response->setHeader($Name, $Value, true);
   }
 
   protected function getUserAgent() {
+    if(self::$request===null) {
+      return parent::getUserAgent();
+    }
     return self::$request->getServer('HTTP_USER_AGENT');
   }
 
