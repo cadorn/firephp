@@ -83,7 +83,7 @@ var FirePHP = top.FirePHP = {
 
     /* Set the FirePHP Extension version for the FirePHP Service Component */  
     try {
-      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setExtensionVersion(this.version);
+//      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setExtensionVersion(this.version);
     } catch (err) {}
 
 
@@ -98,28 +98,49 @@ var FirePHP = top.FirePHP = {
 dump('FirePHP.enable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
     try {
-      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
+      this.observerService.addObserver(this, "http-on-modify-request", false);
+//      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
     } catch (err) {}
   },
   disable: function() {
 dump('FirePHP.disable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
     try {
-      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
+      this.observerService.removeObserver(this, "http-on-modify-request");
+//      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
     } catch (err) {}
   },
+  
+  get observerService() {
+    return Components.classes["@mozilla.org/observer-service;1"]
+                     .getService(Components.interfaces.nsIObserverService);
+  },
+  
+  observe: function(subject, topic, data)
+  {
+    if (topic == "http-on-modify-request") {
+      var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
+
+      /* Add FirePHP/X.X.X to User-Agent header if not already there */
+
+      if(httpChannel.getRequestHeader("User-Agent").match(/\sFirePHP\/([\.|\d]*)\s?/)==null) {
+        httpChannel.setRequestHeader("User-Agent", 
+          httpChannel.getRequestHeader("User-Agent") + ' ' +
+          "FirePHP/" + this.version, false);
+      }
+    }
+  },  
 	
   openPermissions: function()
   {
-      var params = {
-          permissionType: "firephp",
-          windowTitle: "FirePHP Allowed Sites",
-          introText: "Choose which web sites are allowed to be used with FirePHP.",
-          blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
-      };
+    var params = {
+        permissionType: "firephp",
+        windowTitle: "FirePHP Allowed Sites",
+        introText: "Choose which web sites are allowed to be used with FirePHP.",
+        blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
+    };
 
-      FirebugLib.openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",
-          "", params);
+    FirebugLib.openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",'', params);
   },
 	
   isURIAllowed: function(host)
@@ -405,48 +426,84 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 										 context: this.activeContext,
 										 url: url};
 
-			jQuery.ajax({
-				type: "GET",
-				url: mask+'?t='+(new Date().getTime()),
-				success: function(ReturnData){
+      /* Check if the processor to be loaded is the current processor.
+       * If it is we do not re-load the processor
+       */
+      
+      if (this.FirePHPProcessor.sourceURL == mask) {
 
-					with (proecessor_context) {							
-						FirePHPProcessor.url = url;
-						FirePHPProcessor.data = data;
-						FirePHPProcessor.context = proecessor_context.context;
+        with (proecessor_context) {
+          FirePHPProcessor.data = data;
+          FirePHPProcessor.context = proecessor_context.context;
 
-            try {
-  						eval(ReturnData);
+          try {
+            eval(FirePHPProcessor.code);
+            
+            FirePHPProcessor._Init();
+            FirePHPProcessor.ProcessRequest();
+          } 
+          catch (e) {
+            Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!', e]);
+          }
+        }
+        
+      } else {
+
+        this.FirePHPProcessor.sourceURL = mask;
+      
+        jQuery.ajax({
+          type: 'GET',
+          //				url: mask+'?t='+(new Date().getTime()),
+          url: mask,
+          success: function(ReturnData){
+          
+            with (proecessor_context) {
+              FirePHPProcessor.url = url;
+              FirePHPProcessor.data = data;
+              FirePHPProcessor.context = proecessor_context.context;
+              FirePHPProcessor.code = ReturnData;
               
-  						FirePHPProcessor._Init();
-  						FirePHPProcessor.ProcessRequest();
-            } catch(e) {
-              Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!',e]);  
+              try {
+                eval(ReturnData);
+                
+                FirePHPProcessor._Init();
+                FirePHPProcessor.ProcessRequest();
+              } 
+              catch (e) {
+                Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!', e]);
+              }
             }
-					}	
-		
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					if(mask.substr(0,9)=='chrome://') {
-
-						with (proecessor_context) {
-							FirePHPProcessor.url = url;
-							FirePHPProcessor.data = data;
-							FirePHPProcessor.context = proecessor_context.context;
-
-							eval(XMLHttpRequest.responseText);
-						
-							FirePHPProcessor._Init();
-							FirePHPProcessor.ProcessRequest();
-						}	
-
-					} else {
-						
-						this.logWarning('Error loading processor from: '+mask);
-						
-					}
-				}
-			});		
+            
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown){
+            if (mask.substr(0, 9) == 'chrome://') {
+            
+              with (proecessor_context) {
+                FirePHPProcessor.url = url;
+                FirePHPProcessor.data = data;
+                FirePHPProcessor.context = proecessor_context.context;
+                FirePHPProcessor.code = XMLHttpRequest.responseText;
+                
+                try {
+                  eval(XMLHttpRequest.responseText);
+                  
+                  FirePHPProcessor._Init();
+                  FirePHPProcessor.ProcessRequest();
+                } 
+                catch (e) {
+                  Firebug.FirePHP.logWarning(['Error executing default FirePHP processor!', e]);
+                }
+              }
+              
+            }
+            else {
+            
+              this.logWarning('Error loading processor from: ' + mask);
+              
+            }
+          }
+        });
+      }
 		}
 		
 	},
