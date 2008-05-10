@@ -36,7 +36,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-require_once('./../FirefoxExtension/chrome/content/firephp/fb.php');
+require_once('./../Libraries/FirePHPCore/lib/FirePHPCore/fb.php');
 
 
 
