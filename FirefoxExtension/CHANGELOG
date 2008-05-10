@@ -1,8 +1,11 @@
+
+2008-05-09 - Release Version: 0.0.6.15
 	
 	- Updated default processor to render exception stacks without wrapping the filenames
 	- Added updateKey to install.rdf
 	- Updated browser version to support FF3
   - Removed component used to add to User-Agent request header as we can do this directly via httpChannel
+  - Removed ?t=xxx from custom renderer URL's
 
 2008-04-16 - Release Version: 0.0.6.14
 	
