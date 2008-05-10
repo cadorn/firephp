@@ -71,15 +71,20 @@
 }
 
 .logRow-firephp-trace.opened > .head > .info > TABLE TBODY TR TD.cellFile {
+  white-space:nowrap;
+  vertical-align: top;
   border:1px solid #D7D7D7;
   padding-right: 10px;
 }
 .logRow-firephp-trace.opened > .head > .info > TABLE TBODY TR TD.cellLine {
+  white-space:nowrap;
+  vertical-align: top;
   border:1px solid #D7D7D7;
   text-align: right;
 }
 .logRow-firephp-trace.opened > .head > .info > TABLE TBODY TR TD.cellInst {
   border:1px solid #D7D7D7;
+  vertical-align: top;
   padding-left: 10px;
   font-weight: bold;
 }
