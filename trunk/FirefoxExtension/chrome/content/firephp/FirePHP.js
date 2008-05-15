@@ -46,28 +46,33 @@ if(externalMode) {
 
 FBL.ns(function() { with (FBL) {
 
+const FB_NEW = (Firebug.version == '1.2')?true:false;
 
-const nsIPrefBranch2 = FirebugLib.CI("nsIPrefBranch2");
-const nsIPermissionManager = FirebugLib.CI("nsIPermissionManager");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
-const PrefService = FirebugLib.CC("@mozilla.org/preferences-service;1");
-const PermManager = FirebugLib.CC("@mozilla.org/permissionmanager;1");
+const nsIPrefBranch2 = (FB_NEW)?Ci.nsIPrefBranch2:FirebugLib.CI("nsIPrefBranch2");
+const nsIPermissionManager = (FB_NEW)?Ci.nsIPermissionManager:FirebugLib.CI("nsIPermissionManager");
 
+const PrefService = (FB_NEW)?Cc["@mozilla.org/preferences-service;1"]:FirebugLib.CC("@mozilla.org/preferences-service;1");
+const PermManager = (FB_NEW)?Cc["@mozilla.org/permissionmanager;1"]:FirebugLib.CC("@mozilla.org/permissionmanager;1");
+
+const nsIHttpChannel = (FB_NEW)?Ci.nsIHttpChannel:CI("nsIHttpChannel");
+const nsIWebProgress = (FB_NEW)?Ci.nsIWebProgress:CI("nsIWebProgress");
+const nsIWebProgressListener = (FB_NEW)?Ci.nsIWebProgressListener:CI("nsIWebProgressListener");
+const nsISupportsWeakReference = (FB_NEW)?Ci.nsISupportsWeakReference:CI("nsISupportsWeakReference");
+const nsISupports = (FB_NEW)?Ci.nsISupport:CI("nsISupports");
+  
+const ioService = (FB_NEW)?Ci.nsIIOService:FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
+  
 const observerService = CCSV("@mozilla.org/observer-service;1", "nsIObserverService");
+  
 
-
-
-const nsIHttpChannel = CI("nsIHttpChannel")
-const nsIWebProgress = CI("nsIWebProgress")
-const nsIWebProgressListener = CI("nsIWebProgressListener")
-const nsISupportsWeakReference = CI("nsISupportsWeakReference")
-const nsISupports = CI("nsISupports")
 const STATE_TRANSFERRING = nsIWebProgressListener.STATE_TRANSFERRING;
 const STATE_IS_DOCUMENT = nsIWebProgressListener.STATE_IS_DOCUMENT;
 const STATE_STOP = nsIWebProgressListener.STATE_STOP;
 const STATE_IS_REQUEST = nsIWebProgressListener.STATE_IS_REQUEST;
 const NOTIFY_ALL = nsIWebProgress.NOTIFY_ALL;
-
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -140,13 +145,12 @@ dump('FirePHP.disable()'+"\n");
         blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
     };
 
-    FirebugLib.openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",'', params);
+    openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",'', params);
   },
 	
   isURIAllowed: function(host)
   {
     if(!host) return false;
-    var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
     var uri = ioService.newURI('http://'+host, null, null);
     return uri && 
         (pm.testPermission(uri, "firephp") == nsIPermissionManager.ALLOW_ACTION);
@@ -154,8 +158,6 @@ dump('FirePHP.disable()'+"\n");
 
   enableSite: function(host)
   {
-    var ioService = FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
-
     var uri = ioService.newURI('http://'+host, null, null);
     pm.add(uri, "firephp", nsIPermissionManager.ALLOW_ACTION);
   },
@@ -403,7 +405,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
     var mask = info['processorurl'];
     var data = info['data'];
 
-		var domain = FirebugLib.getDomain(mask);
+		var domain = getDomain(mask);
     
 		if(data) {
 			if(!mask) {

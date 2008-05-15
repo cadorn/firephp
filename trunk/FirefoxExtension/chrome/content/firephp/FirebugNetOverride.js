@@ -52,6 +52,220 @@ const binaryCategoryMap =
 
 /* Only override the net code for specific firebug versions */
 
+if(Firebug.version=='1.2') {		/* 1.2.0a27X */
+
+Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep,
+{
+    tag:
+        DIV({class: "netInfoBody", _repObject: "$file"},
+            DIV({class: "netInfoTabs"},
+                A({class: "netInfoParamsTab netInfoTab", onclick: "$onClickTab",
+                    view: "Params",
+                    $collapsed: "$file|hideParams"},
+                    $STR("URLParameters")
+                ),
+                A({class: "netInfoHeadersTab netInfoTab", onclick: "$onClickTab",
+                    view: "Headers"},
+                    $STR("Headers")
+                ),
+                A({class: "netInfoPostTab netInfoTab", onclick: "$onClickTab",
+                    view: "Post",
+                    $collapsed: "$file|hidePost"},
+                    $STR("Post")
+                ),
+                A({class: "netInfoPutTab netInfoTab", onclick: "$onClickTab",
+                    view: "Put",
+                    $collapsed: "$file|hidePut"},
+                    $STR("Put")
+                ),
+                A({class: "netInfoResponseTab netInfoTab", onclick: "$onClickTab",
+                    view: "Response",
+                    $collapsed: "$file|hideResponse"},
+                    $STR("Response")
+                ),
+                A({class: "netInfoCacheTab netInfoTab", onclick: "$onClickTab",
+                   view: "Cache",
+                   $collapsed: "$file|hideCache"},
+                   "Cache" // todo: Localization
+                ),
+                A({class: "netInfoServerTab netInfoTab", onclick: "$onClickTab",
+                    view: "Server",
+                    $collapsed: "$file|hideServer"},
+                    "Server"
+                )
+            ),
+            TABLE({class: "netInfoParamsText netInfoText netInfoParamsTable",
+                    cellpadding: 0, cellspacing: 0}, TBODY()),
+            TABLE({class: "netInfoHeadersText netInfoText netInfoHeadersTable",
+                    cellpadding: 0, cellspacing: 0},
+                TBODY(
+                    TR({class: "netInfoResponseHeadersTitle"},
+                        TD({colspan: 2},
+                            DIV({class: "netInfoHeadersGroup"}, $STR("ResponseHeaders"))
+                        )
+                    ),
+                    TR({class: "netInfoRequestHeadersTitle"},
+                        TD({colspan: 2},
+                            DIV({class: "netInfoHeadersGroup"}, $STR("RequestHeaders"))
+                        )
+                    )
+                )
+            ),
+            DIV({class: "netInfoPostText netInfoText"},
+                TABLE({class: "netInfoPostTable", cellpadding: 0, cellspacing: 0},
+                    TBODY()
+                )
+            ),
+            DIV({class: "netInfoPutText netInfoText"},
+                TABLE({class: "netInfoPutTable", cellpadding: 0, cellspacing: 0},
+                    TBODY()
+                )
+            ),
+            DIV({class: "netInfoResponseText netInfoText"},
+                $STR("Loading")
+            ),
+            DIV({class: "netInfoCacheText netInfoText"},
+                TABLE({class: "netInfoCacheTable", cellpadding: 0, cellspacing: 0},
+                    TBODY()
+                )
+            )
+        ),
+
+
+    updateInfo: function(netInfoBox, file, context)
+    {
+        if (FBTrace.DBG_NET)                                     /*@explore*/
+            FBTrace.dumpProperties("updateInfo file", file);     /*@explore*/
+
+        var tab = netInfoBox.selectedTab;
+        if (hasClass(tab, "netInfoParamsTab"))
+        {
+            if (file.urlParams && !netInfoBox.urlParamsPresented)
+            {
+                netInfoBox.urlParamsPresented = true;
+                this.insertHeaderRows(netInfoBox, file.urlParams, "Params");
+            }
+        }
+
+        if (hasClass(tab, "netInfoHeadersTab"))
+        {
+            if (file.responseHeaders && !netInfoBox.responseHeadersPresented)
+            {
+                netInfoBox.responseHeadersPresented = true;
+                this.insertHeaderRows(netInfoBox, file.responseHeaders, "Headers", "ResponseHeaders");
+            }
+
+            if (file.requestHeaders && !netInfoBox.requestHeadersPresented)
+            {
+                netInfoBox.requestHeadersPresented = true;
+                this.insertHeaderRows(netInfoBox, file.requestHeaders, "Headers", "RequestHeaders");
+            }
+        }
+
+        if (hasClass(tab, "netInfoPostTab"))
+        {
+            var postTextBox = getChildByClass(netInfoBox, "netInfoPostText");
+            if (!netInfoBox.postPresented)
+            {
+                netInfoBox.postPresented  = true;
+
+                var text = getPostText(file, context);
+                if (text != undefined)
+                {
+                    if (isURLEncodedFile(file, text))
+                    {
+                        var lines = text.split("\n");
+                        var params = parseURLEncodedText(lines[lines.length-1]);
+                        this.insertHeaderRows(netInfoBox, params, "Post");
+                    }
+                    else
+                    {
+                        var postText = formatPostText(text);
+                        if (postText)
+                            insertWrappedText(postText, postTextBox);
+                    }
+                }
+            }
+        }
+
+        if (hasClass(tab, "netInfoPutTab"))
+        {
+            var putTextBox = getChildByClass(netInfoBox, "netInfoPutText");
+            if (!netInfoBox.putPresented)
+            {
+                netInfoBox.putPresented  = true;
+
+                var text = getPostText(file, context);
+                if (text != undefined)
+                {
+                    if (isURLEncodedFile(file, text))
+                    {
+                        var lines = text.split("\n");
+                        var params = parseURLEncodedText(lines[lines.length-1]);
+                        this.insertHeaderRows(netInfoBox, params, "Put");
+                    }
+                    else
+                    {
+                        var putText = formatPostText(text);
+                        if (putText)
+                            insertWrappedText(putText, putTextBox);
+                    }
+                }
+            }
+        }
+
+
+        if (hasClass(tab, "netInfoResponseTab") && file.loaded && !netInfoBox.responsePresented)
+        {
+            netInfoBox.responsePresented = true;
+
+            var responseTextBox = getChildByClass(netInfoBox, "netInfoResponseText");
+            if (file.category == "image")
+            {
+                var responseImage = netInfoBox.ownerDocument.createElement("img");
+                responseImage.src = file.href;
+                responseTextBox.replaceChild(responseImage, responseTextBox.firstChild);
+            }
+            else if (!(binaryCategoryMap.hasOwnProperty(file.category)))
+            {
+                var text = file.responseText
+                    ? file.responseText
+                    : context.sourceCache.loadText(file.href, file.method);
+
+                if (text)
+                    insertWrappedText(text, responseTextBox);
+                else
+                    insertWrappedText("", responseTextBox);
+            }
+        }
+
+        if (hasClass(tab, "netInfoCacheTab") && file.loaded && !netInfoBox.cachePresented)
+        {
+            netInfoBox.cachePresented = true;
+
+            var responseTextBox = getChildByClass(netInfoBox, "netInfoCacheText");
+            if(file.cacheEntry) {
+              this.insertHeaderRows(netInfoBox, file.cacheEntry, "Cache");
+            }
+        }
+        
+        if (hasClass(tab, "netInfoServerTab") && file.loaded && !netInfoBox.serverPresented)
+        {
+					netInfoServerTab(netInfoBox, file, context);
+        }				
+    },
+		
+
+    hideServer: function(file)
+    {
+        return false;
+    }
+
+
+});
+
+
+} else
 if(Firebug.version=='1.1') {		/* 1.1.0b12 */
 
 
