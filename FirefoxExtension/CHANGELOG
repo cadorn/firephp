@@ -1,4 +1,8 @@
 
+2008-05-15 - Release Version: 0.0.6.18
+
+	- Added support for Firebug 1.2
+
 2008-05-15 - Release Version: 0.0.6.17
 
 	- Bugfix - Ensure custom log templates and stylesheets are added correctly at all times
