@@ -54,7 +54,7 @@ const binaryCategoryMap =
 
 if(Firebug.version=='1.2') {		/* 1.2.0a27X */
 
-Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep,
+Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 {
     tag:
         DIV({class: "netInfoBody", _repObject: "$file"},
@@ -128,6 +128,9 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep,
                 TABLE({class: "netInfoCacheTable", cellpadding: 0, cellspacing: 0},
                     TBODY()
                 )
+            ),
+            DIV({class: "netInfoServerText netInfoText"}, 
+                $STR("Loading")
             )
         ),
 
@@ -254,8 +257,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep,
 					netInfoServerTab(netInfoBox, file, context);
         }				
     },
-		
-
+    
     hideServer: function(file)
     {
         return false;
@@ -633,100 +635,104 @@ function insertWrappedText(text, textBox)
 
 
 function netInfoServerTab(netInfoBox, file, context) {
-	
-            netInfoBox.serverPresented = true;
 
-            var responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
+    netInfoBox.serverPresented = true;
 
-						var name = '';
-						var url = '';
-						var item_index = 0;
-						
-						/* Net Panel */
-						if(file.href) {
-							url = file.href;
-							for( var i=0 ; i<file.row.parentNode.childNodes.length ; i++ ) {
-								if(file.row.parentNode.childNodes[i]==file.row) {
-									item_index = 'n'+i;
-									break;
-								}
-							}
-						} else
-						/* Console Panel */
-						if(file.request && file.request.channel && file.request.channel.name) {
-							url = file.request.channel.name;							
-							for( var i=0 ; i<file.logRow.parentNode.childNodes.length ; i++ ) {
-								if(file.logRow.parentNode.childNodes[i]==file.logRow) {
-									item_index = 'c'+i;
-									break;
-								}
-							}
-						}
-						
-						if(url) {
-              
-              var info = FirePHP.parseHeaders(file.responseHeaders,'array');
-              var mask = info['rendererurl'];
-              var data = info['data'];
-              
-							var hash = hex_md5(item_index+':'+url);
-              
-              if(!mask) {
-            		mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
-              }
-                            
-            	if(info['rendererurl'] || info['processorurl']) {
-                
-                var rendererurl_domain = '';
-                var processorurl_domain = '';
-                var rendererurl_allowed = false;
-                var processorurl_allowed = false;
+    var responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
 
-                if(info['rendererurl']) {
-                  rendererurl_domain = FirebugLib.getDomain(info['rendererurl']);
-                  rendererurl_allowed = top.FirePHP.isURIAllowed(rendererurl_domain);
-                } else {
-                  rendererurl_allowed = true;
-                }
-                if(info['processorurl']) {
-                  processorurl_domain = FirebugLib.getDomain(info['processorurl']);
-                  processorurl_allowed = top.FirePHP.isURIAllowed(processorurl_domain);
-                } else {
-                  processorurl_allowed = true;
-                }
-                            
-  							if( rendererurl_allowed && processorurl_allowed ) {
-                  
-  								if(data) {
-  			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
-  								} else {
-  									responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
-  								}
-                  
-  							} else {
-                  var msg = '<p>By default FirePHP is not allowed to load custom renderers nor processors.</p>';
-                  if(!rendererurl_allowed) {
-									  msg += '<p>To allow custom loading from host <b>'+rendererurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+rendererurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+rendererurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
-                  }
-                  if(!processorurl_allowed && processorurl_domain!=rendererurl_domain) {
-									  msg += '<p>To allow custom loading from host <b>'+processorurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+processorurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+processorurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
-                  }
-									msg += '<p><font color="red"><b>WARNING:</b> FirePHP customizing works by allowing a server script to insert code into your browser. <b>Only enable this for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>';
-									msg += '<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>';
-									msg += '<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>';
-									msg += 'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>';
-									msg += 'By using FirePHP you agree to all terms of the Mozilla Public License.<br>';
-									msg += 'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
-  								responseTextBox.innerHTML = msg;													
-  							}                
-            	} else {
-								if(data) {
-			            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
-								} else {
-									responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
-								}
-              }
-						}	
+		var name = '';
+		var url = '';
+		var item_index = 0;
+    var row = null;
+    
+    if(file.href) {
+      url = file.href; 
+    } else
+    if(file.request && file.request.channel && file.request.channel.name) {
+			url = file.request.channel.name;							
+    } else {
+      return;
+    }
+    if(file.row) {
+      row = file.row;
+    } else
+    if(file.logRow) {
+      row = file.logRow;
+    } else {
+      return;
+    }
+		
+		for( var i=0 ; i<row.parentNode.childNodes.length ; i++ ) {
+			if(row.parentNode.childNodes[i]==file.row) {
+				item_index = 'r'+i;
+				break;
+			}
+		}
+		
+		if(url) {
+      
+      var info = FirePHP.parseHeaders(file.responseHeaders,'array');
+      var mask = info['rendererurl'];
+      var data = info['data'];
+      
+			var hash = hex_md5(item_index+':'+url);
+      
+      if(!mask) {
+    		mask = 'chrome://firephp/content/ServerNetPanelRenderer.js';
+      }
+                    
+    	if(info['rendererurl'] || info['processorurl']) {
+        
+        var rendererurl_domain = '';
+        var processorurl_domain = '';
+        var rendererurl_allowed = false;
+        var processorurl_allowed = false;
+
+        if(info['rendererurl']) {
+          rendererurl_domain = FirebugLib.getDomain(info['rendererurl']);
+          rendererurl_allowed = top.FirePHP.isURIAllowed(rendererurl_domain);
+        } else {
+          rendererurl_allowed = true;
+        }
+        if(info['processorurl']) {
+          processorurl_domain = FirebugLib.getDomain(info['processorurl']);
+          processorurl_allowed = top.FirePHP.isURIAllowed(processorurl_domain);
+        } else {
+          processorurl_allowed = true;
+        }
+                    
+				if( rendererurl_allowed && processorurl_allowed ) {
+          
+					if(data) {
+            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+					} else {
+						responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
+					}
+          
+				} else {
+          var msg = '<p>By default FirePHP is not allowed to load custom renderers nor processors.</p>';
+          if(!rendererurl_allowed) {
+					  msg += '<p>To allow custom loading from host <b>'+rendererurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+rendererurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+rendererurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
+          }
+          if(!processorurl_allowed && processorurl_domain!=rendererurl_domain) {
+					  msg += '<p>To allow custom loading from host <b>'+processorurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+processorurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+processorurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
+          }
+					msg += '<p><font color="red"><b>WARNING:</b> FirePHP customizing works by allowing a server script to insert code into your browser. <b>Only enable this for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>';
+					msg += '<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>';
+					msg += '<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>';
+					msg += 'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>';
+					msg += 'By using FirePHP you agree to all terms of the Mozilla Public License.<br>';
+					msg += 'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
+					responseTextBox.innerHTML = msg;													
+				}                
+    	} else {
+				if(data) {
+          parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+				} else {
+					responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
+				}
+      }
+		}	
 }
 
 
