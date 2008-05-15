@@ -451,7 +451,7 @@ function netInfoServerTab(netInfoBox, file, context) {
 						
 						if(url) {
               
-              var info = FirePHP.parseHeaders(url,file.responseHeaders,'array');
+              var info = FirePHP.parseHeaders(file.responseHeaders,'array');
               var mask = info['rendererurl'];
               var data = info['data'];
               

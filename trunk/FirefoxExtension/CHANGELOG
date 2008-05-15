@@ -1,4 +1,10 @@
 
+2008-05-14 - Release Version: 0.0.6.16
+
+  - Bugfix - Monitor page loading and trigger request processor for main page and iframes
+  - Changed API of Request processor to receive URL and Data as method arguments
+	- Bugfix - Display correct URL for console message groups
+
 2008-05-09 - Release Version: 0.0.6.15
 	
 	- Updated default processor to render exception stacks without wrapping the filenames

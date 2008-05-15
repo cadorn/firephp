@@ -161,7 +161,7 @@ dump('FirePHP.disable()'+"\n");
   },
   
   
-  parseHeaders: function(url,headers_in,parser) {
+  parseHeaders: function(headers_in,parser) {
     
  		var info = [];
    
@@ -275,10 +275,12 @@ Firebug.FirePHP = extend(Firebug.Module,
   activeContext: null,
   activeBrowser: null,
   
+  requestBuffer: [],
   
   enable: function()
   {
 dump('Firebug.FirePHP.enable()'+"\n");    
+    this.requestBuffer = [];
 		FirePHP.enable();
   },
   
@@ -286,6 +288,7 @@ dump('Firebug.FirePHP.enable()'+"\n");
   {
 dump('Firebug.FirePHP.disable()'+"\n");    
 		FirePHP.disable();
+//    this.requestBuffer = [];
   },		
 	
 
@@ -302,12 +305,14 @@ dump('Firebug.FirePHP.destroyContext()'+"\n");
   
   reattachContext: function(browser, context)
   {
-dump('Firebug.FirePHP.reattachContext()'+"\n"); 
+dump('Firebug.FirePHP.reattachContext'+"\n");
   },
   
   watchWindow: function(context, win)
   {
-dump('Firebug.FirePHP.watchWindow()'+"\n");    
+dump('Firebug.FirePHP.watchWindow()'+"\n");   
+
+    this.processRequestQue();
   },
   unwatchWindow: function(context, win)
   {
@@ -318,25 +323,25 @@ dump('Firebug.FirePHP.unwatchWindow()'+"\n");
 dump('Firebug.FirePHP.showPanel()'+"\n");    
 
     /* Add any stylesheets if not added yet */
-    
-    if(this.activeContext && this.FirePHPProcessor) {
-      if(!this.activeContext.customStylesheets) {
-        this.activeContext.customStylesheets = [];
-      }
-      var panel = this.activeContext.getPanel('console');
-      if(panel) {
-        for( var url in this.FirePHPProcessor.consoleStylesheets ) {
-          if(!this.activeContext.customStylesheets[url]) {
-            var doc = panel.document;
-            addStyleSheet(doc, createStyleSheet(doc, url));
-            this.activeContext.customStylesheets[url] = true;
+    try {
+      if(this.activeContext && this.FirePHPProcessor) {
+        if(!this.activeContext.customStylesheets) {
+          this.activeContext.customStylesheets = [];
+        }
+        var panel = this.activeContext.getPanel('console');
+        if(panel) {
+          for( var url in this.FirePHPProcessor.consoleStylesheets ) {
+            if(!this.activeContext.customStylesheets[url]) {
+              var doc = panel.document;
+              addStyleSheet(doc, createStyleSheet(doc, url));
+              this.activeContext.customStylesheets[url] = true;
+            }
           }
         }
       }
-    } 
-
+    } catch(e) {}    
+    
   },
-  
   
   
   showContext: function(browser, context)
@@ -353,22 +358,40 @@ dump('Firebug.FirePHP.showContext()'+"\n");
     this.activeContext = context;
   },
 	 
-   
-   
-   
-  
-	processRequest: function(Request) {
-	
-		var name = '';
-		var url = Request.name;
 
-
+	queRequest: function(Request) {
 		var http = QI(Request, nsIHttpChannel);
+    var info = FirePHP.parseHeaders(http,'visit');
+    this.requestBuffer.push([Request.name,info]);
+  },
 
-    var info = FirePHP.parseHeaders(url,http,'visit');
+	processRequest: function(Request) {
+
+		var url = Request.name;
+		var http = QI(Request, nsIHttpChannel);
+    var info = FirePHP.parseHeaders(http,'visit');
+    
+    this._processRequest(url,info);
+  },
+   
+   
+	processRequestQue: function(Request) {
+    if(!this.requestBuffer) return;
+
+    for( var index in this.requestBuffer ) {
+      this._processRequest(this.requestBuffer[index][0],this.requestBuffer[index][1]);
+    }
+    this.requestBuffer = [];
+  }, 
+
+
+  
+	_processRequest: function(url,info) {
+    
     var mask = info['processorurl'];
     var data = info['data'];
 
+    if(!data) return;
 		
 		var domain = FirebugLib.getDomain(mask);
     
@@ -440,7 +463,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
             eval(FirePHPProcessor.code);
             
             FirePHPProcessor._Init();
-            FirePHPProcessor.ProcessRequest();
+            FirePHPProcessor.ProcessRequest(url,data);
           } 
           catch (e) {
             Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!', e]);
@@ -458,7 +481,6 @@ dump('Firebug.FirePHP.showContext()'+"\n");
           success: function(ReturnData){
           
             with (proecessor_context) {
-              FirePHPProcessor.url = url;
               FirePHPProcessor.data = data;
               FirePHPProcessor.context = proecessor_context.context;
               FirePHPProcessor.code = ReturnData;
@@ -467,7 +489,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
                 eval(ReturnData);
                 
                 FirePHPProcessor._Init();
-                FirePHPProcessor.ProcessRequest();
+                FirePHPProcessor.ProcessRequest(url,data);
               } 
               catch (e) {
                 Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!', e]);
@@ -479,7 +501,6 @@ dump('Firebug.FirePHP.showContext()'+"\n");
             if (mask.substr(0, 9) == 'chrome://') {
             
               with (proecessor_context) {
-                FirePHPProcessor.url = url;
                 FirePHPProcessor.data = data;
                 FirePHPProcessor.context = proecessor_context.context;
                 FirePHPProcessor.code = XMLHttpRequest.responseText;
@@ -488,7 +509,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
                   eval(XMLHttpRequest.responseText);
                   
                   FirePHPProcessor._Init();
-                  FirePHPProcessor.ProcessRequest();
+                  FirePHPProcessor.ProcessRequest(url,data);
                 } 
                 catch (e) {
                   Firebug.FirePHP.logWarning(['Error executing default FirePHP processor!', e]);
@@ -572,10 +593,18 @@ FirePHPProgress.prototype =
         if (flag & STATE_TRANSFERRING && flag & STATE_IS_DOCUMENT)
         {
 //						dump('FILE 3: '+request+"\n");
+          var win = progress.DOMWindow;
+          if (win == win.parent) {
+            if(this.context==Firebug.FirePHP.activeContext &&
+                FirebugChrome.isFocused()) {
+
+              Firebug.FirePHP.queRequest(request);
+            }
+          }
         }
         else if (flag & STATE_STOP && flag & STATE_IS_REQUEST)
         {
-//						dump('FILE 4: '+request+"\n");
+//						dump('FILE 4: '+request+' - '+progress.isLoadingDocument+"\n");
         }
     },
 
@@ -603,7 +632,7 @@ function monitorContext(context)
 
         var listener = context.firephpProgress = new FirePHPProgress(context);
 
-//        context.browser.addProgressListener(listener, NOTIFY_ALL);
+        context.browser.addProgressListener(listener, NOTIFY_ALL);
 //        observerService.addObserver(listener, "http-on-modify-request", false);
 
         observerService.addObserver(listener, "http-on-examine-response", false);
@@ -615,8 +644,8 @@ function unmonitorContext(context)
     if (context.firephpProgress)
     {
 
-//        if (context.browser.docShell)
-//            context.browser.removeProgressListener(context.firephpProgress, NOTIFY_ALL);
+        if (context.browser.docShell)
+            context.browser.removeProgressListener(context.firephpProgress, NOTIFY_ALL);
 
 //        observerService.removeObserver(context.firephpProgress, "http-on-modify-request", false);
         observerService.removeObserver(context.firephpProgress, "http-on-examine-response", false);
