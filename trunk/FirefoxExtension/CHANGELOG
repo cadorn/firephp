@@ -1,4 +1,6 @@
 
+	- Bugfix - Ensure custom log templates and stylesheets are added correctly at all times
+
 2008-05-14 - Release Version: 0.0.6.16
 
   - Bugfix - Monitor page loading and trigger request processor for main page and iframes

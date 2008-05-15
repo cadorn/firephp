@@ -288,7 +288,7 @@ dump('Firebug.FirePHP.enable()'+"\n");
   {
 dump('Firebug.FirePHP.disable()'+"\n");    
 		FirePHP.disable();
-//    this.requestBuffer = [];
+    this.requestBuffer = [];
   },		
 	
 
@@ -391,8 +391,6 @@ dump('Firebug.FirePHP.showContext()'+"\n");
     var mask = info['processorurl'];
     var data = info['data'];
 
-    if(!data) return;
-		
 		var domain = FirebugLib.getDomain(mask);
     
 		if(data) {
@@ -411,6 +409,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 					  initialized: false,
             consoleStylesheets: [],
             consoleTemplates: [],
+            sourceURL: null,
 						_Init: function() {
 							if(this.initialized) return;
               try {
@@ -453,7 +452,8 @@ dump('Firebug.FirePHP.showContext()'+"\n");
        * If it is we do not re-load the processor
        */
       
-      if (this.FirePHPProcessor.sourceURL == mask) {
+      if (this.FirePHPProcessor.sourceURL == mask &&
+          this.FirePHPProcessor.initialized) {
 
         with (proecessor_context) {
           FirePHPProcessor.data = data;
@@ -462,7 +462,6 @@ dump('Firebug.FirePHP.showContext()'+"\n");
           try {
             eval(FirePHPProcessor.code);
             
-            FirePHPProcessor._Init();
             FirePHPProcessor.ProcessRequest(url,data);
           } 
           catch (e) {
@@ -472,15 +471,13 @@ dump('Firebug.FirePHP.showContext()'+"\n");
         
       } else {
 
-        this.FirePHPProcessor.sourceURL = mask;
-      
         jQuery.ajax({
           type: 'GET',
           //				url: mask+'?t='+(new Date().getTime()),
           url: mask,
           success: function(ReturnData){
-          
             with (proecessor_context) {
+              FirePHPProcessor.sourceURL = mask;
               FirePHPProcessor.data = data;
               FirePHPProcessor.context = proecessor_context.context;
               FirePHPProcessor.code = ReturnData;
@@ -501,6 +498,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
             if (mask.substr(0, 9) == 'chrome://') {
             
               with (proecessor_context) {
+                FirePHPProcessor.sourceURL = mask;
                 FirePHPProcessor.data = data;
                 FirePHPProcessor.context = proecessor_context.context;
                 FirePHPProcessor.code = XMLHttpRequest.responseText;
