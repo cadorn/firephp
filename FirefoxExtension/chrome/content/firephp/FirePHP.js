@@ -306,6 +306,8 @@ dump('Firebug.FirePHP.destroyContext()'+"\n");
   reattachContext: function(browser, context)
   {
 dump('Firebug.FirePHP.reattachContext'+"\n");
+
+    this.addStylesheets(true);
   },
   
   watchWindow: function(context, win)
@@ -322,19 +324,29 @@ dump('Firebug.FirePHP.unwatchWindow()'+"\n");
   {
 dump('Firebug.FirePHP.showPanel()'+"\n");    
 
+    this.addStylesheets();
+  },
+  
+  addStylesheets: function(Force) {
+    
+    if(!Force) Force = false;
+ 
     /* Add any stylesheets if not added yet */
     try {
       if(this.activeContext && this.FirePHPProcessor) {
-        if(!this.activeContext.customStylesheets) {
-          this.activeContext.customStylesheets = [];
-        }
+
         var panel = this.activeContext.getPanel('console');
         if(panel) {
+
+          if(!panel.customStylesheets) {
+            panel.customStylesheets = [];
+          }
+          
           for( var url in this.FirePHPProcessor.consoleStylesheets ) {
-            if(!this.activeContext.customStylesheets[url]) {
+            if(!panel.customStylesheets[url] || Force==true) {
               var doc = panel.document;
               addStyleSheet(doc, createStyleSheet(doc, url));
-              this.activeContext.customStylesheets[url] = true;
+              panel.customStylesheets[url] = true;
             }
           }
         }
