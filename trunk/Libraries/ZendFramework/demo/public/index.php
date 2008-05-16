@@ -50,6 +50,7 @@ require_once 'FirePhp/Log/Writer/FirePhp.php';
 require_once 'Zend/Controller/Front.php';
 require_once 'Zend/Controller/Request/Http.php';
 require_once 'Zend/Controller/Response/Http.php';
+require_once 'FirePhp/Debug.php';
 
 /*
  * Initialize the HTTP Request and Response Objects
