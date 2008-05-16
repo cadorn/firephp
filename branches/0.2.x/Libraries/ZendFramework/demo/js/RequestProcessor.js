@@ -1,4 +1,33 @@
 
+/* ***** BEGIN LICENSE BLOCK *****
+ *  
+ * This file is part of FirePHP (http://www.firephp.org/).
+ * 
+ * Copyright (C) 2007 Christoph Dorn
+ * 
+ * FirePHP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * FirePHP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with FirePHP.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
+ * 
+ * ***** END LICENSE BLOCK ***** */
+
+
+/*
+ * @copyright  Copyright (C) 2007 Christoph Dorn
+ * @license    http://www.gnu.org/licenses/lgpl.html
+ * @author     Christoph Dorn <christoph@christophdorn.com>
+ */
+
+
 FirePHPProcessor.Init = function() {
 
   this.RegisterConsoleStyleSheet('chrome://firephp/content/RequestProcessor.css');
@@ -140,13 +169,13 @@ FirePHPProcessor.Init = function() {
 /* 
  * Called once for each request as it comes in
  */
-FirePHPProcessor.ProcessRequest = function(URL,Data) {
+FirePHPProcessor.ProcessRequest = function() {
 
-  var data = json_parse(Data);
+  this.data = json_parse(this.data);
 
-  if (data['FirePHP.Firebug.Console']) {
+  if (this.data['FirePHP.Firebug.Console']) {
 
-    Firebug.Console.openGroup(URL, null, "group", null, false);
+    Firebug.Console.openGroup(this.url, null, "group", null, false);
 
     /* 
      * We wrap the logging code to ensure we can close the group
@@ -154,9 +183,9 @@ FirePHPProcessor.ProcessRequest = function(URL,Data) {
      */
     try {
 			
-	    for (var index in data['FirePHP.Firebug.Console']) {
+	    for (var index in this.data['FirePHP.Firebug.Console']) {
 	
-	      var item = data['FirePHP.Firebug.Console'][index];
+	      var item = this.data['FirePHP.Firebug.Console'][index];
         if (item && item.length==2) {
         
           var mode = item[0].toLowerCase();

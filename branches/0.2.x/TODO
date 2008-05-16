@@ -8,18 +8,17 @@
   are handled call the appropriate renderer. Allow different renderers to exist
   at the same time for different request URL's.
 
-
 - Allow the ProcessRequest method to render debug data in dedicated FirePHP panel.
-	=> Will log for firebug console for now.
-
+	=> Will log to firebug console for now.
 
 - Test suite to allow testing of Renderers outside of Firebug (in main browser)
   and thus allow debugging of renderer code using firebug.
 
+- Document the domplate system as it will be used extensively for custom renderers
+  and processors.  
 
---------------------------------------------------------------------------------  
-  Waitning for additional bug reports
---------------------------------------------------------------------------------
+- Expanding of stack trace does not work after Firebug is detached.
+  Need to reload page at the moment.
   
-- Bugfix for hostname check to correctly verify "localhost" and IP hostnames.
-	=> This should work
+- When Firefox is first started and a page is called that uses FirePHP, sometimes the
+  request processor is called twice.

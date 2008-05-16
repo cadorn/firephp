@@ -34,6 +34,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+
+require_once('./../Libraries/FirePHPCore/lib/FirePHPCore/fb.php');
+
+
 $data = $_SERVER;
 
 
@@ -41,19 +45,20 @@ $data = $_SERVER;
 
 if($_GET['var']==1) {
 	
-	$data = array('FirePHP.Firebug.Console'=>array(
-		array('log','This is a test log message'),
-		array('info','This is a test info message'),
-		array('warn','This is a test warn message'),
-		array('error','This is a test error message')
-		));
+  fb('Hello World');
 	
+  fb('Log message',FirePHP::LOG);
+  fb('Info message',FirePHP::INFO);
+  fb('Warn message',FirePHP::WARN);
+  fb('Error message',FirePHP::ERROR);
+  
+} else {
+
+  fb($data);  
+
+  fb($data,'$_SERVER',FirePHP::DUMP);  
 }
 
-
-$data_str = json_encode($data);
-
-header('X-Firephp-data: '.$data_str);
 
 
 //header('FirePHP-data: '.substr($data_str,0,strlen($data_str)/2));
@@ -61,8 +66,14 @@ header('X-Firephp-data: '.$data_str);
 
 //header('X-FirePHP-ProcessorURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Processor.js');
 
-header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
+//header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
 
 var_dump($data);
 
 ?>
+
+<script type="application/x-javascript" src="jquery.js"></script>
+
+<p><a href="#" onClick="$.get('Version1.php?var=1');">Version1.php?var=1</a></p>
+<p><a href="#" onClick="$.get('ConsoleTest.php');">ConsoleTest.php</a></p>
+<p><a href="#" onClick="$.get('ZendTest.php');">ZendTest.php</a></p>

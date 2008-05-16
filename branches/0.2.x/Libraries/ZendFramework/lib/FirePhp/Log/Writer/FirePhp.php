@@ -12,21 +12,26 @@
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
  *
- * @category   Zend
- * @package    Zend_Log
+ * @category   FirePhp
+ * @package    FirePhp_Log
  * @subpackage Writer
- * @copyright  Copyright (c) 2008 FirePHP (http://www.firephp.org)
- * @author     Christoph Dorn <christoph@christophdorn.com>
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    0.1
+ * @author     Christoph Dorn <christoph@christophdorn.com>
  */
+
+
+/** Zend_Log */
+require_once 'Zend/Log.php';
 
 /** Zend_Log_Writer_Abstract */
 require_once 'Zend/Log/Writer/Abstract.php';
 
-/** Zend_Json */
-require_once 'Zend/Json.php';
+/** FirePhp_Core */
+require_once 'FirePhp/Core.php';
 
+/** Zend_Controller_Front */
+require_once 'Zend/Controller/Front.php';
 
 /**
  * Writes log messages to the Firebug Console via FirePHP.
@@ -34,7 +39,7 @@ require_once 'Zend/Json.php';
  * 
  * Usage:
  * 
- * $writer = new Zend_Log_Writer_FirePHP();
+ * $writer = new Zend_Log_Writer_FirePhp();
  * 
  * $logger = new Zend_Log($writer);
  * 
@@ -47,34 +52,31 @@ require_once 'Zend/Json.php';
  * $logger->log('Informational: informational messages', Zend_Log::INFO);
  * $logger->log('Debug: debug messages', Zend_Log::DEBUG);
  * 
- * $logger->log(array('$_SERVER',$_SERVER), Zend_Log::DEBUG);
+ * $logger->log(array('$_SERVER',$_SERVER), Zend_Log::INFO);
  * 
  * 
- * @category   Zend
- * @package    Zend_Log
+ * @category   FirePhp
+ * @package    FirePhp_Log
  * @subpackage Writer
- * @copyright  Copyright (c) 2008 FirePHP (http://www.firephp.org)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @author     Christoph Dorn <christoph@christophdorn.com>
  */
-class Zend_Log_Writer_FirePHP extends Zend_Log_Writer_Abstract
+class FirePhp_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
 {
     /**
      * Flag indicating if FirePHP extension was detected
      *
      * @var boolean
      */
-    private $_firephpDetected = false;
-
+    protected $_firePhpDetected = false;
+    
     /**
      * Class constructor
      */
     public function __construct()
     {
-        /* Check if FirePHP is installed on client */
-        if(preg_match_all('/\sFirePHP\/([\.|\d]*)\s?/si',$_SERVER['HTTP_USER_AGENT'],$m) &&
-           version_compare($m[1][0],'0.0.6','>=')) {
-          $this->_firephpDetected = true;
-        }
+        $this->_firePhpDetected = FirePhp_Core::getInstance()->detectClientExtension();
     }
 
     /**
@@ -84,6 +86,7 @@ class Zend_Log_Writer_FirePHP extends Zend_Log_Writer_Abstract
      */
     public function setFormatter($formatter)
     {
+        require_once 'Zend/Log/Exception.php';
         throw new Zend_Log_Exception(get_class() . ' does not support formatting');
     }
 
@@ -96,52 +99,41 @@ class Zend_Log_Writer_FirePHP extends Zend_Log_Writer_Abstract
     protected function _write($event)
     {
         
-        if(!$this->_firephpDetected)
-        {
+        if(!$this->_firePhpDetected) {
             return;
         }
-        if (headers_sent($filename, $linenum))
-        {
-            throw new Zend_Log_Exception('Headers already sent in '.$filename.' on line '.$linenum.'. Cannot send log data to FirePHP. You must have Output Buffering enabled via ob_start() or output_buffering ini directive.');
+        if (headers_sent($filename, $line)) {
+            $message = 'Headers already sent in ' . $filename . ' on line ' . $line .
+                      '. Cannot send log data to FirePHP. You must have Output Buffering enabled.';
+            
+            require_once 'Zend/Log/Exception.php';
+            throw new Zend_Log_Exception($message);
         }       
       
-        $type = 'log';
-
-        switch($event['priority'])
-        {
+        switch($event['priority']) {
           case Zend_Log::EMERG:
           case Zend_Log::ALERT:
           case Zend_Log::CRIT:
           case Zend_Log::ERR:
-            $type = 'error';
+            $type = FirePHP::ERROR;
             break;
           case Zend_Log::WARN:
-            $type = 'warn';
+            $type = FirePHP::WARN;
             break;
           case Zend_Log::NOTICE:
           case Zend_Log::INFO:
-            $type = 'info';
+            $type = FirePHP::INFO;
             break;
           case Zend_Log::DEBUG:
           default:
-            $type = 'log';
+            $type = FirePHP::LOG;
             break;
-        }     
-
-      	header('X-FirePHP-Data-100000000001: {');
-      	header('X-FirePHP-Data-300000000001: "FirePHP.Firebug.Console":[');
-      	header('X-FirePHP-Data-399999999999: ["__SKIP__"]],');
-      	header('X-FirePHP-Data-999999999999: "__SKIP__":"__SKIP__"}');
-      
-      	$msg = '["'.$type.'",'.Zend_Json::encode($event['message'],true).'],';
-       
-      	foreach( explode("\n",chunk_split($msg, 5000, "\n")) as $part )
-        {
-      		  $mt = explode(' ',microtime());
-      		  $mt = substr($mt[1],7).substr($mt[0],2);
-      
-      		  header('X-FirePHP-Data-3'.$mt.': '.$part);
-      	}
+        }
+        
+        if($event['message'] instanceof Exception) {
+          $type = FirePHP::EXCEPTION;
+        }
+        
+        FirePhp_Core::getInstance()->fb($event['message'],$type);
     }
-
 }
