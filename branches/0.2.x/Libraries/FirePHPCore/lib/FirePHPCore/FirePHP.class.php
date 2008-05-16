@@ -75,6 +75,7 @@ class FirePHP {
   const WARN = 'WARN';
   const ERROR = 'ERROR';
   const DUMP = 'DUMP';
+  const SET = 'SET';
   const EXCEPTION = 'EXCEPTION';
   
   protected static $instance = null;
@@ -130,75 +131,119 @@ class FirePHP {
     }
   
     $Type = null;
+    $Target = 'FirePHP.Firebug.Console';
+    $Group = null;
+    $Name = null;
   
     if(func_num_args()==1) {
     } else
     if(func_num_args()==2) {
-      switch(func_get_arg(1)) {
+      if(is_array($val=func_get_arg(1))) {
+        $Group = $val[0];
+        $val = $val[1];
+      }
+      switch($val) {
         case self::LOG:
         case self::INFO:
         case self::WARN:
         case self::ERROR:
         case self::DUMP:
         case self::EXCEPTION:
-          $Type = func_get_arg(1);
+        case self::SET:
+          $Type = $val;
+          if($Type===self::SET) {
+            $Target = 'FirePHP.Variables';
+          }
           break;
         default:
-          $Object = array(func_get_arg(1),$Object);
+          $Name = $val;
           break;
       }
     } else
     if(func_num_args()==3) {
       $Type = func_get_arg(2);
-      $Object = array(func_get_arg(1),$Object);
+      if(is_array($val=func_get_arg(1))) {
+        $Group = $val[0];
+        $val = $val[1];
+      }
+      if($Type===self::SET) {
+        $Target = 'FirePHP.Variables';
+      }
+      $Name = $val;
     } else {
       throw $this->newException('Wrong number of arguments to fb() function!');
     }
   
-  
     if(!$this->detectClientExtension()) {
       return false;
     }
-  
-    if($Object instanceof Exception) {
+      
+    if($Object instanceof Exception && $Type===null) {
       
       $Object = array('Class'=>get_class($Object),
                       'Message'=>$Object->getMessage(),
                       'File'=>$Object->getFile(),
                       'Line'=>$Object->getLine(),
                       'Trace'=>$Object->getTrace());
-      if($Type===null || $Type===self::EXCEPTION) {
-        $Type = 'TRACE';
-      }
+      $Type = self::EXCEPTION;
       
     } else {
       if($Type===null) {
         $Type = self::LOG;
       }
     }
+
+    if($Group) {
+      if($Target=='FirePHP.Variables') {
+        throw $this->newException('You may not specify a group when using the FirePHP::SET type!');
+      }
+      $Target = 'FirePHP.Inspector.Console';
+    }
+    
+    if($Type==self::SET && $Name===null) {
+      throw $this->newException('You must specify a Label when using the FirePHP::SET type!');
+    }
   
   	$this->setHeader('X-FirePHP-Data-100000000001','{');
-    if($Type==self::DUMP) {
-    	$this->setHeader('X-FirePHP-Data-200000000001','"FirePHP.Dump":{');
-    	$this->setHeader('X-FirePHP-Data-299999999999','"__SKIP__":"__SKIP__"},');
-    } else {
-    	$this->setHeader('X-FirePHP-Data-300000000001','"FirePHP.Firebug.Console":[');
-    	$this->setHeader('X-FirePHP-Data-399999999999','["__SKIP__"]],');
+    
+    $target_index = null;
+    switch($Target) {
+      case 'FirePHP.Firebug.Console':
+        $target_index = 3;
+      	$this->setHeader('X-FirePHP-Data-300000000001','"FirePHP.Firebug.Console":[');
+      	$this->setHeader('X-FirePHP-Data-399999999999','["__SKIP__"]],');
+        break;
+      case 'FirePHP.Variables':
+        $target_index = 2;
+      	$this->setHeader('X-FirePHP-Data-200000000001','"FirePHP.Variables":{');
+      	$this->setHeader('X-FirePHP-Data-299999999999','"__SKIP__":"__SKIP__"},');
+        break;
+      case 'FirePHP.Inspector.Console':
+        $target_index = 4;
+        if($Group===null) $Group = 'All';
+      	$this->setHeader('X-FirePHP-Data-400000000001','"FirePHP.Inspector.Console":[');
+      	$this->setHeader('X-FirePHP-Data-499999999999','["__SKIP__"]],');
+        break;
     }
+    
   	$this->setHeader('X-FirePHP-Data-999999999999','"__SKIP__":"__SKIP__"}');
-  
-    if($Type==self::DUMP) {
-    	$msg = '"'.$Object[0].'":'.$this->json_encode($Object[1]).',';
+
+    if($Group) {
+    	$msg = '["'.$Group.'","'.$Name.'","'.$Type.'",'.$this->json_encode($Object).'],';
     } else {
-    	$msg = '["'.$Type.'",'.$this->json_encode($Object).'],';
+      if($Type==self::SET) {
+      	$msg = '"'.$Name.'":'.$this->json_encode($Object).',';
+      } else {
+      	$msg = '["'.$Type.'","'.$Name.'",'.$this->json_encode($Object).'],';
+      }
     }
-   
+       
   	foreach( explode("\n",chunk_split($msg, 5000, "\n")) as $part ) {
   
   		$mt = explode(' ',microtime());
   		$mt = substr($mt[1],7).substr($mt[0],2);
   
-      $this->setHeader('X-FirePHP-Data-'.(($Type==self::DUMP)?'2':'3').$mt, $part);
+      $this->setHeader('X-FirePHP-Data-'.$target_index.$mt, $part);
   	}
     
     return true;

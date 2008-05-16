@@ -183,17 +183,36 @@ html = '<style>                                  '+
        '  #'+key+' DIV      { display: inline; } '+
        '  #'+key+' DIV.name { cursor:pointer;  } '+
        '  #'+key+' DIV.hide { display: none;   } '+
-       '  #'+key+' DIV#header { display: block; border: 1px solid #D7D7D7; background-color: #D7D7D7; padding: 0px; padding-top: 2px; padding-left: 0px; margin-bottom: 10px; } '+
-       '  #'+key+' DIV#header DIV { display: inline; cursor: pointer; background-color: white; margin-right: 1px; padding: 2px; padding-left: 5px; padding-right: 5px; font-family: Lucida Grande, Tahoma, sans-serif; font-weight: bold; color: #565656; } '+
-       '  #'+key+' DIV#header DIV:hover { color: blue; } '+
-       '  #'+key+' DIV#header DIV.selected { background-color: LightYellow; } '+
+       '  #'+key+' TABLE#header { width: 100%; border: 1px solid #D7D7D7; background-color: #D7D7D7; padding: 0px; margin-bottom: 10px; } '+
+       '  #'+key+' TABLE#header TR TD.tab { border-left: 1px solid #D7D7D7; white-space:nowrap; cursor: pointer; background-color: white; padding: 2px; padding-left: 5px; padding-right: 5px; font-family: Lucida Grande, Tahoma, sans-serif; font-weight: bold; color: #565656; } '+
+       '  #'+key+' TABLE#header TR TD:hover { color: blue; } '+
+       '  #'+key+' TABLE#header TR TD.selected { background-color: LightYellow; } '+
+       '  #'+key+' TABLE#header TR TD.flex { width: 100%; } '+
        '  #'+key+' DIV#body { display: block; min-height: 20px; } '+
        '  #'+key+' DIV#body.loading { margin-left: 10px; background: url(chrome://firebug/skin/loading_16.gif) no-repeat; } '+
        '  #'+key+' DIV#body.nodata { margin-left: 10px; color: gray; } '+
        '</style>                                 '+
        '<div id="'+key+'">                       ';
-			 
-html += '<div id="header"><div id="variables">Variables</div><div id="messages">Messages</div><div id="mod_rewrite">Mod Rewrite</div><div id="all">All</div></div>';
+       
+html += '<table id="header" cellpadding="0" cellspacing="0"><tr><td id="Variables" class="tab">Variables</td>';
+
+/* Determine all groups */
+
+if(data['FirePHP.Inspector.Console']) {
+  var groups = [];
+  for( var i in data['FirePHP.Inspector.Console'] ) {
+    groups[data['FirePHP.Inspector.Console'][i][0]] = data['FirePHP.Inspector.Console'][i][0];
+  }
+  if(groups) {
+    for( var i in groups ) {
+      if(i!='__SKIP__') {
+        html += '<td id="'+i+'" class="tab">'+i+'</td>';
+      }
+    }
+  }
+}
+
+html += '<td class="flex">&nbsp;</td><td id="All" class="tab">All</td></tr></table>';
 html += '<div id="body"></div>';
 
 //html += print_r(key,data);
@@ -209,24 +228,27 @@ FirePHPRenderer.Init = function() {
  * Called once for each request when "Server" tab is clicked
  */
 FirePHPRenderer.InitRequest = function(Key) {
-  $('#'+Key+' DIV#header DIV').bind("click", function(e) {
-    $('#'+Key+' DIV#header DIV').removeClass('selected');
+  $('#'+Key+' TABLE#header TR TD.tab').bind("click", function(e) {
+    $('#'+Key+' TABLE#header TR TD.tab').removeClass('selected');
     $(this).addClass('selected');
     
     var body_value = null;
     
-    switch($(this).attr('id')) {
-      case 'variables':
-        body_value = data['FirePHP.Dump'];
+    var id = $(this).attr('id');
+    switch(id) {
+      case 'Variables':
+        body_value = data['FirePHP.Variables'];
         break;
-      case 'messages':
-        body_value = data['FirePHP.Firebug.Console'];
-        break;
-      case 'mod_rewrite':
-        body_value = data['org.apache.httpd.mod_rewrite'];
-        break;
-      case 'all':
+      case 'All':
         body_value = data;
+        break;
+      default:
+        body_value = [];
+        for( var i in data['FirePHP.Inspector.Console'] ) {
+          if(data['FirePHP.Inspector.Console'][i][0]==id) {
+            body_value.push(data['FirePHP.Inspector.Console'][i]);
+          }          
+        }
         break;
     }
     
@@ -259,5 +281,5 @@ FirePHPRenderer.InitRequest = function(Key) {
     }
   });
   
-  $('#'+Key+' DIV#header DIV#variables').click();
+  $('#'+Key+' TABLE#header TR TD#Variables').click();
 }

@@ -12,6 +12,7 @@
 <p><a href="#" onClick="$.get('Version1.php?var=1');">Version1.php?var=1</a></p>
 <p><a href="#" onClick="$.get('ConsoleTest.php');">ConsoleTest.php</a></p>
 <p><a href="#" onClick="$.get('ZendTest.php');">ZendTest.php</a></p>
+<p><a href="#" onClick="$.get('GroupingTest.php');">GroupingTest.php</a></p>
 
 </body>
 </html>

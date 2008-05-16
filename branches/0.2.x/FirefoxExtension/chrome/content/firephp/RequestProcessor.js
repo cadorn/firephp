@@ -3,10 +3,10 @@ FirePHPProcessor.Init = function() {
 
   this.RegisterConsoleStyleSheet('chrome://firephp/content/RequestProcessor.css');
   
-  this.RegisterConsoleTemplate('trace',
+  this.RegisterConsoleTemplate('exception',
     domplate(Firebug.Rep,
     {
-      className: 'firephp-trace',
+      className: 'firephp-exception',
       tag:
           DIV({class: "head", _repObject: "$object"},
               A({class: "title", onclick: "$onToggleBody"}, "$object|getCaption")
@@ -51,7 +51,7 @@ FirePHPProcessor.Init = function() {
       onToggleBody: function(event)
       {
         var target = event.currentTarget;
-        var logRow = getAncestorByClass(target, "logRow-firephp-trace");
+        var logRow = getAncestorByClass(target, "logRow-firephp-exception");
         if (isLeftClick(event))
         {
           toggleClass(logRow, "opened");
@@ -71,7 +71,7 @@ FirePHPProcessor.Init = function() {
       
       getCallList: function(call) {
         var list = call.Trace;
-        list.unshift({'file':call.File,'line':call.Line,'class':call.Class,'type':'throw'});
+        list.unshift({'file':call.File,'line':call.Line,'class':call.Class,'type':'throw','args':[call.Message]});
         /* Now that we have all call events, lets sew if we can shorten the filename.
          * This only works for unif filepaths for now.
          * TODO: Get this working for windows filepaths as well.
@@ -115,8 +115,8 @@ FirePHPProcessor.Init = function() {
       },
       
       argIterator: function(call) {
-        if (!call.args) return [];
         var items = [];
+        if (!call.args) return items;
         for (var i = 0; i < call.args.length; ++i)
         {
             var arg = call.args[i];
@@ -157,19 +157,28 @@ FirePHPProcessor.ProcessRequest = function(URL,Data) {
 	    for (var index in data['FirePHP.Firebug.Console']) {
 	
 	      var item = data['FirePHP.Firebug.Console'][index];
-        if (item && item.length==2) {
+        if (item && (item.length==2 || item.length==3)) {
         
           var mode = item[0].toLowerCase();
-          if (mode == 'log' || mode == 'info' || mode == 'warn') {
           
-            this.logToFirebug(mode, item[1]);
-            
+          if (mode == 'log' || mode == 'info' || mode == 'warn' || mode == 'dump') {
           } else 
-          if (mode == 'error' || mode == 'trace') {
-          
+          if (mode == 'error' || mode == 'exception') {
             Firebug.Errors.increaseCount(this.context);
-            
-            this.logToFirebug(mode, item[1]);
+          } else {
+            mode = false;
+          }
+          
+          if(mode!=false) {
+            if(item.length==3) {
+              if(item[1]) {
+                this.logToFirebug(mode, [item[1],item[2]]);
+              } else {
+                this.logToFirebug(mode, item[2]);
+              }
+            } else {
+              this.logToFirebug(mode, item[1]);
+            }
           }
         }
 	    }

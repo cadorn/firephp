@@ -1,5 +1,14 @@
 
+	- Refined FirePHP protocol to support more flexible data assignments for default renderer and processor
+	- Renamed FirePHP::DUMP to FirePHP::SET. FirePHP::DUMP now displays a log line that can be expanded
+	- Added exception message as argument to throw Exception(...) on first line of stack trace
 	- Added sub-sections to server tab with loading indicator
+
+TODO:
+	- Implement DUMP Renderer
+	- Unify Renderer and Processor
+	- Update renderer for Variables tab to box in each variable
+	- Implement log rendering for groups in server request tab
 
 ---------- Branch 0.2.x ----------
 
