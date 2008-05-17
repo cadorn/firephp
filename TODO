@@ -1,4 +1,30 @@
 
+-------------------------------
+ Overall
+-------------------------------
+
+- Write tutorial on how to build your own log style
+
+- Document the domplate system as it will be used extensively for custom renderers
+  and processors.  
+
+
+-------------------------------
+ Version 0.1.x
+-------------------------------
+
+- When Firefox is first started and a page is called that uses FirePHP, sometimes the
+  request processor is called twice.
+
+- FirePHP::LIST log style
+
+- Make all JSON server data safe for display in Firebug
+
+
+-------------------------------
+ Version 0.2.x
+-------------------------------
+
 - Refactor FirePHPRenderer API to introduce:
 	 - ProcessRequest - to be called automatically after every request load (DONE)
 	 - RenderRequest - to be called when "Server" tab is clicked
@@ -14,11 +40,8 @@
 - Test suite to allow testing of Renderers outside of Firebug (in main browser)
   and thus allow debugging of renderer code using firebug.
   
-- Document the domplate system as it will be used extensively for custom renderers
-  and processors.  
+- Plugin system for default renderer and processor to add custom functionality easily  
   
 - Expanding of stack trace does not work after Firebug is detached.
   Need to reload page at the moment.
 
-- When Firefox is first started and a page is called that uses FirePHP, sometimes the
-  request processor is called twice.
