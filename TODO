@@ -13,6 +13,10 @@
  Version 0.1.x
 -------------------------------
 
+- Add usleep(1) to header writing loop in FirePHPCore lib
+
+- Ensure chunk_split does not generate trailing "\n" with empty data header in FirePHPCore lib
+
 - When Firefox is first started and a page is called that uses FirePHP, sometimes the
   request processor is called twice.
 
