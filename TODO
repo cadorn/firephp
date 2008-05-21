@@ -10,7 +10,11 @@
 
 - Create page in wiki for drupal integration.
   http://drupal.org/search/node/firephp
-  Also supply patch for cleaner integration.
+  Supply patch for cleaner integration.
+  
+- Create page in wiki for CodeIgniter integration
+  http://codeigniter.com/wiki/Fire_Ignition/
+  Supply patch for cleaner integration.
 
 -------------------------------
  Version 0.1.x
