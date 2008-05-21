@@ -8,6 +8,9 @@
 - Document the domplate system as it will be used extensively for custom renderers
   and processors.  
 
+- Create page in wiki for drupal integration.
+  http://drupal.org/search/node/firephp
+  Also supply patch for cleaner integration.
 
 -------------------------------
  Version 0.1.x
