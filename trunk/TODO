@@ -24,6 +24,9 @@
 
 - Make all JSON server data safe for display in Firebug
 
+- The Rendering of messages to the firebug concole does not work if you
+  do not send any http-content only http-headers.
+
 
 -------------------------------
  Version 0.2.x
