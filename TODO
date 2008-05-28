@@ -15,6 +15,9 @@
 - Create page in wiki for CodeIgniter integration
   http://codeigniter.com/wiki/Fire_Ignition/
   Supply patch for cleaner integration.
+  
+- Add support for Zend_DB_Profiler to send data to FirePHP in Zend Framework Integration
+  http://framework.zend.com/manual/en/zend.db.profiler.html
 
 -------------------------------
  Version 0.1.x
