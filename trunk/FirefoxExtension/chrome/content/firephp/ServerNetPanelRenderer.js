@@ -33,6 +33,28 @@ function str_repeat(str, repeat) {
   return output;
 }
 
+function escapeHTML(value)
+{
+    function replaceChars(ch)
+    {
+        switch (ch)
+        {
+            case "<":
+                return "&lt;";
+            case ">":
+                return "&gt;";
+            case "&":
+                return "&amp;";
+            case "'":
+                return "&#39;";
+            case '"':
+                return "&quot;";
+        }
+        return "?";
+    };
+    return String(value).replace(/[<>&"']/g, replaceChars);
+}
+
 
 var MAX_DEPTH = 10;
 
@@ -67,7 +89,7 @@ function print_r(RequestKey,obj, indent, depth) {
         child = obj[key];
       }
       catch (e) {
-        child = '<font color="orange">*Unable To Evaluate*</font>';
+        child = '*Unable To Evaluate*';
       }
       
       if ( key == '__SKIP__' || child=='__SKIP__' ) {
@@ -78,14 +100,14 @@ function print_r(RequestKey,obj, indent, depth) {
         output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
         
         if (IsNumeric(key)) {
-          output += str_repeat(ws, indent) + '[' + '<font color="green">' + key + '</font>' + '] => ';
+          output += str_repeat(ws, indent) + '[' + '<font color="green">' + escapeHTML(key) + '</font>' + '] => ';
         }
         else 
         if (typeof(key) == "string") {
-          output += str_repeat(ws, indent) + '[' + '<font color="red">\'' + key + '\'</font>' + '] => ';
+          output += str_repeat(ws, indent) + '[' + '<font color="red">\'' + escapeHTML(key) + '\'</font>' + '] => ';
         }
         else {
-          output += str_repeat(ws, indent) + '[' + key + '] => ';
+          output += str_repeat(ws, indent) + '[' + escapeHTML(key) + '] => ';
         }
         
         output += '</div>';
@@ -120,7 +142,7 @@ function print_r(RequestKey,obj, indent, depth) {
         if (IsNumeric(child)) {
         
           output += '<div id="' + RequestKey + hex_md5(UniqueIndex + key) + 'v">';
-          output += '<font color="green">' + child + '</font>';
+          output += '<font color="green">' + escapeHTML(child) + '</font>';
           output += '</div>';
           output += '<div class="hide" id="' + RequestKey + hex_md5(UniqueIndex + key) + 'k">';
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
@@ -134,7 +156,7 @@ function print_r(RequestKey,obj, indent, depth) {
         if (typeof(child) == "string") {
         
           output += '<div id="' + RequestKey + hex_md5(UniqueIndex + key) + 'v">';
-          output += '<font color="red">\'' + child + '\'</font>';
+          output += '<font color="red">\'' + escapeHTML(child) + '\'</font>';
           output += '</div>';
           output += '<div class="hide" id="' + RequestKey + hex_md5(UniqueIndex + key) + 'k">';
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
@@ -147,7 +169,7 @@ function print_r(RequestKey,obj, indent, depth) {
         else {
         
           output += '<div id="' + RequestKey + hex_md5(UniqueIndex + key) + 'v">';
-          output += child;
+          output += escapeHTML(child);
           output += '</div>';
           output += '<div class="hide" id="' + RequestKey + hex_md5(UniqueIndex + key) + 'k">';
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
@@ -164,7 +186,7 @@ function print_r(RequestKey,obj, indent, depth) {
     return output;
   }
   else {
-    return str_repeat(ws, indent) + obj + nl;
+    return str_repeat(ws, indent) + escapeHTML(obj) + nl;
   }
 }
 
