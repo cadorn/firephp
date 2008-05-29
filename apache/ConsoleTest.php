@@ -52,6 +52,9 @@ try {
 
 fb('Hello World');
 
+fb('<a onclick="alert(\'Hello World\');">ClickMe!</a>');
+
+
 fb('Log message',FB_LOG);
 fb('Info message',FB_INFO);
 fb('Warn message',FB_WARN);
@@ -79,5 +82,7 @@ fb(apache_request_headers(),'RequestHeaders',FB_DUMP);
 
 //header('X-FirePHP-ProcessorURL: http://www.google.com/');
 //header('X-FirePHP-RendererURL: http://www.msn.com/');
+
+print 'Hello World';
 
 ?>

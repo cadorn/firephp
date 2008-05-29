@@ -103,7 +103,7 @@ var FirePHP = top.FirePHP = {
 dump('FirePHP.enable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
     try {
-      this.observerService.addObserver(this, "http-on-modify-request", false);
+      observerService.addObserver(this, "http-on-modify-request", false);
 //      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
     } catch (err) {}
   },
@@ -111,20 +111,15 @@ dump('FirePHP.enable()'+"\n");
 dump('FirePHP.disable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
     try {
-      this.observerService.removeObserver(this, "http-on-modify-request");
+      observerService.removeObserver(this, "http-on-modify-request");
 //      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
     } catch (err) {}
   },
-  
-  get observerService() {
-    return Components.classes["@mozilla.org/observer-service;1"]
-                     .getService(Components.interfaces.nsIObserverService);
-  },
-  
+    
   observe: function(subject, topic, data)
   {
     if (topic == "http-on-modify-request") {
-      var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
+      var httpChannel = subject.QueryInterface(nsIHttpChannel);
 
       /* Add FirePHP/X.X.X to User-Agent header if not already there */
 
@@ -279,6 +274,9 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   requestBuffer: [],
   
+  processQueOnWatchWindow: false,
+  
+  
   enable: function()
   {
 dump('Firebug.FirePHP.enable()'+"\n");    
@@ -303,6 +301,8 @@ dump('Firebug.FirePHP.initContext()'+"\n");
   {
 dump('Firebug.FirePHP.destroyContext()'+"\n");    
     unmonitorContext(context);
+    
+    this.processQueOnWatchWindow = false;
   },
   
   reattachContext: function(browser, context)
@@ -316,7 +316,9 @@ dump('Firebug.FirePHP.reattachContext'+"\n");
   {
 dump('Firebug.FirePHP.watchWindow()'+"\n");   
 
-    this.processRequestQue();
+    if (this.processQueOnWatchWindow) {
+      this.processRequestQue();
+    }
   },
   unwatchWindow: function(context, win)
   {
@@ -327,6 +329,10 @@ dump('Firebug.FirePHP.unwatchWindow()'+"\n");
 dump('Firebug.FirePHP.showPanel()'+"\n");    
 
     this.addStylesheets();
+
+    this.processQueOnWatchWindow = true;
+    
+    this.processRequestQue();    
   },
   
   addStylesheets: function(Force) {
@@ -374,12 +380,15 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 	 
 
 	queRequest: function(Request) {
+dump('Firebug.FirePHP.queRequest('+Request.name+')'+"\n");    
+    
 		var http = QI(Request, nsIHttpChannel);
     var info = FirePHP.parseHeaders(http,'visit');
     this.requestBuffer.push([Request.name,info]);
   },
 
 	processRequest: function(Request) {
+dump('Firebug.FirePHP.processRequest('+Request.name+')'+"\n");    
 
 		var url = Request.name;
 		var http = QI(Request, nsIHttpChannel);
@@ -389,8 +398,11 @@ dump('Firebug.FirePHP.showContext()'+"\n");
   },
    
    
-	processRequestQue: function(Request) {
+	processRequestQue: function() {
+dump('Firebug.FirePHP.processRequestQue()'+"\n");    
     if(!this.requestBuffer) return;
+
+dump('Firebug.FirePHP.processRequestQue() - 1'+"\n");
 
     for( var index in this.requestBuffer ) {
       this._processRequest(this.requestBuffer[index][0],this.requestBuffer[index][1]);
@@ -401,6 +413,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 
   
 	_processRequest: function(url,info) {
+dump('Firebug.FirePHP._processRequest('+url+')'+"\n");    
     
     var mask = info['processorurl'];
     var data = info['data'];
@@ -588,6 +601,8 @@ FirePHPProgress.prototype =
 
     observe: function(request, topic, data)
     {
+				dump('FirePHPProgress.observe()'+"\n");
+      
         request = QI(request, nsIHttpChannel);
 
         if(this.context==Firebug.FirePHP.activeContext &&
@@ -602,15 +617,27 @@ FirePHPProgress.prototype =
 
     onStateChange: function(progress, request, flag, status)
     {
+				dump('FirePHPProgress.onStateChange()'+"\n");
+        
         if (flag & STATE_TRANSFERRING && flag & STATE_IS_DOCUMENT)
         {
+
+				dump('FirePHPProgress.onStateChange() - 1'+"\n");
+          
 //						dump('FILE 3: '+request+"\n");
           var win = progress.DOMWindow;
           if (win == win.parent) {
-            if(this.context==Firebug.FirePHP.activeContext &&
-                FirebugChrome.isFocused()) {
+            
+    				dump('FirePHPProgress.onStateChange() - 2'+"\n");
 
-              Firebug.FirePHP.queRequest(request);
+            if (FirebugChrome.isFocused()) {
+
+      				dump('FirePHPProgress.onStateChange() - 3'+"\n");
+
+//              if (this.context == Firebug.FirePHP.activeContext) {
+              
+                Firebug.FirePHP.queRequest(request);
+//              }
             }
           }
         }

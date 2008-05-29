@@ -1,4 +1,11 @@
 
+2008-05-28 - Release Version: 0.0.6.20
+
+  - Bugfix - FF3 - Call request processor on main page load
+	- Bugfix - Display of POST parameters in Post tab of request inspector
+	- Bugfix - Display of POST response in Response tab of request inspector
+	- Bugfix - Escape all HTML chracters rendered in Server tab of request inspector
+
 2008-05-15 - Release Version: 0.0.6.19
 
 	- Bugfix - Expanding requests for Firebug 1.2

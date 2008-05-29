@@ -52,7 +52,7 @@ const binaryCategoryMap =
 
 /* Only override the net code for specific firebug versions */
 
-if(Firebug.version=='1.2') {		/* 1.2.0a27X */
+if(Firebug.version=='1.2') {		/* 1.2.0b1 */
 
 Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 {
@@ -137,9 +137,6 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 
     updateInfo: function(netInfoBox, file, context)
     {
-        if (FBTrace.DBG_NET)                                     /*@explore*/
-            FBTrace.dumpProperties("updateInfo file", file);     /*@explore*/
-
         var tab = netInfoBox.selectedTab;
         if (hasClass(tab, "netInfoParamsTab"))
         {
@@ -602,13 +599,61 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 
 
 
+/* START **** Simple copy from net.js **** */
+
+function findHeader(headers, name)
+{
+    for (var i = 0; i < headers.length; ++i)
+    {
+        if (headers[i].name == name)
+            return headers[i].value;
+    }
+}
+
+function formatPostText(text)
+{
+    if (text instanceof XMLDocument)
+        return getElementXML(text.documentElement);
+    else
+        return text;
+}
+
+function getPostText(file, context)
+{
+    if (!file.postText)
+        file.postText = readPostTextFromPage(file.href, context);
+
+    if (!file.postText)
+        file.postText = readPostTextFromRequest(file.request, context);
+
+    return file.postText;
+}
+
+function readPostTextFromRequest(request, context)
+{
+    try
+    {
+        if (!request.notificationCallbacks)
+            return null;
+
+        var xhrRequest = GI(request.notificationCallbacks, nsIXMLHttpRequest);
+        if (xhrRequest)
+            return readPostTextFromXHR(xhrRequest, context);
+    }
+    catch(exc)
+    {
+    }
+
+    return null;
+}
+
 function insertWrappedText(text, textBox)
 {
     var reNonAlphaNumeric = /[^A-Za-z_$0-9'"-]/;
 
     var html = [];
     var wrapWidth = Firebug.textWrapWidth;
-        
+
     var lines = splitLines(text);
     for (var i = 0; i < lines.length; ++i)
     {
@@ -630,8 +675,24 @@ function insertWrappedText(text, textBox)
         html.push("</pre>");
     }
 
-    textBox.innerHTML = html.join("");    
+    textBox.innerHTML = html.join("");
 }
+
+function isURLEncodedFile(file, text)
+{
+    if (text && text.indexOf("Content-Type: application/x-www-form-urlencoded") != -1)
+        return true;
+
+    // The header value doesn't have to be alway exactly "application/x-www-form-urlencoded",
+    // there can be even charset specified. So, use indexOf rather than just "==".
+    var headerValue = findHeader(file.requestHeaders, "Content-Type");
+    if (headerValue && headerValue.indexOf("application/x-www-form-urlencoded") == 0)
+        return true;
+
+    return false;
+}
+
+/* END **** Simple copy from net.js **** */
 
 
 function netInfoServerTab(netInfoBox, file, context) {

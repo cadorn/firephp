@@ -27,16 +27,17 @@
 
 - Ensure chunk_split does not generate trailing "\n" with empty data header in FirePHPCore lib
 
-- When Firefox is first started and a page is called that uses FirePHP, sometimes the
+- FF2 - When Firefox is first started and a page is called that uses FirePHP, sometimes the
   request processor is called twice.
+
+- FF3 - Catch iframes loading on first parent/main page load.
 
 - FirePHP::LIST log style
 
-- Make all JSON server data safe for display in Firebug
+- Automatic updates for FF3
 
-- The Rendering of messages to the firebug concole does not work if you
-  do not send any http-content only http-headers.
-
+- FB1.2 - Print INFO message instead of FirePHP messages in FB console when response came from cache
+				- Print NOTE on server tab if data came from cache
 
 -------------------------------
  Version 0.2.x
