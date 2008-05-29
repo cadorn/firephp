@@ -30,7 +30,10 @@
 - FF2 - When Firefox is first started and a page is called that uses FirePHP, sometimes the
   request processor is called twice.
 
-- FF3 - Catch iframes loading on first parent/main page load.
+- New style/template for console groups. The spacing between characters is irritating
+
+- Bug when no content is sent:
+  http://groups.google.com/group/FirePHP/browse_frm/thread/a7a9b725824daa18?hl=en  
 
 - FirePHP::LIST log style
 
@@ -38,7 +41,9 @@
 
 - FB1.2 - Print INFO message instead of FirePHP messages in FB console when response came from cache
 				- Print NOTE on server tab if data came from cache
-
+        - Use Firebug NetMonitor to listen for request activity.
+          http://groups.google.com/group/firebug/browse_frm/thread/267b1f4abf79bdc3?hl=en#
+          http://code.google.com/p/fbug/issues/detail?id=587
 
 -------------------------------
  Version 0.2.x
@@ -47,7 +52,8 @@
 - FB1.2 - Add FirePHP panel that is disabled by default and asks users to enable it for each website
           just like the Net panel does in FB1.2
 				- More reliable detection for when Firebug is enabled/disabled to enable/disable FirePHP user-agent header
-          
+
+- Optionally allow variable inspection in sidebar or browser overaly instead of the DOM tab
 
 - Refactor FirePHPRenderer API to introduce:
 	 - ProcessRequest - to be called automatically after every request load (DONE)
