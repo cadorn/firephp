@@ -38,6 +38,7 @@
 
 - FB1.2 - Print INFO message instead of FirePHP messages in FB console when response came from cache
 				- Print NOTE on server tab if data came from cache
+				- More reliable detection for when Firebug is enabled/disabled to enable/disable FirePHP user-agent header
 
 -------------------------------
  Version 0.2.x
