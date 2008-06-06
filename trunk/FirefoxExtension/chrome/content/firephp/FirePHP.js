@@ -83,50 +83,62 @@ const pm = PermManager.getService(nsIPermissionManager);
 var FirePHP = top.FirePHP = {
 
   version: '0.0.6',
+  
+  /* This variable is only used for ff2 */
+  enabled: false,
 
   initialize: function() {
-
-    /* Set the FirePHP Extension version for the FirePHP Service Component */  
-    try {
-//      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setExtensionVersion(this.version);
-    } catch (err) {}
-
-
-		this.enable();
-
   },
-  	  
+  
   /* Enable and disable FirePHP
    * At the moment this enables and disables the FirePHP accept header
    */ 
   enable: function() {
+    
+    this.enabled = true;
+    
 dump('FirePHP.enable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
-    try {
       observerService.addObserver(this, "http-on-modify-request", false);
-//      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(true);
-    } catch (err) {}
   },
   disable: function() {
+    
+    this.enabled = false;
+    
 dump('FirePHP.disable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
-    try {
       observerService.removeObserver(this, "http-on-modify-request");
-//      Components.classes['@firephp.org/service;1'].getService(Components.interfaces.nsIFirePHP).setRequestHeaderEnabled(false);
-    } catch (err) {}
   },
+  
+  isEnabled: function() {
+    
+    if (FB_NEW) {
+      /* FirePHP is enabled when the Firebug Net Panel is enabled */
+      return (this.enabled && Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext));
+    }
+    else {
+      /* FirePHP is enabled when Firebug is enabled. */
+      return this.enabled;
+    }
+  },
+  
     
   observe: function(subject, topic, data)
   {
     if (topic == "http-on-modify-request") {
       var httpChannel = subject.QueryInterface(nsIHttpChannel);
 
-      /* Add FirePHP/X.X.X to User-Agent header if not already there */
+      /* Add FirePHP/X.X.X to User-Agent header if not already there and firephp is enabled.
+       * If firephp is not enabled remove header from request if it exists.
+       */
 
       if(httpChannel.getRequestHeader("User-Agent").match(/\sFirePHP\/([\.|\d]*)\s?/)==null) {
-        httpChannel.setRequestHeader("User-Agent", 
-          httpChannel.getRequestHeader("User-Agent") + ' ' +
-          "FirePHP/" + this.version, false);
+        if (this.isEnabled()) {
+dump('ADD HEADER'+"\n");          
+          httpChannel.setRequestHeader("User-Agent", httpChannel.getRequestHeader("User-Agent") + ' ' +
+            "FirePHP/" +
+            this.version, false);
+        }
       }
     }
   },  
@@ -275,18 +287,18 @@ Firebug.FirePHP = extend(Firebug.Module,
   requestBuffer: [],
   
   processQueOnWatchWindow: false,
-  
-  
+
+    
   enable: function()
   {
-dump('Firebug.FirePHP.enable()'+"\n");    
+//dump('Firebug.FirePHP.enable()'+"\n");    
     this.requestBuffer = [];
 		FirePHP.enable();
   },
   
   disable: function()
   {
-dump('Firebug.FirePHP.disable()'+"\n");    
+//dump('Firebug.FirePHP.disable()'+"\n");    
 		FirePHP.disable();
     this.requestBuffer = [];
   },		
@@ -294,12 +306,12 @@ dump('Firebug.FirePHP.disable()'+"\n");
 
   initContext: function(context)
   {
-dump('Firebug.FirePHP.initContext()'+"\n");    
+//dump('Firebug.FirePHP.initContext()'+"\n");    
     monitorContext(context);
   },
   destroyContext: function(context)
   {
-dump('Firebug.FirePHP.destroyContext()'+"\n");    
+//dump('Firebug.FirePHP.destroyContext()'+"\n");    
     unmonitorContext(context);
     
     this.processQueOnWatchWindow = false;
@@ -307,14 +319,14 @@ dump('Firebug.FirePHP.destroyContext()'+"\n");
   
   reattachContext: function(browser, context)
   {
-dump('Firebug.FirePHP.reattachContext'+"\n");
+//dump('Firebug.FirePHP.reattachContext'+"\n");
 
     this.addStylesheets(true);
   },
   
   watchWindow: function(context, win)
   {
-dump('Firebug.FirePHP.watchWindow()'+"\n");   
+//dump('Firebug.FirePHP.watchWindow()'+"\n");   
 
     if (this.processQueOnWatchWindow) {
       this.processRequestQue();
@@ -322,11 +334,11 @@ dump('Firebug.FirePHP.watchWindow()'+"\n");
   },
   unwatchWindow: function(context, win)
   {
-dump('Firebug.FirePHP.unwatchWindow()'+"\n");    
+//dump('Firebug.FirePHP.unwatchWindow()'+"\n");    
   },
   showPanel: function(browser, panel)
   {
-dump('Firebug.FirePHP.showPanel()'+"\n");    
+//dump('Firebug.FirePHP.showPanel()'+"\n");    
 
     this.addStylesheets();
 
@@ -366,13 +378,14 @@ dump('Firebug.FirePHP.showPanel()'+"\n");
   
   showContext: function(browser, context)
   {
-dump('Firebug.FirePHP.showContext()'+"\n");    
-    
+//dump('Firebug.FirePHP.showContext()'+"\n");    
+/*    
     if(isEnabled(safeGetURI(browser))) {
   		FirePHP.enable();
     } else {
   		FirePHP.disable();
     }
+*/
 
     this.activeBrowser = browser;
     this.activeContext = context;
@@ -380,7 +393,7 @@ dump('Firebug.FirePHP.showContext()'+"\n");
 	 
 
 	queRequest: function(Request) {
-dump('Firebug.FirePHP.queRequest('+Request.name+')'+"\n");    
+//dump('Firebug.FirePHP.queRequest('+Request.name+')'+"\n");    
     
 		var http = QI(Request, nsIHttpChannel);
     var info = FirePHP.parseHeaders(http,'visit');
@@ -388,7 +401,7 @@ dump('Firebug.FirePHP.queRequest('+Request.name+')'+"\n");
   },
 
 	processRequest: function(Request) {
-dump('Firebug.FirePHP.processRequest('+Request.name+')'+"\n");    
+//dump('Firebug.FirePHP.processRequest('+Request.name+')'+"\n");    
 
 		var url = Request.name;
 		var http = QI(Request, nsIHttpChannel);
@@ -399,10 +412,10 @@ dump('Firebug.FirePHP.processRequest('+Request.name+')'+"\n");
    
    
 	processRequestQue: function() {
-dump('Firebug.FirePHP.processRequestQue()'+"\n");    
+//dump('Firebug.FirePHP.processRequestQue()'+"\n");    
     if(!this.requestBuffer) return;
 
-dump('Firebug.FirePHP.processRequestQue() - 1'+"\n");
+//dump('Firebug.FirePHP.processRequestQue() - 1'+"\n");
 
     for( var index in this.requestBuffer ) {
       this._processRequest(this.requestBuffer[index][0],this.requestBuffer[index][1]);
@@ -413,7 +426,7 @@ dump('Firebug.FirePHP.processRequestQue() - 1'+"\n");
 
   
 	_processRequest: function(url,info) {
-dump('Firebug.FirePHP._processRequest('+url+')'+"\n");    
+//dump('Firebug.FirePHP._processRequest('+url+')'+"\n");    
     
     var mask = info['processorurl'];
     var data = info['data'];
@@ -601,7 +614,7 @@ FirePHPProgress.prototype =
 
     observe: function(request, topic, data)
     {
-				dump('FirePHPProgress.observe()'+"\n");
+//				dump('FirePHPProgress.observe()'+"\n");
       
         request = QI(request, nsIHttpChannel);
 
@@ -617,22 +630,22 @@ FirePHPProgress.prototype =
 
     onStateChange: function(progress, request, flag, status)
     {
-				dump('FirePHPProgress.onStateChange()'+"\n");
+//				dump('FirePHPProgress.onStateChange()'+"\n");
         
         if (flag & STATE_TRANSFERRING && flag & STATE_IS_DOCUMENT)
         {
 
-				dump('FirePHPProgress.onStateChange() - 1'+"\n");
+//				dump('FirePHPProgress.onStateChange() - 1'+"\n");
           
 //						dump('FILE 3: '+request+"\n");
           var win = progress.DOMWindow;
           if (win == win.parent) {
             
-    				dump('FirePHPProgress.onStateChange() - 2'+"\n");
+//    				dump('FirePHPProgress.onStateChange() - 2'+"\n");
 
             if (FirebugChrome.isFocused()) {
 
-      				dump('FirePHPProgress.onStateChange() - 3'+"\n");
+//      				dump('FirePHPProgress.onStateChange() - 3'+"\n");
 
 //              if (this.context == Firebug.FirePHP.activeContext) {
               
