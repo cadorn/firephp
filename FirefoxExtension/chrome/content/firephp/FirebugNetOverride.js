@@ -52,7 +52,7 @@ const binaryCategoryMap =
 
 /* Only override the net code for specific firebug versions */
 
-if(Firebug.version=='1.2') {		/* 1.2.0b1 */
+if(Firebug.version=='1.2') {		/* 1.2.x */
 
 Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
 {
