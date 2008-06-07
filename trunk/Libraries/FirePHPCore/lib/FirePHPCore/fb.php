@@ -4,7 +4,7 @@
  *  
  * This file is part of FirePHP (http://www.firephp.org/).
  * 
- * Copyright (C) 2007 Christoph Dorn
+ * Copyright (C) 2007-2008 Christoph Dorn
  * 
  * FirePHP is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -58,13 +58,19 @@ require_once dirname(__FILE__).'/FirePHP.class.php';
  *   fb($e);
  * }
  * 
+ * fb(array('2 SQL queries took 0.06 seconds',array(
+ *    array('SQL Statement','Time','Result'),
+ *    array('SELECT * FROM Foo','0.02',array('row1','row2')),
+ *    array('SELECT * FROM Bar','0.04',array('row1','row2'))
+ *   )),FirePHP::TABLE);
+ * 
  * // Will show only in "Server" tab for the request
  * fb(apache_request_headers(),'RequestHeaders',FirePHP::DUMP);
  * 
  * 
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
  * 
- * @copyright   Copyright (C) 2007 Christoph Dorn
+ * @copyright   Copyright (C) 2007-2008 Christoph Dorn
  * @author      Christoph Dorn <christoph@christophdorn.com>
  * @license     http://www.gnu.org/licenses/lgpl.html
  */
