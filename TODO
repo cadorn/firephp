@@ -23,35 +23,21 @@
  Version 0.1.x
 -------------------------------
 
-- Add usleep(1) to header writing loop in FirePHPCore lib
-
-- Ensure chunk_split does not generate trailing "\n" with empty data header in FirePHPCore lib
-
-- FF2 - When Firefox is first started and a page is called that uses FirePHP, sometimes the
-  request processor is called twice.
-
-- Bug when no content is sent:
-  http://groups.google.com/group/FirePHP/browse_frm/thread/a7a9b725824daa18?hl=en  
-
 - FirePHP::LIST log style
 
 - Automatic updates for FF3
 
-- Add option to hide all the X-FirePHP- headers from the Firebug response headers viewer
+-------------------------------
+ Version 0.2.x
+-------------------------------
 
 - FB1.2 - Print INFO message instead of FirePHP messages in FB console when response came from cache
 				- Print NOTE on server tab if data came from cache
         - Use Firebug NetMonitor to listen for request activity.
           http://groups.google.com/group/firebug/browse_frm/thread/267b1f4abf79bdc3?hl=en#
           http://code.google.com/p/fbug/issues/detail?id=587
-
--------------------------------
- Version 0.2.x
--------------------------------
-
-- FB1.2 - Add FirePHP panel that is disabled by default and asks users to enable it for each website
+				- Add FirePHP panel that is disabled by default and asks users to enable it for each website
           just like the Net panel does in FB1.2
-				- More reliable detection for when Firebug is enabled/disabled to enable/disable FirePHP user-agent header
 
 - Optionally allow variable inspection in sidebar or browser overaly instead of the DOM tab
 
@@ -75,6 +61,7 @@
 - Expanding of stack trace does not work after Firebug is detached.
   Need to reload page at the moment.
 
+- Add option to hide all the X-FirePHP- headers from the Firebug response headers viewer
 
 -------------------------------
  Deferred
@@ -83,4 +70,16 @@
 - New style/template for console groups. The spacing between characters is irritating
 	=> Looked into this. Cannot be done without modifying Firebug at this time.
 	
+-------------------------------
+ Known Issues
+-------------------------------
+
+- FirePHP not called when only headers are sent without body content
+  http://groups.google.com/group/FirePHP/browse_frm/thread/a7a9b725824daa18?hl=en  
+  => Problem with FF2. Works in FF3.
+  
+- FF2 - When Firefox is first started and a page is called that uses FirePHP, sometimes the
+  request processor is called twice.
+	=> I am going to leave this alone. The request monitoring in FF2 is a mess.
+	   Will work fine in FF3.
 

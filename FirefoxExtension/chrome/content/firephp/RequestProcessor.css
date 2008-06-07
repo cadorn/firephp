@@ -90,3 +90,76 @@
 }
 
 
+
+
+
+
+.logRow-firephp-table {
+    padding: 0px;
+    margin: 0px;
+}
+
+.logRow-firephp-table > .head {
+  margin: 0px;
+  padding-bottom: 1px;
+  padding-top: 2px;
+  padding-right: 10px;
+  background-color: #f0f3f9;
+}
+
+.logRow-firephp-table > .head > .title {
+  cursor: pointer;
+  padding-left: 23px;    
+  padding-bottom: 0px;
+  padding-top: 2px;
+  font-family: Monaco, monospace;
+  background-image: url(chrome://firephp/skin/tableIcon.png);
+  background-repeat: no-repeat;
+  background-position: 4px 2px;
+  color: black;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+.logRow-firephp-table > .head > .title:hover {
+    color: blue;
+    text-decoration: none !important;
+}
+
+.logRow-firephp-table > .head > .title:hover {
+    text-decoration: underline !important;
+    color: blue;
+}
+
+.logRow-firephp-table.opened {
+    border-bottom: 1px solid #D7D7D7;
+}
+
+
+.logRow-firephp-table > .head > .info {
+    display: none;
+    padding-left: 10px;
+    margin-top: 2px;
+    padding-bottom: 10px;
+}
+
+.logRow-firephp-table.opened > .head > .info {
+    display: block;
+}
+
+
+.logRow-firephp-table.opened > .head > .info > TABLE TBODY TR TD.header {
+  font-weight: bold;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.logRow-firephp-table.opened > .head > .info > TABLE TBODY TR TD.cell {
+  vertical-align: top;
+  border:1px solid #D7D7D7;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+

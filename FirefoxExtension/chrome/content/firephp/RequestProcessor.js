@@ -132,6 +132,119 @@ FirePHPProcessor.Init = function() {
   );
 
 
+  this.RegisterConsoleTemplate('table',
+    domplate(Firebug.Rep,
+    {
+      className: 'firephp-table',
+      tag:
+          DIV({class: "head", _repObject: "$object"},
+              A({class: "title", onclick: "$onToggleBody"}, "$object|getCaption")
+          ),
+    
+      infoTag: DIV({class: "info"},
+             TABLE({cellpadding: 3, cellspacing: 0},
+              TBODY(
+                TR(
+                  FOR("column", "$object|getHeaderColumns",
+                    TD({class:'header'},'$column')
+                  )
+                ),
+                FOR("row", "$object|getRows",
+                    TR({},
+                      FOR("column", "$row|getColumns",
+                        TD({class:'cell'},
+                          TAG("$column.tag", {object: "$column.value"})
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+             ),
+                  
+           
+                  
+      getCaption: function(item)
+      {
+        return item[0];
+      },
+    
+      onToggleBody: function(event)
+      {
+        var target = event.currentTarget;
+        var logRow = getAncestorByClass(target, "logRow-firephp-table");
+        if (isLeftClick(event))
+        {
+          toggleClass(logRow, "opened");
+    
+          if (hasClass(logRow, "opened"))
+          {
+    
+            /* Lets only render the stack trace once we request it */        
+            if (!getChildByClass(logRow, "head", "info"))
+            {
+                this.infoTag.append({'object':getChildByClass(logRow, "head").repObject},
+                                    getChildByClass(logRow, "head"));
+            }
+          }
+        }
+      },
+      
+      getHeaderColumns: function(object) {
+        
+        try{
+          return object[1][0];
+        } catch(e) {}
+        
+        return [];
+      },
+      
+      getRows: function(object) {
+        
+        try{
+          var rows = object[1];
+          rows.splice(0,1);
+          return rows;
+        } catch(e) {}
+        
+        return [];
+      },
+      
+      getColumns: function(row) {
+
+        if (!row) return [];
+        
+        var items = [];
+
+        try {
+        
+          for (var i = 0; i < row.length; ++i)
+          {
+              var arg = row[i];
+  
+              if (arg.constructor.toString().indexOf("Array")!=-1) {
+                var rep = FirebugReps.Obj;
+                var tag = rep.tag;
+                
+                obj = new Object();
+                obj.Array = arg;
+                arg = ['Click for Data',obj];
+              } else {
+                var rep = FirebugReps.Text;
+                var tag = rep.shortTag ? rep.shortTag : rep.tag;
+              }
+              
+              items.push({name: 'arg'+i, value: arg, tag: tag});
+          }
+        } catch(e) {}
+        
+        return items;
+      },
+      
+    })
+  );
+
+
 
   
 }
@@ -160,7 +273,7 @@ FirePHPProcessor.ProcessRequest = function(URL,Data) {
         if (item && item.length==2) {
         
           var mode = item[0].toLowerCase();
-          if (mode == 'log' || mode == 'info' || mode == 'warn') {
+          if (mode == 'log' || mode == 'info' || mode == 'warn' || mode == 'table') {
           
             this.logToFirebug(mode, item[1]);
             

@@ -21,6 +21,11 @@ fb('Main Page');
 <p><a href="#" onClick="$.post('ConsoleTest.php', {var1:'val1'});">ConsoleTest.php (POST)</a></p>
 <p><a href="#" onClick="$.get('ZendTest.php');">ZendTest.php</a></p>
 
+<p><a href="#" onClick="$.get('NoContentTest.php');">AJAX - NoContentTest.php</a></p>
+
+
+<p><a href="/NoContentTest.php">PAGE - NoContentTest.php</a></p>
+
 
 <p><a href="/Test1.php">Home</a></p>
 </body>
