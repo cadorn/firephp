@@ -30,10 +30,6 @@
 - FF2 - When Firefox is first started and a page is called that uses FirePHP, sometimes the
   request processor is called twice.
 
-- New style/template for console groups. The spacing between characters is irritating
-
-- Only update user-agent string if Firebug is enabled
-
 - Bug when no content is sent:
   http://groups.google.com/group/FirePHP/browse_frm/thread/a7a9b725824daa18?hl=en  
 
@@ -78,4 +74,13 @@
   
 - Expanding of stack trace does not work after Firebug is detached.
   Need to reload page at the moment.
+
+
+-------------------------------
+ Deferred
+-------------------------------
+
+- New style/template for console groups. The spacing between characters is irritating
+	=> Looked into this. Cannot be done without modifying Firebug at this time.
+	
 

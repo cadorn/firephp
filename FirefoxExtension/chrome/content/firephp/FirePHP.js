@@ -99,7 +99,12 @@ var FirePHP = top.FirePHP = {
     
 dump('FirePHP.enable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
-      observerService.addObserver(this, "http-on-modify-request", false);
+    observerService.addObserver(this, "http-on-modify-request", false);
+
+    if (FB_NEW) {
+      /* Do not enable this yet. It will break the Net panel in 1.2.0b3 */
+//      Firebug.NetMonitor.addListener(this);
+    }
   },
   disable: function() {
     
@@ -107,8 +112,20 @@ dump('FirePHP.enable()'+"\n");
     
 dump('FirePHP.disable()'+"\n");    
     /* Enable the FirePHP Service Component to set the multipart/firephp accept header */  
-      observerService.removeObserver(this, "http-on-modify-request");
+    observerService.removeObserver(this, "http-on-modify-request");
+      
+    if (FB_NEW) {
+      /* Do not enable this yet. It will break the Net panel in 1.2.0b3 */
+//      Firebug.NetMonitor.removeListener(this);
+    }
   },
+
+  /* Used for FB1.2 */
+  onLoad: function(context, file)
+  {
+dump("--> " + file.method + " " + file.href+"\n");    
+  },
+
   
   isEnabled: function() {
     
@@ -134,7 +151,6 @@ dump('FirePHP.disable()'+"\n");
 
       if(httpChannel.getRequestHeader("User-Agent").match(/\sFirePHP\/([\.|\d]*)\s?/)==null) {
         if (this.isEnabled()) {
-dump('ADD HEADER'+"\n");          
           httpChannel.setRequestHeader("User-Agent", httpChannel.getRequestHeader("User-Agent") + ' ' +
             "FirePHP/" +
             this.version, false);
@@ -246,38 +262,6 @@ dump('ADD HEADER'+"\n");
 }
 
 
-function safeGetURI(browser)
-{
-    try
-    {
-        return browser.currentURI;
-    }
-    catch (exc)
-    {
-        return null;
-    }
-}
-
-
-function isEnabled(uri) {
-    if (Firebug.disabledAlways)
-    {
-        // Check if the whitelist makes an exception
-        if (!Firebug.isURIAllowed(uri))
-            return false;
-    }
-    else
-    {
-        // Check if the blacklist says no
-        if (Firebug.isURIDenied(uri))
-            return false;
-    }
-    return true;  
-}
-
-
-
-
 Firebug.FirePHP = extend(Firebug.Module,
 {
 	
@@ -288,6 +272,19 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   processQueOnWatchWindow: false,
 
+/*
+  initializeUI: function(detachArgs)
+  {
+dump('Firebug.FirePHP.initializeUI()'+"\n");    
+		FirePHP.enable();
+  },
+  
+  shutdown: function()
+  {
+dump('Firebug.FirePHP.shutdown()'+"\n");    
+		FirePHP.disable();
+  },
+*/  
     
   enable: function()
   {
@@ -378,15 +375,6 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   showContext: function(browser, context)
   {
-//dump('Firebug.FirePHP.showContext()'+"\n");    
-/*    
-    if(isEnabled(safeGetURI(browser))) {
-  		FirePHP.enable();
-    } else {
-  		FirePHP.disable();
-    }
-*/
-
     this.activeBrowser = browser;
     this.activeContext = context;
   },
@@ -573,8 +561,6 @@ Firebug.FirePHP = extend(Firebug.Module,
   }
     		   
 });
-
-
 
 
 
