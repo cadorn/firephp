@@ -1,4 +1,6 @@
 
+2008-06-06 - Release Version: 0.0.6.21
+
 	- Bugfix - FF2 - Only send FirePHP user-agent header when Firebug is enabled
 	- Bugfix - FF3 - Only send FirePHP user-agent header when Firebug Net Panel is enabled
   - Added support for FirePHP::TABLE log style
