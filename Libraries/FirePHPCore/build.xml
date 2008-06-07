@@ -12,6 +12,7 @@
         <echo msg="Copying files to build directory..." />
 
         <copy file="./README" tofile="./build/FirePHPCore/README"/>
+        <copy file="./CHANGELOG" tofile="./build/FirePHPCore/CHANGELOG"/>
 
         <copy todir="./build/FirePHPCore/demo" >
           <fileset dir="./demo"/>
