@@ -82,6 +82,12 @@ class IndexController extends Zend_Controller_Action
           /* Log exception including stack trace & variables */
           FirePhp_Debug::fb($e);
         }
+                
+        FirePhp_Debug::fb(array('2 SQL queries took 0.06 seconds',array(
+           array('SQL Statement','Time','Result'),
+           array('SELECT * FROM Foo','0.02',array('row1','row2')),
+           array('SELECT * FROM Bar','0.04',array('row1','row2'))
+          )),FirePHP::TABLE);        
         
         /* Will show only in "Server" tab for the request */
         FirePhp_Debug::fb(apache_request_headers(),'RequestHeaders',FirePHP::DUMP);
