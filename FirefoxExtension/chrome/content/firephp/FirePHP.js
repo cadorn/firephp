@@ -499,7 +499,7 @@ dump('Firebug.FirePHP.shutdown()'+"\n");
         
       } else {
 
-        jQuery.ajax({
+        FirePHPLib.jQuery.ajax({
           type: 'GET',
           //				url: mask+'?t='+(new Date().getTime()),
           url: mask,
