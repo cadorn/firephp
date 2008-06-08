@@ -868,7 +868,7 @@ function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
 	}
 	
 	
-	jQuery.ajax({
+	FirePHPLib.jQuery.ajax({
 		type: "GET",
 		url: Mask,
 		success: function(ReturnData){

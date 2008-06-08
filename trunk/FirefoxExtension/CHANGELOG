@@ -1,4 +1,8 @@
 
+2008-06-07 - Release Version: 0.0.6.23
+
+	- Bugfix - Moved jQuery to a namespace under FirePHPLib to avoid namespace conflicts with other extensions
+
 2008-06-06 - Release Version: 0.0.6.22
 
 	- Bugfix - FF2 - Only send FirePHP user-agent header when Firebug is enabled
