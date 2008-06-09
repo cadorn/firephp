@@ -26,6 +26,7 @@ require_once 'Zend/Controller/Action.php';
 require_once 'Zend/Exception.php';
 
 
+
 /*
  * @copyright  Copyright (C) 2007 Christoph Dorn
  * @license    http://www.gnu.org/licenses/lgpl.html
@@ -93,16 +94,39 @@ class IndexController extends Zend_Controller_Action
         FirePhp_Debug::fb(apache_request_headers(),'RequestHeaders',FirePHP::DUMP);
 
 
-
         FirePhp_Debug::log('Var1');
         FirePhp_Debug::log('Var1', 'Var2');
         FirePhp_Debug::log('Var1', 'Var2', 'Var3');
 
+
         
+        /* Run some SQL so we can log the queries */
+
+        $db = Zend_Registry::get('db');
+
+        $db->getConnection()->exec('CREATE TABLE foo (
+                                      id      INTEGNER NOT NULL,
+                                      col1    VARCHAR(10) NOT NULL  
+                                    )');
+
+        $db->insert('foo', array('id'=>1,'col1'=>'original'));
+
+        $db->fetchAll('SELECT * FROM foo WHERE id = ?', 1);
+
+        $db->update('foo', array('col1'=>'new'), 'id = 1');
+
+        $db->fetchAll('SELECT * FROM foo WHERE id = ?', 1);
+
+        $db->delete('foo', 'id = 1');
+
+        $db->getConnection()->exec('DROP TABLE foo');
+
+
+        /* Dump a variable to the "Server" tab of the request. */        
         FirePhp_Debug::dump('DummyLabel', 'Dummy string with a label');
         
-        
-        throw new Zend_Exception('Zend Test Exception');
+        /* Log an exception */
+//        throw new Zend_Exception('Zend Test Exception');
         
     }
 }

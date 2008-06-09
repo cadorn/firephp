@@ -63,6 +63,9 @@ require_once 'Zend/Controller/Front.php';
 require_once 'Zend/Controller/Request/Http.php';
 require_once 'Zend/Controller/Response/Http.php';
 
+require_once 'Zend/Db.php';
+require_once 'FirePhp/Db/Profiler/FirePhp.php';
+
 /*
  * Initialize the HTTP Request and Response Objects
  */
@@ -116,6 +119,37 @@ FirePhp_Debug::log('Var1', 'Var2', 'Var3');
 
 
 FirePhp_Debug::dump('DummyLabel', 'Dummy string with a label');
+
+
+
+
+
+$params = array(
+    'dbname'   => ':memory:',
+    'profiler' => new FirePhp_Db_Profiler_FirePhp()
+);
+$db = Zend_Db::factory('PDO_SQLITE', $params);
+$db->getProfiler()->setEnabled(true);
+
+$db->getConnection()->exec('CREATE TABLE foo (
+                              id      INTEGNER NOT NULL,
+                              col1    VARCHAR(10) NOT NULL  
+                            )');
+
+$db->insert('foo', array('id'=>1,'col1'=>'original'));
+
+$db->fetchAll('SELECT * FROM foo WHERE id = ?', 1);
+
+$db->update('foo', array('col1'=>'new'), 'id = 1');
+
+$db->fetchAll('SELECT * FROM foo WHERE id = ?', 1);
+
+$db->delete('foo', 'id = 1');
+
+$db->getConnection()->exec('DROP TABLE foo');
+
+$db->getProfiler()->flush();
+
 
 
 ?>
