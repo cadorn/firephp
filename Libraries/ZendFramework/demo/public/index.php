@@ -51,6 +51,9 @@ require_once 'Zend/Controller/Front.php';
 require_once 'Zend/Controller/Request/Http.php';
 require_once 'Zend/Controller/Response/Http.php';
 require_once 'FirePhp/Debug.php';
+require_once 'Zend/Db.php';
+require_once 'FirePhp/Db/Profiler/FirePhp.php';
+require_once 'FirePhp/Controller/Plugin/FirePhp.php';
 
 /*
  * Initialize the HTTP Request and Response Objects
@@ -90,10 +93,35 @@ Zend_Registry::set('logger',$logger);
 
 
 /*
- * Run the front controller
+ * Add a DB adpater with our FirePhp db profiler to the registry
+ */
+
+$profiler = new FirePhp_Db_Profiler_FirePhp();
+
+$params = array(
+    'dbname'   => ':memory:',
+    'profiler' => $profiler
+);
+
+$db = Zend_Db::factory('PDO_SQLITE', $params);
+
+$db->getProfiler()->setEnabled(true);
+
+Zend_Registry::set('db',$db);
+
+/*
+ * Setup a plugin for the controller that can flush any debug data
  */
  
+$plugin = new FirePhp_Controller_Plugin_FirePhp();
+$plugin->setProfiler($profiler);
+
+/*
+ * Run the front controller
+ */
+
 $controller = Zend_Controller_Front::getInstance();
-$controller->setControllerDirectory('../application/controllers');
+$controller->setControllerDirectory('../application/controllers')
+           ->registerPlugin($plugin);
 $controller->dispatch($request, $response);
 
