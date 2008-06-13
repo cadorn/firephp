@@ -1,3 +1,9 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * 
+ * This software is distributed under the New BSD License.
+ * See LICENSE file for terms of use.
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 FirePHPProcessor.Init = function() {
 
