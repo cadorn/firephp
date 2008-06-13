@@ -19,9 +19,6 @@ const binaryCategoryMap =
 };
 
 
-//dump('Firebug.version: '+Firebug.version+"\n");
-
-
 /* Only override the net code for specific firebug versions */
 
 if(Firebug.version=='1.2') {		/* 1.2.x */
