@@ -139,17 +139,14 @@ getProtocol: function(url)
 *  http://www.webtoolkit.info/
 *
 **/  
-// public method for url encoding
 	urlEncode : function (string) {
 		return escape(this._utf8_encode(string));
 	},
 
-	// public method for url decoding
 	urlDecode : function (string) {
 		return this._utf8_decode(unescape(string));
 	},
 
-	// private method for UTF-8 encoding
 	_utf8_encode : function (string) {
 		string = string.replace(/\r\n/g,"\n");
 		var utftext = "";
@@ -176,7 +173,6 @@ getProtocol: function(url)
 		return utftext;
 	},
 
-	// private method for UTF-8 decoding
 	_utf8_decode : function (utftext) {
 		var string = "";
 		var i = 0;
@@ -227,22 +223,22 @@ getProtocol: function(url)
 		var dumped_text = "";
 		if(!level) level = 0;
 		
-		//The padding given at the beginning of the line.
+		/* The padding given at the beginning of the line. */
 		var level_padding = "";
 		for(var j=0;j<level+1;j++) level_padding += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		
-		if(typeof(arr) == 'object') { //Array/Hashes/Objects
+		if(typeof(arr) == 'object') { /* Array/Hashes/Objects */
 		 for(var item in arr) {
 		  var value = arr[item];
 		 
-		  if(typeof(value) == 'object') { //If it is an array,
+		  if(typeof(value) == 'object') { /* If it is an array */
 		   dumped_text += level_padding + "'" + item + "' ...<br>";
 		   dumped_text += FirePHPLib.renderJSONString(value,level+1);
 		  } else {
 		   dumped_text += level_padding + "'" + item + "' => \"" + value + "\"<br>";
 		  }
 		 }
-		} else { //Stings/Chars/Numbers etc.
+		} else { /* Stings/Chars/Numbers etc. */
 		 dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
 		}
 		return dumped_text;
