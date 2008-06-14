@@ -78,11 +78,7 @@ class Zend_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
                 $type = Zend_Debug_FirePhp::LOG;
                 break;
         }
-        
-        if($event['message'] instanceof Exception) {
-          $type = Zend_Debug_FirePhp::EXCEPTION;
-        }
-        
+
         Zend_Debug_FirePhp::getInstance()->fire($event['message'], null, $type);
     }
 }
