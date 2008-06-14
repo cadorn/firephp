@@ -37,7 +37,7 @@ require_once 'Zend/Debug/FirePhp/Plugin/Interface.php';
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class FirePhp_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_FirePhp_Plugin_Interface
+class Zend_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_FirePhp_Plugin_Interface
 {
   
     /**

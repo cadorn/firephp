@@ -30,7 +30,7 @@ require_once('Zend/Controller/Request/Abstract.php');
 /** Zend_Controller_Response_Abstract */
 require_once('Zend/Controller/Response/Abstract.php');
 
-/** Zend_Debug_FirePhp_JsonEncoder */
+/** Zend_Json_Encoder */
 require_once 'Zend/Json/Encoder.php';
 
 /** Zend_Controller_Plugin_Abstract */
