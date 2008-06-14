@@ -265,7 +265,7 @@ FirePHPProcessor.ProcessRequest = function(URL,Data) {
 
   if (data['FirePHP.Firebug.Console']) {
 
-    Firebug.Console.openGroup(URL, null, "group", null, false);
+    Firebug.Console.openGroup(URL);
 
     /* 
      * We wrap the logging code to ensure we can close the group
