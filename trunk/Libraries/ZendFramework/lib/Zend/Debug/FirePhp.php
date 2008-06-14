@@ -225,19 +225,6 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
         }
         
         if($var instanceof Exception) {
-          
-          if($var instanceof Zend_Debug_FirePhp_Exception) {
-            
-            if(ini_get('display_errors')) {
-              print 'Stopping cyclical exception logging to FirePHP. <b>ERROR: '.
-                    $var->getMessage().
-                    '</b>'.
-                    "\n";
-            } else {
-              /* TODO: Log this error somewhere else? */
-            }
-            exit;
-          }
 
           $var = array('Class'=>get_class($var),
                        'Message'=>$var->getMessage(),
