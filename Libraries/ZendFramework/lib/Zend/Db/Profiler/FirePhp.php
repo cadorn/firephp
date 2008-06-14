@@ -60,13 +60,17 @@ class FirePhp_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug
      */
     public function flush(Zend_Debug_FirePhp $firephp)
     {
+        $profiles = $this->getQueryProfiles();
+        
+        if(!$profiles) return;
+      
         $table = array();
         
         $table[] = array('Time', 'Event', 'Params');
         
         $total_time = 0;
-        
-        foreach ($this->getQueryProfiles() as $query) {
+                
+        foreach($profiles as $query) {
           
             $params = $query->getQueryParams();
             if($params) {
