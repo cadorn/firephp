@@ -64,7 +64,7 @@ Zend_Registry::set('logger',$logger);
 
 $db = Zend_Db::factory('PDO_SQLITE',
                        array('dbname' => ':memory:',
-                             'profiler' => new FirePhp_Db_Profiler_FirePhp()));
+                             'profiler' => new Zend_Db_Profiler_FirePhp()));
 
 $db->getProfiler()->setEnabled(true);
 
