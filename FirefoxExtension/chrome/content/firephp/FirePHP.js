@@ -53,7 +53,7 @@ const pm = PermManager.getService(nsIPermissionManager);
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.1',
+  version: '0.1.0',
   
   /* This variable is only used for ff2 */
   enabled: false,
