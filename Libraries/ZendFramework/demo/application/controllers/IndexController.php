@@ -1,46 +1,45 @@
 <?php
-
-/* ***** BEGIN LICENSE BLOCK *****
- *  
- * This file is part of FirePHP (http://www.firephp.org/).
- * 
- * Copyright (C) 2007 Christoph Dorn
- * 
- * FirePHP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * FirePHP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with FirePHP.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
- * 
- * ***** END LICENSE BLOCK ***** */
-
-require_once 'Zend/Controller/Action.php';
-
-require_once 'Zend/Exception.php';
-
-
-
-/*
- * @copyright  Copyright (C) 2007 Christoph Dorn
- * @license    http://www.gnu.org/licenses/lgpl.html
- * @author     Jean-Marc Fontaine
- * @author     Christoph Dorn <christoph@christophdorn.com>
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category   Zend
+ * @package    Zend_Debug
+ * @subpackage FirePhp
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+/** Zend_Controller_Action */
+require_once 'Zend/Controller/Action.php';
+
+/** Zend_Exception */
+require_once 'Zend/Exception.php';
+
+/**
+ * Sample index controller.
+ *
+ * @category   Zend
+ * @package    Zend_Debug
+ * @subpackage FirePhp
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 class IndexController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-
         /*
-         * FirePhp_Log_Writer_FirePhp
+         * Zend_Log_Writer_FirePhp
          */
 
         $logger = Zend_Registry::get('logger');
@@ -56,51 +55,46 @@ class IndexController extends Zend_Controller_Action
         $logger->log(array('$_SERVER',$_SERVER), Zend_Log::DEBUG);
         
         
-        
         /*
-         * FirePhp_Debug
+         * Zend_Debug
          */
         
-        FirePhp_Debug::fb('Hello World'); /* Defaults to FB_LOG */
+        Zend_Debug::fire('Hello World'); /* Defaults to Zend_Debug_FirePhp::LOG */
         
-        FirePhp_Debug::fb('Log message'  ,FirePHP::LOG);
-        FirePhp_Debug::fb('Info message' ,FirePHP::INFO);
-        FirePhp_Debug::fb('Warn message' ,FirePHP::WARN);
-        FirePhp_Debug::fb('Error message',FirePHP::ERROR);
+        Zend_Debug::fire('Log message'  , Zend_Debug_FirePhp::LOG);
+        Zend_Debug::fire('Log message'  , 'LOG');
+        Zend_Debug::fire('Info message' , Zend_Debug_FirePhp::INFO);
+        Zend_Debug::fire('Info message' , 'INFO');
+        Zend_Debug::fire('Warn message' , Zend_Debug_FirePhp::WARN);
+        Zend_Debug::fire('Warn message' , 'WARN');
+        Zend_Debug::fire('Error message', Zend_Debug_FirePhp::ERROR);
+        Zend_Debug::fire('Error message', 'ERROR');
         
-        FirePhp_Debug::fb('Message with label','Label',FirePHP::LOG);
+        Zend_Debug::fire('Message with label','Label', Zend_Debug_FirePhp::LOG);
+        Zend_Debug::fire('Message with label','Label', 'LOG');
         
-        FirePhp_Debug::fb(array('key1'=>'val1',
+        Zend_Debug::fire(array('key1'=>'val1',
                                 'key2'=>array(array('v1','v2'),'v3')),
-                          'TestArray',FirePHP::LOG);
+                          'TestArray', Zend_Debug_FirePhp::LOG);
         
-        function test($Arg1) {
-          throw new Exception('Test Exception');
-        }
         try {
-          test(array('Hello'=>'World'));
+            throw new Exception('Test Exception');
         } catch(Exception $e) {
-          /* Log exception including stack trace & variables */
-          FirePhp_Debug::fb($e);
+            Zend_Debug::fire($e);
         }
                 
-        FirePhp_Debug::fb(array('2 SQL queries took 0.06 seconds',array(
-           array('SQL Statement','Time','Result'),
-           array('SELECT * FROM Foo','0.02',array('row1','row2')),
-           array('SELECT * FROM Bar','0.04',array('row1','row2'))
-          )),FirePHP::TABLE);        
-        
-        /* Will show only in "Server" tab for the request */
-        FirePhp_Debug::fb(apache_request_headers(),'RequestHeaders',FirePHP::DUMP);
+        Zend_Debug::fire(array(
+                           array('Column1','Column2','Column3'),
+                           array('Row 1 Column 1','Row 1 Column 2',array('row1','row2')),
+                           array('Row 2 Column 1','Row 2 Column 2',array('row1','row2'))
+                         ),
+                         'This is a Sample Table',
+                         'TABLE');        
 
+        Zend_Debug::fire(apache_request_headers(),'RequestHeaders',Zend_Debug_FirePhp::DUMP);
 
-        FirePhp_Debug::log('Var1');
-        FirePhp_Debug::log('Var1', 'Var2');
-        FirePhp_Debug::log('Var1', 'Var2', 'Var3');
-
-
-        
-        /* Run some SQL so we can log the queries */
+  
+        /* Run some SQL so we can log the queries using Zend_Db_Profiler_FirePhp */
 
         $db = Zend_Registry::get('db');
 
@@ -120,13 +114,10 @@ class IndexController extends Zend_Controller_Action
         $db->delete('foo', 'id = 1');
 
         $db->getConnection()->exec('DROP TABLE foo');
-
-
-        /* Dump a variable to the "Server" tab of the request. */        
-        FirePhp_Debug::dump('DummyLabel', 'Dummy string with a label');
+          
         
-        /* Log an exception */
-//        throw new Zend_Exception('Zend Test Exception');
+        /* Throw an exception so that or error controller can log it. */
+        throw new Zend_Exception('Zend Test Exception');
         
     }
 }
