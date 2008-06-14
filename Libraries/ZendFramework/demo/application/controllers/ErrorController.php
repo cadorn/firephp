@@ -38,33 +38,27 @@ class ErrorController extends Zend_Controller_Action
 {
     public function errorAction()
     {
-        $errors = $this->_getParam('error_handler');
-
         /*
-         * Make sure we don't log FirePHP exceptions. If we do we will create an infinite loop.
+         * Make sure we don't log exceptions thrown during the exception logging.
+         * If we do we will create an infinite loop.
          */
-        if($errors->exception instanceof Zend_Debug_FirePhp_Exception) {
+
+        try {
           
-            if(ini_get('display_errors')) {
-              print 'We caught a Zend_Debug_FirePhp_Exception!'."\n";
-              
-              Zend_Debug::dump($errors->exception);
-            } else {
-              
-              /* TODO: In your production environment log the exception somewhere else. */
-            }
-            exit;
-            
-        } else {
-          
-            Zend_Registry::get('logger')->err($errors->exception);
-            
+            Zend_Registry::get('logger')->err($this->_getParam('error_handler')->exception);
             /* 
              * OR
              * 
              * Zend_Debug::fire($errors->exception);
              * 
              */
+          
+        } catch(Exception $e) {
+          
+          /* TODO: You can log this exception somewhere or display it during development.
+           *       DO NOT USE THE FirePHP error logging functionality here!
+           */
+          
         }
     }
 }
