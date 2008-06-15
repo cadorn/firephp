@@ -62,18 +62,20 @@ class Zend_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_Fi
     {
         $profiles = $this->getQueryProfiles();
         
-        if(!$profiles) return;
-      
+        if (!$profiles) {
+            return;
+        }
+        
         $table = array();
         
         $table[] = array('Time', 'Event', 'Params');
         
         $total_time = 0;
                 
-        foreach($profiles as $query) {
+        foreach ($profiles as $query) {
           
             $params = $query->getQueryParams();
-            if($params) {
+            if ($params) {
                 $params = '\''.implode('\', \'',array_values($params)).'\'';
             } else {
                 $params = '';
@@ -85,7 +87,7 @@ class Zend_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_Fi
             $total_time += $query->getElapsedSecs();
         }
         
-        if(sizeof($table)>1) {
+        if (sizeof($table)>1) {
             $firephp->fire($table,
                            (sizeof($table)-1).' DB events in '.round($total_time,5).' seconds',
                            Zend_Debug_FirePhp::TABLE);

@@ -74,8 +74,8 @@ class IndexController extends Zend_Controller_Action
         Zend_Debug::fire('Message with label','Label', 'LOG');
         
         Zend_Debug::fire(array('key1'=>'val1',
-                                'key2'=>array(array('v1','v2'),'v3')),
-                          'TestArray', Zend_Debug_FirePhp::LOG);
+                               'key2'=>array(array('v1','v2'),'v3')),
+                         'TestArray', Zend_Debug_FirePhp::LOG);
         
         try {
             throw new Exception('Test Exception');

@@ -146,7 +146,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                                 Zend_Controller_Response_Abstract $response = null)
     {
       
-        if(self::$_instance!==null) {
+        if (self::$_instance!==null) {
             throw new Zend_Debug_FirePhp_Exception('Singleton instance of Zend_Debug_FirePhp already exists!');
         }
         if (!$request || !$request instanceof Zend_Controller_Request_Abstract) {
@@ -171,7 +171,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public static function getInstance()
     {  
-        if(self::$_instance===null) {
+        if (self::$_instance===null) {
             throw new Zend_Debug_FirePhp_Exception('Singleton instance of Zend_Debug_FirePhp does not exist! You must call Zend_Debug_FirePhp::init(..) first.');
         }
         
@@ -184,8 +184,9 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @param $plugin Zend_Debug_FirePhp_Plugin_Interface The plugin instance
      * @return boolean Returns TRUE if plugin was added, FALSE if already added.
      */
-    public function addPlugin(Zend_Debug_FirePhp_Plugin_Interface $plugin) {
-      if(in_array($plugin,$this->_plugins)) {
+    public function addPlugin(Zend_Debug_FirePhp_Plugin_Interface $plugin)
+    {
+      if (in_array($plugin,$this->_plugins)) {
         return false;
       }
       $this->_plugins[] = $plugin;
@@ -198,7 +199,8 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @param boolean $enabled Set to TRUE to enable sending of messages. 
      * @return boolean The previous value.
      */
-    public function setEnabled($enabled) {
+    public function setEnabled($enabled)
+    {
       $previous = self::$_enabled;
       self::$_enabled = $enabled;
       return $previous;
@@ -216,15 +218,15 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function fire($var, $label=null, $type=null)
     {
-        if(!self::$_enabled) {
+        if (!self::$_enabled) {
             return true;
         }
         
-        if(!$this->canSendHeaders() || !$this->isUserAgentExtensionInstalled()) {
+        if (!$this->canSendHeaders() || !$this->isUserAgentExtensionInstalled()) {
             return false; 
         }
         
-        if($var instanceof Exception) {
+        if ($var instanceof Exception) {
 
           $var = array('Class'=>get_class($var),
                        'Message'=>$var->getMessage(),
@@ -235,12 +237,12 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
           $type = self::EXCEPTION;
           
         } else {
-          if($type===null) {
+          if ($type===null) {
             $type = self::LOG;
           }
         }
 
-        switch($type) {
+        switch ($type) {
             case self::LOG:
             case self::INFO:
             case self::WARN:
@@ -254,17 +256,17 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                 break;
         }
       
-        if($type == self::EXCEPTION) {
+        if ($type == self::EXCEPTION) {
           $type = 'TRACE';
         }
         
-        if($type == self::DUMP) {
+        if ($type == self::DUMP) {
           
           return $this->sendToRegister('FirePHP.Dump', $var, $label);
           
         } else {
           
-          if($label!=null) {
+          if ($label!=null) {
             $var = array($label,$var);
           }
           
@@ -288,7 +290,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     protected function sendToRegister($register, $variable, $key=null, $meta=null)
     {
-        if($this->_headerCounter==0)
+        if ($this->_headerCounter==0)
         {
         	$this->sendJSONMessage(self::$_headerPrefix.'100'.self::$_serverID.'00000','{');
         	$this->sendJSONMessage(self::$_headerPrefix.'210'.self::$_serverID.'00000','"FirePHP.Dump":{');
@@ -298,11 +300,10 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
         	$this->sendJSONMessage(self::$_headerPrefix.'999'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"}');
         }
 
-        switch($register)
-        {
+        switch ($register) {
             case 'FirePHP.Dump':
               
-                if($key==null) {
+                if ($key==null) {
                     throw new Zend_Debug_FirePhp_Exception('You must supply a key.');
                 }
                 
@@ -311,7 +312,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
               
             case 'FirePHP.Firebug.Console':
 
-                if($meta==null || !is_array($meta) || !array_key_exists('Type',$meta)) {
+                if ($meta==null || !is_array($meta) || !array_key_exists('Type',$meta)) {
                     throw new Zend_Debug_FirePhp_Exception('You must supply a "Type" in the meta information.');
                 }
               
@@ -335,21 +336,21 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     protected function sendJSONMessage($headerPrefix, $message)
     {
-        foreach( explode("\n",chunk_split($message, 5000, "\n")) as $part ) {
-            if($part) {
+        foreach (explode("\n",chunk_split($message, 5000, "\n")) as $part) {
+            if ($part) {
               
                 $this->_headerCounter++;
                 
-                if($this->_headerCounter > 99999) {
+                if ($this->_headerCounter > 99999) {
                     throw new Zend_Debug_FirePhp_Exception('Maximum number (99,999) of log messages reached!');             
                 }
                 
                 $name = $headerPrefix;
-                if( ( $len = strlen($name) ) < 27 ) {
+                if ( ( $len = strlen($name) ) < 27 ) {
                   $name = $headerPrefix.str_pad((string)$this->_headerCounter, 27-$len, STR_PAD_LEFT, '0');
                 }
                 
-                if(!$this->setHeader($name, $part)) {
+                if (!$this->setHeader($name, $part)) {
                     return false;
                 }
             }
@@ -389,7 +390,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
     {
         try {
             $this->_response->setHeader($name,$value,true);
-        } catch(Zend_Controller_Response_Exception $e) {
+        } catch (Zend_Controller_Response_Exception $e) {
             return false;
         }
         return true;
@@ -402,7 +403,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     protected function isUserAgentExtensionInstalled()
     {
-      if(!preg_match_all('/\s?FirePHP\/([\.|\d]*)\s?/si',$this->getUserAgent(),$m)) {
+      if (!preg_match_all('/\s?FirePHP\/([\.|\d]*)\s?/si',$this->getUserAgent(),$m)) {
         return false;
       }
       return true;    
@@ -426,8 +427,8 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
-        if($this->_plugins) {
-            foreach( $this->_plugins as $plugin ) {
+        if ($this->_plugins) {
+            foreach ( $this->_plugins as $plugin ) {
                 $plugin->flush($this);
             }
         }
