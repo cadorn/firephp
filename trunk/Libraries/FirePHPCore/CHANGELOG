@@ -1,4 +1,6 @@
 
+	- Changed license to New BSD License
+
 2008-06-06 - Release Version: 0.0.2
 
   - Bugfix - Added usleep() to header writing loop to ensure unique index
