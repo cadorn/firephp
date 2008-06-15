@@ -59,7 +59,7 @@ class Zend_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
      */
     protected function _write($event)
     {
-        switch($event['priority']) {
+        switch ($event['priority']) {
             case Zend_Log::EMERG:
             case Zend_Log::ALERT:
             case Zend_Log::CRIT:
