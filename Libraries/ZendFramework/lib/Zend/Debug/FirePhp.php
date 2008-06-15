@@ -222,7 +222,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
             return true;
         }
         
-        if (!$this->canSendHeaders() || !$this->isUserAgentExtensionInstalled()) {
+        if (!$this->_canSendHeaders() || !$this->_isUserAgentExtensionInstalled()) {
             return false; 
         }
         
@@ -262,7 +262,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
         
         if ($type == self::DUMP) {
           
-          return $this->sendToRegister('FirePHP.Dump', $var, $label);
+          return $this->_sendToRegister('FirePHP.Dump', $var, $label);
           
         } else {
           
@@ -270,7 +270,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
             $var = array($label,$var);
           }
           
-          return $this->sendToRegister('FirePHP.Firebug.Console', $var, $label, array('Type'=>$type));
+          return $this->_sendToRegister('FirePHP.Firebug.Console', $var, $label, array('Type'=>$type));
         }
     }
     
@@ -288,16 +288,16 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @return boolean Returns TRUE if the variable was added to the response headers.
      * @throws Zend_Debug_FirePhp_Exception
      */
-    protected function sendToRegister($register, $variable, $key=null, $meta=null)
+    protected function _sendToRegister($register, $variable, $key=null, $meta=null)
     {
         if ($this->_headerCounter==0)
         {
-        	$this->sendJSONMessage(self::$_headerPrefix.'100'.self::$_serverID.'00000','{');
-        	$this->sendJSONMessage(self::$_headerPrefix.'210'.self::$_serverID.'00000','"FirePHP.Dump":{');
-        	$this->sendJSONMessage(self::$_headerPrefix.'299'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"},');
-        	$this->sendJSONMessage(self::$_headerPrefix.'310'.self::$_serverID.'00000','"FirePHP.Firebug.Console":[');
-        	$this->sendJSONMessage(self::$_headerPrefix.'399'.self::$_serverID.'99999','["__SKIP__"]],');
-        	$this->sendJSONMessage(self::$_headerPrefix.'999'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"}');
+        	$this->_sendJSONMessage(self::$_headerPrefix.'100'.self::$_serverID.'00000','{');
+        	$this->_sendJSONMessage(self::$_headerPrefix.'210'.self::$_serverID.'00000','"FirePHP.Dump":{');
+        	$this->_sendJSONMessage(self::$_headerPrefix.'299'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"},');
+        	$this->_sendJSONMessage(self::$_headerPrefix.'310'.self::$_serverID.'00000','"FirePHP.Firebug.Console":[');
+        	$this->_sendJSONMessage(self::$_headerPrefix.'399'.self::$_serverID.'99999','["__SKIP__"]],');
+        	$this->_sendJSONMessage(self::$_headerPrefix.'999'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"}');
         }
 
         switch ($register) {
@@ -307,8 +307,8 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                     throw new Zend_Debug_FirePhp_Exception('You must supply a key.');
                 }
                 
-              	return $this->sendJSONMessage(self::$_headerPrefix.'220'.self::$_serverID,
-                                              '"'.$key.'":'.$this->encode($variable).',');
+              	return $this->_sendJSONMessage(self::$_headerPrefix.'220'.self::$_serverID,
+                                              '"'.$key.'":'.$this->_encode($variable).',');
               
             case 'FirePHP.Firebug.Console':
 
@@ -316,8 +316,8 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                     throw new Zend_Debug_FirePhp_Exception('You must supply a "Type" in the meta information.');
                 }
               
-              	return $this->sendJSONMessage(self::$_headerPrefix.'320'.self::$_serverID,
-                                              '["'.$meta['Type'].'",'.$this->encode($variable).'],');
+              	return $this->_sendJSONMessage(self::$_headerPrefix.'320'.self::$_serverID,
+                                              '["'.$meta['Type'].'",'.$this->_encode($variable).'],');
                 
             default:
                 throw new Zend_Debug_FirePhp_Exception('Register of name "'.$register.'" is not recognized.');
@@ -334,7 +334,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @return boolean Return TRUE if message was added to response headers.
      * @throws Zend_Debug_FirePhp_Exception
      */
-    protected function sendJSONMessage($headerPrefix, $message)
+    protected function _sendJSONMessage($headerPrefix, $message)
     {
         foreach (explode("\n",chunk_split($message, 5000, "\n")) as $part) {
             if ($part) {
@@ -350,7 +350,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                   $name = $headerPrefix.str_pad((string)$this->_headerCounter, 27-$len, STR_PAD_LEFT, '0');
                 }
                 
-                if (!$this->setHeader($name, $part)) {
+                if (!$this->_setHeader($name, $part)) {
                     return false;
                 }
             }
@@ -364,7 +364,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @param mixed $value The value to be encoded
      * @return string  The encoded value
      */
-    protected function encode($value)
+    protected function _encode($value)
     {
         return Zend_Json_Encoder::encode($value);
     }
@@ -374,7 +374,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      *
      * @return boolean
      */
-    protected function canSendHeaders()
+    protected function _canSendHeaders()
     {
         return $this->_response->canSendHeaders();
     }    
@@ -386,7 +386,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @param string $value
      * @return void
      */
-    protected function setHeader($name, $value, $replace = false)
+    protected function _setHeader($name, $value, $replace = false)
     {
         try {
             $this->_response->setHeader($name,$value,true);
@@ -401,9 +401,9 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * 
      * @return boolean Returns TRUE if FirePHP is installed on user-agent.
      */
-    protected function isUserAgentExtensionInstalled()
+    protected function _isUserAgentExtensionInstalled()
     {
-      if (!preg_match_all('/\s?FirePHP\/([\.|\d]*)\s?/si',$this->getUserAgent(),$m)) {
+      if (!preg_match_all('/\s?FirePHP\/([\.|\d]*)\s?/si',$this->_getUserAgent(),$m)) {
         return false;
       }
       return true;    
@@ -414,7 +414,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      *
      * @return string The user-agent string
      */
-    protected function getUserAgent()
+    protected function _getUserAgent()
     {
         return $this->_request->getServer('HTTP_USER_AGENT');
     }
