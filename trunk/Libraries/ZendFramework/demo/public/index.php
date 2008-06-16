@@ -21,7 +21,7 @@
 
 /* NOTE: You must have the Zend Frameworkin your include path! */
 
-set_include_path('./../../lib'.PATH_SEPARATOR.
+set_include_path('./../../library'.PATH_SEPARATOR.
                  get_include_path());
 
 require_once 'Zend/Registry.php';
