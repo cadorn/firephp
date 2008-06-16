@@ -39,6 +39,55 @@ require_once 'Zend/Debug/FirePhp.php';
  */
 class Zend_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
 {
+    /**
+     * Maps logging priorities to logging display styles
+     * @var array
+     */
+    protected $_logStyleMap = array(Zend_Log::EMERG => Zend_Debug_FirePhp::ERROR,
+                                    Zend_Log::EMERG => Zend_Debug_FirePhp::ERROR,
+                                    Zend_Log::ALERT => Zend_Debug_FirePhp::ERROR,
+                                    Zend_Log::CRIT => Zend_Debug_FirePhp::ERROR,
+                                    Zend_Log::ERR => Zend_Debug_FirePhp::ERROR,
+                                    Zend_Log::WARN => Zend_Debug_FirePhp::WARN,
+                                    Zend_Log::NOTICE => Zend_Debug_FirePhp::INFO,
+                                    Zend_Log::INFO => Zend_Debug_FirePhp::INFO,
+                                    Zend_Log::DEBUG => Zend_Debug_FirePhp::LOG);
+    
+    /**
+     * The default logging style for un-mapped priorities
+     * @var string
+     */    
+    protected $_defaultLogStyle = Zend_Debug_FirePhp::LOG;
+    
+    /**
+     * Set the default log style for un-mapped priorities
+     * 
+     * @param string $style The default log display style
+     * @return string Returns previous default log display style
+     */    
+    public function setDefaultLogStyle($style)
+    {
+        $previous = $this->_defaultLogStyle;
+        $this->_defaultLogStyle = $style;
+        return $previous;
+    }
+    
+    /**
+     * Map a logging priority to a logging display style
+     * 
+     * @param int $priority The logging priority
+     * @param string $style The logging display style
+     * @return string|boolean The previous logging display style if defined or TRUE otherwise
+     */
+    public function mapLogStyle($priority, $style)
+    {
+        $previous = true;
+        if (array_key_exists($priority,$this->_logStyleMap)) {
+            $previous = $this->_logStyleMap[$priority];
+        }
+        $this->_logStyleMap[$priority] = $style;
+        return $previous;
+    }
 
     /**
      * Formatting is not possible on this writer
@@ -59,26 +108,11 @@ class Zend_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
      */
     protected function _write($event)
     {
-        switch ($event['priority']) {
-            case Zend_Log::EMERG:
-            case Zend_Log::ALERT:
-            case Zend_Log::CRIT:
-            case Zend_Log::ERR:
-                $type = Zend_Debug_FirePhp::ERROR;
-                break;
-            case Zend_Log::WARN:
-                $type = Zend_Debug_FirePhp::WARN;
-                break;
-            case Zend_Log::NOTICE:
-            case Zend_Log::INFO:
-                $type = Zend_Debug_FirePhp::INFO;
-                break;
-            case Zend_Log::DEBUG:
-            default:
-                $type = Zend_Debug_FirePhp::LOG;
-                break;
+        if (array_key_exists($event['priority'],$this->_logStyleMap)) {
+            $type = $this->_logStyleMap[$event['priority']];
+        } else {
+            $type = $this->_defaultLogStyle;
         }
-
         Zend_Debug_FirePhp::getInstance()->fire($event['message'], null, $type);
     }
 }
