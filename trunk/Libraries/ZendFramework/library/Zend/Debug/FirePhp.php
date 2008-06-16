@@ -111,7 +111,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * Flag indicating whether FirePHP should send messages to the user-agent.
      * @var boolean
      */
-    protected static $_enabled = false;
+    protected $_enabled = false;
 
     /**
      * Instance of Zend_Controller_Request_Abstract
@@ -215,9 +215,9 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function setEnabled($enabled)
     {
-      $previous = self::$_enabled;
-      self::$_enabled = $enabled;
-      if (!self::$_enabled) {
+      $previous = $this->_enabled;
+      $this->_enabled = $enabled;
+      if (!$this->_enabled) {
           $this->_clearHeaders();
       }
       return $previous;
@@ -230,7 +230,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function getEnabled()
     {
-        return self::$_enabled;
+        return $this->_enabled;
     }
     
     /**
@@ -260,7 +260,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function fire($var, $label=null, $type=null)
     {
-        if (!self::$_enabled ||
+        if (!$this->_enabled ||
             !$this->_canSendHeaders() ||
             !$this->_isUserAgentExtensionInstalled()) {
             
@@ -475,7 +475,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
-        if (!self::$_enabled || !$this->_canSendHeaders()) {
+        if (!$this->_enabled || !$this->_canSendHeaders()) {
             return;
         }
 

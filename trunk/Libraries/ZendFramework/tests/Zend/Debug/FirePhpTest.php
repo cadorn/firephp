@@ -256,11 +256,11 @@ class Zend_Debug_FirePhpTest_Reponse extends Zend_Controller_Response_Http
         
         $parts = array();
         
-        $headerPrefix = strtolower(Zend_Debug_FirePhpTest_FirePhp::getHeaderPrefix());
+        $headerPrefix = Zend_Debug_FirePhpTest_FirePhp::getHeaderPrefix();
         $headerPrefixLength = strlen($headerPrefix);
         
         foreach ($headers as $header ) {
-            if (substr(strtolower($header['name']), 0, $headerPrefixLength) == $headerPrefix) {
+            if (substr_compare($header['name'], $headerPrefix, 0, $headerPrefixLength, true)) {
                 $parts[substr($header['name'],$headerPrefixLength)] = $header['value'];
             }
         }
