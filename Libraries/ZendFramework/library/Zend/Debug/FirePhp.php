@@ -468,7 +468,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
     }
 
     /**
-     * Flush all FirePHP data from all registered plugins after the controller has dispatched the request.
+     * Flush all data from all registered plugins and send all data to response headers.
      *
      * @param  Zend_Controller_Request_Abstract  $request  The controller request
      * @return void
