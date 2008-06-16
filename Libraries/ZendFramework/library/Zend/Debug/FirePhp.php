@@ -18,6 +18,9 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+/** Zend_Loader */
+require_once 'Zend/Loader.php';
+
 /** Zend_Debug */
 require_once 'Zend/Debug.php';
 
@@ -123,10 +126,10 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
     protected $_response = null;
     
     /**
-     * Counter for number of headers sent. Used as an index.
-     * @var int
+     * All headers to be sent.
+     * @var array
      */
-    protected $_headerCounter = 0;
+    protected $_headers = array();
     
     /**
      * All Zend_Debug_FirePhp_Plugin_Interface plugins that provide data for FirePHP
@@ -139,11 +142,13 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      *
      * @param Zend_Controller_Request_Abstract $request
      * @param Zend_Controller_Response_Abstract $response
+     * @param Zend_Debug_FirePhp $class OPTIONAL Subclass for Zend_Debug_FirePhp instance
      * @return Zend_Debug_FirePhp Returns the singleton Zend_Debug_FirePhp instance
      * @throws Zend_Debug_FirePhp_Exception
      */
-    public static function init(Zend_Controller_Request_Abstract $request = null,
-                                Zend_Controller_Response_Abstract $response = null)
+    public static function init(Zend_Controller_Request_Abstract $request,
+                                Zend_Controller_Response_Abstract $response,
+                                $class = null)
     {
       
         if (self::$_instance!==null) {
@@ -155,8 +160,19 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
         if (!$response || !$response instanceof Zend_Controller_Response_Abstract) {
             throw new Zend_Debug_FirePhp_Exception('Invalid response class');
         }
-        
-        self::$_instance = new self();
+        if ($class!==null) {
+            if (!is_string($class)) {
+                throw new Zend_Debug_FirePhp_Exception('Third argument is not a class string');
+            }
+            Zend_Loader::loadClass($class);
+            self::$_instance = new $class();
+            if (!self::$_instance instanceof Zend_Debug_FirePhp) {
+                throw new Zend_Debug_FirePhp_Exception('Invalid class to third argument. Must be subclass of Zend_Debug_FirePhp.');
+            }
+        } else {
+          self::$_instance = new self();
+        }
+
         self::$_instance->_request = $request;
         self::$_instance->_response = $response;
         
@@ -179,6 +195,45 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
     }
     
     /**
+     * Destroys the singleton instance
+     *
+     * Primarily used for testing.
+     *
+     * @return void
+     */
+    public static function destroyInstance()
+    {
+        self::$_instance = null;
+    }    
+    
+    /**
+     * Enable or disable sending of messages to user-agent.
+     * If disabled all headers to be sent will be removed.
+     * 
+     * @param boolean $enabled Set to TRUE to enable sending of messages. 
+     * @return boolean The previous value.
+     */
+    public function setEnabled($enabled)
+    {
+      $previous = self::$_enabled;
+      self::$_enabled = $enabled;
+      if (!self::$_enabled) {
+          $this->_clearHeaders();
+      }
+      return $previous;
+    }
+    
+    /**
+     * Determine if logging to user-agent is enabled.
+     * 
+     * @return boolean Returns TRUE if logging is enabled.
+     */
+    public function getEnabled()
+    {
+        return self::$_enabled;
+    }
+    
+    /**
      * Add a plugin that provides data to FirePHP.
      * 
      * @param $plugin Zend_Debug_FirePhp_Plugin_Interface The plugin instance
@@ -192,20 +247,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
       $this->_plugins[] = $plugin;
       return true;
     }
-    
-    /**
-     * Enable or disable sending of messages to user-agent.
-     * 
-     * @param boolean $enabled Set to TRUE to enable sending of messages. 
-     * @return boolean The previous value.
-     */
-    public function setEnabled($enabled)
-    {
-      $previous = self::$_enabled;
-      self::$_enabled = $enabled;
-      return $previous;
-    }
-    
+        
     /**
      * Logs variables to the Firebug Console
      * via HTTP response headers and the FirePHP Firefox Extension.
@@ -218,14 +260,13 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function fire($var, $label=null, $type=null)
     {
-        if (!self::$_enabled) {
-            return true;
-        }
-        
-        if (!$this->_canSendHeaders() || !$this->_isUserAgentExtensionInstalled()) {
+        if (!self::$_enabled ||
+            !$this->_canSendHeaders() ||
+            !$this->_isUserAgentExtensionInstalled()) {
+            
             return false; 
         }
-        
+
         if ($var instanceof Exception) {
 
           $var = array('Class'=>get_class($var),
@@ -290,14 +331,14 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     protected function _sendToRegister($register, $variable, $key=null, $meta=null)
     {
-        if ($this->_headerCounter==0)
+        if (!$this->_headers)
         {
-        	$this->_sendJSONMessage(self::$_headerPrefix.'100'.self::$_serverID.'00000','{');
-        	$this->_sendJSONMessage(self::$_headerPrefix.'210'.self::$_serverID.'00000','"FirePHP.Dump":{');
-        	$this->_sendJSONMessage(self::$_headerPrefix.'299'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"},');
-        	$this->_sendJSONMessage(self::$_headerPrefix.'310'.self::$_serverID.'00000','"FirePHP.Firebug.Console":[');
-        	$this->_sendJSONMessage(self::$_headerPrefix.'399'.self::$_serverID.'99999','["__SKIP__"]],');
-        	$this->_sendJSONMessage(self::$_headerPrefix.'999'.self::$_serverID.'99999','"__SKIP__":"__SKIP__"}');
+        	$this->_sendJSONMessage('100'.self::$_serverID.'00000', '{');
+        	$this->_sendJSONMessage('210'.self::$_serverID.'00000', '"FirePHP.Dump":{');
+        	$this->_sendJSONMessage('299'.self::$_serverID.'99999', '"__SKIP__":"__SKIP__"},');
+        	$this->_sendJSONMessage('310'.self::$_serverID.'00000', '"FirePHP.Firebug.Console":[');
+        	$this->_sendJSONMessage('399'.self::$_serverID.'99999', '["__SKIP__"]],');
+        	$this->_sendJSONMessage('999'.self::$_serverID.'99999', '"__SKIP__":"__SKIP__"}');
         }
 
         switch ($register) {
@@ -307,7 +348,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                     throw new Zend_Debug_FirePhp_Exception('You must supply a key.');
                 }
                 
-              	return $this->_sendJSONMessage(self::$_headerPrefix.'220'.self::$_serverID,
+              	return $this->_sendJSONMessage('220'.self::$_serverID,
                                               '"'.$key.'":'.$this->_encode($variable).',');
               
             case 'FirePHP.Firebug.Console':
@@ -316,7 +357,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
                     throw new Zend_Debug_FirePhp_Exception('You must supply a "Type" in the meta information.');
                 }
               
-              	return $this->_sendJSONMessage(self::$_headerPrefix.'320'.self::$_serverID,
+              	return $this->_sendJSONMessage('320'.self::$_serverID,
                                               '["'.$meta['Type'].'",'.$this->_encode($variable).'],');
                 
             default:
@@ -339,15 +380,15 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
         foreach (explode("\n",chunk_split($message, 5000, "\n")) as $part) {
             if ($part) {
               
-                $this->_headerCounter++;
-                
-                if ($this->_headerCounter > 99999) {
+                $count = sizeof($this->_headers);
+              
+                if ($count >= 99999) {
                     throw new Zend_Debug_FirePhp_Exception('Maximum number (99,999) of log messages reached!');             
                 }
                 
                 $name = $headerPrefix;
-                if ( ( $len = strlen($name) ) < 27 ) {
-                  $name = $headerPrefix.str_pad((string)$this->_headerCounter, 27-$len, STR_PAD_LEFT, '0');
+                if ( ( $len = strlen($name) ) < 12  && is_numeric($name) ) {
+                  $name = $headerPrefix.str_pad((string)$count, 12-$len, STR_PAD_LEFT, '0');
                 }
                 
                 if (!$this->_setHeader($name, $part)) {
@@ -386,15 +427,22 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @param string $value
      * @return void
      */
-    protected function _setHeader($name, $value, $replace = false)
+    protected function _setHeader($name, $value)
     {
-        try {
-            $this->_response->setHeader($name,$value,true);
-        } catch (Zend_Controller_Response_Exception $e) {
-            return false;
-        }
+        $this->_headers[$name] = $value;
         return true;
-    }  
+    }
+    
+    /**
+     * Remove all headers to be sent
+     * 
+     * @return boolean Returns true
+     */
+    protected function _clearHeaders()
+    {
+        $this->_headers = array();
+        return true;
+    }
     
     /**
      * Check if FirePHP is installed on the user-agent
@@ -416,7 +464,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     protected function _getUserAgent()
     {
-        return $this->_request->getServer('HTTP_USER_AGENT');
+        return $this->_request->getHeader('User-Agent');
     }
 
     /**
@@ -427,12 +475,25 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
+        if (!self::$_enabled) {
+            return;
+        }
+        
         if ($this->_plugins) {
             foreach ( $this->_plugins as $plugin ) {
                 $plugin->flush($this);
             }
         }
         $this->_plugins = array();
+
+        if ($this->_headers) {
+          
+            ksort($this->_headers, SORT_NUMERIC); 
+          
+            foreach ($this->_headers as $name => $value) {
+                $this->_response->setHeader(self::$_headerPrefix.$name, $value, true);
+            }
+        }
     }
 }
 
