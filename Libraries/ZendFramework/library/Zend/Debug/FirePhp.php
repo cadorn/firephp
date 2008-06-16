@@ -475,10 +475,10 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
-        if (!self::$_enabled) {
+        if (!self::$_enabled || !$this->_canSendHeaders()) {
             return;
         }
-        
+
         if ($this->_plugins) {
             foreach ( $this->_plugins as $plugin ) {
                 $plugin->flush($this);
