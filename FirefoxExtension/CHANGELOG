@@ -1,4 +1,6 @@
 
+2008-06-16 - Release Version: 0.1.0.1
+
 	- Added support for FirePHP::TRACE log style
 	- Updated background and font for FirePHP request group titles
 
