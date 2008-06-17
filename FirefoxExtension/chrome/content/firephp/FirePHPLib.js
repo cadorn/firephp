@@ -9,6 +9,13 @@
 var FirePHPLib = top.FirePHPLib = {
 
 
+ isArray: function(obj) {
+     if (obj.constructor.toString().indexOf("Array") == -1)
+        return false;
+     else
+        return true;
+  },
+
   createMenuItem: function(popup, item) {
     
     var menuitem = popup.ownerDocument.createElement("menuitem");
