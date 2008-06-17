@@ -74,6 +74,8 @@ try {
   $firephp->fb($e);
 }
 
+$firephp->fb('Backtrace to here',FirePHP::TRACE);
+
 $firephp->fb(array('2 SQL queries took 0.06 seconds',array(
    array('SQL Statement','Time','Result'),
    array('SELECT * FROM Foo','0.02',array('row1','row2')),

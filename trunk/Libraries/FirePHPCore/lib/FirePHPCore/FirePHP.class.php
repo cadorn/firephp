@@ -96,6 +96,7 @@ class FirePHP {
   const WARN = 'WARN';
   const ERROR = 'ERROR';
   const DUMP = 'DUMP';
+  const TRACE = 'TRACE';
   const EXCEPTION = 'EXCEPTION';
   const TABLE = 'TABLE';
   
@@ -162,6 +163,7 @@ class FirePHP {
         case self::WARN:
         case self::ERROR:
         case self::DUMP:
+        case self::TRACE:
         case self::EXCEPTION:
         case self::TABLE:
           $Type = func_get_arg(1);
@@ -189,11 +191,34 @@ class FirePHP {
                       'Message'=>$Object->getMessage(),
                       'File'=>$Object->getFile(),
                       'Line'=>$Object->getLine(),
+                      'Type'=>'throw',
                       'Trace'=>$Object->getTrace());
-      if($Type===null || $Type===self::EXCEPTION) {
-        $Type = 'TRACE';
-      }
+      $Type = self::EXCEPTION;
       
+    } else
+    if($Type==self::TRACE) {
+      
+      $trace = debug_backtrace();
+      if(!$trace) return false;
+      for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
+        
+        if($trace[$i]['class']=='FirePHP' &&
+           substr($trace[$i+1]['file'],-18,18)=='FirePHPCore/fb.php') {
+          /* Skip */
+        } else
+        if($trace[$i]['function']=='fb') {
+          $Object = array('Class'=>$trace[$i]['class'],
+                          'Type'=>$trace[$i]['type'],
+                          'Function'=>$trace[$i]['function'],
+                          'Message'=>$trace[$i]['args'][0],
+                          'File'=>$trace[$i]['file'],
+                          'Line'=>$trace[$i]['line'],
+                          'Args'=>$trace[$i]['args'],
+                          'Trace'=>array_splice($trace,$i+1));
+          break;
+        }
+      }
+
     } else {
       if($Type===null) {
         $Type = self::LOG;
