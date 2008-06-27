@@ -42,7 +42,7 @@ $response = new Zend_Controller_Response_Http();
 
 $firephp = Zend_Debug_FirePhp::init($request, $response); 
 $firephp->setEnabled(true);
-Zend_Debug::registerPlugin($firephp, 'trace');
+Zend_Debug::registerMethodHandler('trace', $firephp);
 
 $controller = Zend_Controller_Front::getInstance();
 $controller->setControllerDirectory('../application/controllers')

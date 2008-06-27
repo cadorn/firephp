@@ -18,8 +18,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/** Zend_Debug_Plugin_Interface */
-require_once 'Zend/Debug/Plugin/Interface.php';
+/** Zend_Debug_MethodHandler_Interface */
+require_once 'Zend/Debug/MethodHandler/Interface.php';
 
 /**
  * Concrete class for generating debug dumps related to the output source.
@@ -39,10 +39,10 @@ class Zend_Debug
     protected static $_sapi = null;
 
     /**
-     * List of Zend_Debug_Plugin_Interface
+     * List of Zend_Debug_MethodHandler_Interface
      * @var array
      */
-    protected static $_plugins = array();
+    protected static $_handlers = array();
 
     /**
      * Get the current value of the debug output environment.
@@ -71,35 +71,35 @@ class Zend_Debug
     }
 
     /**
-     * Register a plugin for a specific method
+     * Register a handler for a specific method
      *
-     * @param  Zend_Debug_Plugin_Interface $plugin Plugin object to register
-     * @param  string $method The method that should trigger this plugin
-     * @return boolean Returns TRUE if plugin was added for method, FALSE if already added.
+     * @param  string $method The method that should trigger this handler
+     * @param  Zend_Debug_MethodHandler_Interface $handler Handler object to register
+     * @return boolean Returns TRUE if handler was added for method, FALSE if already added.
      */
-    public static function registerPlugin(Zend_Debug_Plugin_Interface $plugin, $method)
+    public static function registerMethodHandler($method, Zend_Debug_MethodHandler_Interface $handler)
     {
-        if (isset(self::$_plugins[$method]) && in_array($plugin,self::$_plugins[$method])) {
+        if (isset(self::$_handlers[$method]) && in_array($handler,self::$_handlers[$method])) {
             return false;
         }
         
-        self::$_plugins[$method][] = $plugin;
+        self::$_handlers[$method][] = $handler;
         return true;
     }
 
     /**
-     * Unregister a plugin for a specific method
+     * Unregister a handler for a specific method
      *
-     * @param  Zend_Debug_Plugin_Interface $plugin Plugin object to unregister
-     * @param  string $method The method that should trigger this plugin
-     * @return boolean Returns TRUE if plugin was removed, FALSE otherwise.
+     * @param  string $method The method that should trigger this handler
+     * @param  Zend_Debug_MethodHandler_Interface $handler Handler object to register
+     * @return boolean Returns TRUE if handler was added for method, FALSE if already added.
      */
-    public function unregisterPlugin(Zend_Debug_Plugin_Interface $plugin, $method)
+    public static function unregisterMethodHandler($method, Zend_Debug_MethodHandler_Interface $handler)
     {
-        if (isset(self::$_plugins[$method]) && in_array($plugin,self::$_plugins[$method])) {
-            unset(self::$_plugins[$method][array_search($plugin,self::$_plugins[$method])]);
-            if (sizeof(self::$_plugins[$method])==0) {
-                unset(self::$_plugins[$method]);
+        if (isset(self::$_handlers[$method]) && in_array($handler,self::$_handlers[$method])) {
+            unset(self::$_handlers[$method][array_search($handler,self::$_handlers[$method])]);
+            if (sizeof(self::$_handlers[$method])==0) {
+                unset(self::$_handlers[$method]);
             }
             return true;
         }
@@ -107,19 +107,19 @@ class Zend_Debug
     }
 
     /**
-     * Dispatch a method call to all registered plugins.
+     * Dispatch a method call to all registered handlers.
      * 
      * @param string $method The target method.
-     * @param array $arguments An array of arguments to be passed to the plugin
-     * @return boolean Returns TRUE if method call was dispatched, FALSE if no plugins were found.
+     * @param array $arguments An array of arguments to be passed to the handler
+     * @return boolean Returns TRUE if method call was dispatched, FALSE if no handlers were found.
      */
-    protected static function _dispatch($method, $arguments)
+    protected static function _dispatchToMethodHandlers($method, $arguments)
     {
-        if (!isset(self::$_plugins[$method])) {
+        if (!isset(self::$_handlers[$method])) {
             return false;
         }
-        foreach (self::$_plugins[$method] as $plugin) {
-            $plugin->handleDebugCall($method, $arguments);
+        foreach (self::$_handlers[$method] as $handler) {
+            $handler->handleDebugMethod($method, $arguments);
         }
         return true;
     }
@@ -166,11 +166,11 @@ class Zend_Debug
     /**
      * Debug helper function.
      * 
-     * @return boolean Returns TRUE if message was delivered to plugins, FALSE otherwise.
+     * @return boolean Returns TRUE if message was delivered to handlers, FALSE otherwise.
      */
     public static function trace($var, $label=null, $type=null)
     {
         $args = func_get_args();
-        return self::_dispatch('trace', $args);
+        return self::_dispatchToMethodHandlers('trace', $args);
     }
 }

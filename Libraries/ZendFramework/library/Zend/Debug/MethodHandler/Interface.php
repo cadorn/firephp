@@ -23,7 +23,7 @@
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Debug_Plugin_Interface
+interface Zend_Debug_MethodHandler_Interface
 {
   
     /**
@@ -33,6 +33,6 @@ interface Zend_Debug_Plugin_Interface
      * @param array $arguments List of arguments passed to the debug method
      * @return void
      */
-    public function handleDebugCall($method, $arguments);
+    public function handleDebugMethod($method, $arguments);
     
 }
