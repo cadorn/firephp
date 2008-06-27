@@ -42,8 +42,8 @@ require_once 'Zend/Controller/Plugin/Abstract.php';
 /** Zend_Debug_FirePhp_Plugin_Interface **/
 require_once 'Zend/Debug/FirePhp/Plugin/Interface.php';
 
-/** Zend_Debug_Plugin_Interface */
-require_once 'Zend/Debug/Plugin/Interface.php';
+/** Zend_Debug_MethodHandler_Interface */
+require_once 'Zend/Debug/MethodHandler/Interface.php';
 
 /**
  * Primary class for communicating with FirePHP clients.
@@ -54,7 +54,7 @@ require_once 'Zend/Debug/Plugin/Interface.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend_Debug_Plugin_Interface
+class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend_Debug_MethodHandler_Interface
 {
     /**
      * The string to be used to prefix the headers.
@@ -507,7 +507,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend
      * @param array $arguments List of arguments passed to the debug method
      * @return void
      */
-    public function handleDebugCall($method, $arguments)
+    public function handleDebugMethod($method, $arguments)
     {  
         if ($method=='trace' && sizeof($arguments)>=1) {
 
