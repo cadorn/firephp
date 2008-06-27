@@ -49,7 +49,7 @@ class ErrorController extends Zend_Controller_Action
             /* 
              * OR
              * 
-             * Zend_Debug::fire($errors->exception);
+             * Zend_Debug::trace($errors->exception);
              * 
              */
           

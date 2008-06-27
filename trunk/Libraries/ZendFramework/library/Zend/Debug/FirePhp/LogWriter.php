@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Log
- * @subpackage Writer
+ * @package    Zend_Debug
+ * @subpackage FirePhp
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -32,12 +32,12 @@ require_once 'Zend/Debug/FirePhp.php';
  * Writes log messages to the Firebug Console via FirePHP.
  * 
  * @category   Zend
- * @package    Zend_Log
- * @subpackage Writer
+ * @package    Zend_Debug
+ * @subpackage FirePhp
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
+class Zend_Debug_FirePhp_LogWriter extends Zend_Log_Writer_Abstract
 {
     /**
      * Maps logging priorities to logging display styles
@@ -113,6 +113,6 @@ class Zend_Log_Writer_FirePhp extends Zend_Log_Writer_Abstract
         } else {
             $type = $this->_defaultLogStyle;
         }
-        Zend_Debug_FirePhp::getInstance()->fire($event['message'], null, $type);
+        Zend_Debug_FirePhp::getInstance()->trace($event['message'], null, $type);
     }
 }

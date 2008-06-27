@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Db
- * @subpackage Profiler
+ * @package    Zend_Debug
+ * @subpackage FirePhp
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -32,12 +32,12 @@ require_once 'Zend/Debug/FirePhp/Plugin/Interface.php';
  * Writes DB events as log messages to the Firebug Console via FirePHP.
  * 
  * @category   Zend
- * @package    Zend_Db
- * @subpackage Profiler
+ * @package    Zend_Debug
+ * @subpackage FirePhp
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_FirePhp_Plugin_Interface
+class Zend_Debug_FirePhp_DbProfiler extends Zend_Db_Profiler implements Zend_Debug_FirePhp_Plugin_Interface
 {
   
     /**
@@ -49,7 +49,7 @@ class Zend_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_Fi
      */
     public function __construct()
     {
-        Zend_Debug_FirePhp::getInstance()->addPlugin($this);    
+        Zend_Debug_FirePhp::getInstance()->registerPlugin($this);    
     }
 
     /**
@@ -88,9 +88,9 @@ class Zend_Db_Profiler_FirePhp extends Zend_Db_Profiler implements Zend_Debug_Fi
         }
         
         if (sizeof($table)>1) {
-            $firephp->fire($table,
-                           (sizeof($table)-1).' DB events in '.round($total_time,5).' seconds',
-                           Zend_Debug_FirePhp::TABLE);
+            $firephp->trace($table,
+                            (sizeof($table)-1).' DB events in '.round($total_time,5).' seconds',
+                            Zend_Debug_FirePhp::TABLE);
         }
     }
 }

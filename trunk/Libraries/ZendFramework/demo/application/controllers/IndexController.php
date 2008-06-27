@@ -59,39 +59,39 @@ class IndexController extends Zend_Controller_Action
          * Zend_Debug
          */
         
-        Zend_Debug::fire('Hello World'); /* Defaults to Zend_Debug_FirePhp::LOG */
+        Zend_Debug::trace('Hello World'); /* Defaults to Zend_Debug_FirePhp::LOG */
         
-        Zend_Debug::fire('Log message'  , Zend_Debug_FirePhp::LOG);
-        Zend_Debug::fire('Log message'  , 'LOG');
-        Zend_Debug::fire('Info message' , Zend_Debug_FirePhp::INFO);
-        Zend_Debug::fire('Info message' , 'INFO');
-        Zend_Debug::fire('Warn message' , Zend_Debug_FirePhp::WARN);
-        Zend_Debug::fire('Warn message' , 'WARN');
-        Zend_Debug::fire('Error message', Zend_Debug_FirePhp::ERROR);
-        Zend_Debug::fire('Error message', 'ERROR');
+        Zend_Debug::trace('Log message'  , Zend_Debug_FirePhp::LOG);
+        Zend_Debug::trace('Log message'  , 'LOG');
+        Zend_Debug::trace('Info message' , Zend_Debug_FirePhp::INFO);
+        Zend_Debug::trace('Info message' , 'INFO');
+        Zend_Debug::trace('Warn message' , Zend_Debug_FirePhp::WARN);
+        Zend_Debug::trace('Warn message' , 'WARN');
+        Zend_Debug::trace('Error message', Zend_Debug_FirePhp::ERROR);
+        Zend_Debug::trace('Error message', 'ERROR');
         
-        Zend_Debug::fire('Message with label','Label', Zend_Debug_FirePhp::LOG);
-        Zend_Debug::fire('Message with label','Label', 'LOG');
+        Zend_Debug::trace('Message with label','Label', Zend_Debug_FirePhp::LOG);
+        Zend_Debug::trace('Message with label','Label', 'LOG');
         
-        Zend_Debug::fire(array('key1'=>'val1',
-                               'key2'=>array(array('v1','v2'),'v3')),
-                         'TestArray', Zend_Debug_FirePhp::LOG);
+        Zend_Debug::trace(array('key1'=>'val1',
+                                'key2'=>array(array('v1','v2'),'v3')),
+                          'TestArray', Zend_Debug_FirePhp::LOG);
         
         try {
             throw new Exception('Test Exception');
         } catch(Exception $e) {
-            Zend_Debug::fire($e);
+            Zend_Debug::trace($e);
         }
                 
-        Zend_Debug::fire(array(
-                           array('Column1','Column2','Column3'),
-                           array('Row 1 Column 1','Row 1 Column 2',array('row1','row2')),
-                           array('Row 2 Column 1','Row 2 Column 2',array('row1','row2'))
-                         ),
-                         'This is a Sample Table',
-                         'TABLE');        
+        Zend_Debug::trace(array(
+                            array('Column1','Column2','Column3'),
+                            array('Row 1 Column 1','Row 1 Column 2',array('row1','row2')),
+                            array('Row 2 Column 1','Row 2 Column 2',array('row1','row2'))
+                          ),
+                          'This is a Sample Table',
+                          'TABLE');        
 
-        Zend_Debug::fire(apache_request_headers(),'RequestHeaders',Zend_Debug_FirePhp::DUMP);
+        Zend_Debug::trace(apache_request_headers(),'RequestHeaders',Zend_Debug_FirePhp::DUMP);
 
   
         /* Run some SQL so we can log the queries using Zend_Db_Profiler_FirePhp */

@@ -42,6 +42,9 @@ require_once 'Zend/Controller/Plugin/Abstract.php';
 /** Zend_Debug_FirePhp_Plugin_Interface **/
 require_once 'Zend/Debug/FirePhp/Plugin/Interface.php';
 
+/** Zend_Debug_Plugin_Interface */
+require_once 'Zend/Debug/Plugin/Interface.php';
+
 /**
  * Primary class for communicating with FirePHP clients.
  * 
@@ -51,7 +54,7 @@ require_once 'Zend/Debug/FirePhp/Plugin/Interface.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
+class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend_Debug_Plugin_Interface
 {
     /**
      * The string to be used to prefix the headers.
@@ -234,12 +237,12 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
     }
     
     /**
-     * Add a plugin that provides data to FirePHP.
+     * Register a plugin that provides data to FirePHP.
      * 
      * @param $plugin Zend_Debug_FirePhp_Plugin_Interface The plugin instance
      * @return boolean Returns TRUE if plugin was added, FALSE if already added.
      */
-    public function addPlugin(Zend_Debug_FirePhp_Plugin_Interface $plugin)
+    public function registerPlugin(Zend_Debug_FirePhp_Plugin_Interface $plugin)
     {
       if (in_array($plugin,$this->_plugins)) {
         return false;
@@ -258,7 +261,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
      * @return boolean Returns TRUE if the variable was added to the response headers.
      * @throws Zend_Debug_FirePhp_Exception
      */
-    public function fire($var, $label=null, $type=null)
+    public function trace($var, $label=null, $type=null)
     {
         if (!$this->_enabled ||
             !$this->_canSendHeaders() ||
@@ -493,6 +496,31 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract
             foreach ($this->_headers as $name => $value) {
                 $this->_response->setHeader(self::$_headerPrefix.$name, $value, true);
             }
+        }
+    }
+    
+  
+    /**
+     * Handle a debug call.
+     * 
+     * @param string $method The debug method that was called
+     * @param array $arguments List of arguments passed to the debug method
+     * @return void
+     */
+    public function handleDebugCall($method, $arguments)
+    {  
+        if ($method=='trace' && sizeof($arguments)>=1) {
+
+            $var = $arguments[0];
+            $label = (sizeof($arguments)>=2)?$arguments[1]:null;
+            $type = (sizeof($arguments)>=3)?$arguments[2]:null;
+            
+            if ($type===null && $label!==null) {
+                $type = $label;
+                $label = null;  
+            }
+
+            $this->trace($var, $label, $type);         
         }
     }
 }
