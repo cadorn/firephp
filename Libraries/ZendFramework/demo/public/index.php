@@ -32,8 +32,8 @@ require_once 'Zend/Controller/Response/Http.php';
 require_once 'Zend/Db.php';
 
 require_once 'Zend/Debug/FirePhp.php';
-require_once 'Zend/Log/Writer/FirePhp.php';
-require_once 'Zend/Db/Profiler/FirePhp.php';
+require_once 'Zend/Debug/FirePhp/LogWriter.php';
+require_once 'Zend/Debug/FirePhp/DbProfiler.php';
 
 
 
@@ -42,6 +42,7 @@ $response = new Zend_Controller_Response_Http();
 
 $firephp = Zend_Debug_FirePhp::init($request, $response); 
 $firephp->setEnabled(true);
+Zend_Debug::registerPlugin($firephp, 'trace');
 
 $controller = Zend_Controller_Front::getInstance();
 $controller->setControllerDirectory('../application/controllers')
@@ -52,7 +53,7 @@ $controller->setControllerDirectory('../application/controllers')
  * Add our FirePHP logger to the registry
  */
 
-$writer = new Zend_Log_Writer_FirePhp();
+$writer = new Zend_Debug_FirePhp_LogWriter();
 $logger = new Zend_Log($writer);
 
 Zend_Registry::set('logger',$logger);
@@ -64,7 +65,7 @@ Zend_Registry::set('logger',$logger);
 
 $db = Zend_Db::factory('PDO_SQLITE',
                        array('dbname' => ':memory:',
-                             'profiler' => new Zend_Db_Profiler_FirePhp()));
+                             'profiler' => new Zend_Debug_FirePhp_DbProfiler()));
 
 $db->getProfiler()->setEnabled(true);
 
