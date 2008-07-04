@@ -1,4 +1,7 @@
 
+	- Bugfix - Standardize windows paths in stack traces
+	- Bugfix - Display correct stack trace info in windows environments
+	- Bugfix - Check $_SERVER['HTTP_USER_AGENT'] before returning
 	- Added support for FirePHP::TRACE log style
 	- Changed license to New BSD License
 

@@ -139,7 +139,7 @@ class FirePHP {
   
   public function detectClientExtension() {
     /* Check if FirePHP is installed on client */
-    if(!preg_match_all('/\sFirePHP\/([\.|\d]*)\s?/si',$this->getUserAgent(),$m) ||
+    if(!@preg_match_all('/\sFirePHP\/([\.|\d]*)\s?/si',$this->getUserAgent(),$m) ||
        !version_compare($m[1][0],'0.0.6','>=')) {
       return false;
     }
@@ -189,10 +189,10 @@ class FirePHP {
       
       $Object = array('Class'=>get_class($Object),
                       'Message'=>$Object->getMessage(),
-                      'File'=>$Object->getFile(),
+                      'File'=>$this->_escapeTraceFile($Object->getFile()),
                       'Line'=>$Object->getLine(),
                       'Type'=>'throw',
-                      'Trace'=>$Object->getTrace());
+                      'Trace'=>$this->_escapeTrace($Object->getTrace()));
       $Type = self::EXCEPTION;
       
     } else
@@ -203,7 +203,7 @@ class FirePHP {
       for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
         
         if($trace[$i]['class']=='FirePHP' &&
-           substr($trace[$i+1]['file'],-18,18)=='FirePHPCore/fb.php') {
+           substr($this->_standardizePath($trace[$i+1]['file']),-18,18)=='FirePHPCore/fb.php') {
           /* Skip */
         } else
         if($trace[$i]['function']=='fb') {
@@ -211,10 +211,10 @@ class FirePHP {
                           'Type'=>$trace[$i]['type'],
                           'Function'=>$trace[$i]['function'],
                           'Message'=>$trace[$i]['args'][0],
-                          'File'=>$trace[$i]['file'],
+                          'File'=>$this->_escapeTraceFile($trace[$i]['file']),
                           'Line'=>$trace[$i]['line'],
                           'Args'=>$trace[$i]['args'],
-                          'Trace'=>array_splice($trace,$i+1));
+                          'Trace'=>$this->_escapeTrace(array_splice($trace,$i+1)));
           break;
         }
       }
@@ -256,12 +256,37 @@ class FirePHP {
     
     return true;
   }
+  
+  protected function _standardizePath($Path) {
+    return preg_replace('/\\\\+/','/',$Path);    
+  }
+  
+  protected function _escapeTrace($Trace) {
+    if(!$Trace) return $Trace;
+    for( $i=0 ; $i<sizeof($Trace) ; $i++ ) {
+      $Trace[$i]['file'] = $this->_escapeTraceFile($Trace[$i]['file']);
+    }
+    return $Trace;    
+  }
+  
+  protected function _escapeTraceFile($File) {
+    /* Check if we have a windows filepath */
+    if(strpos($File,'\\')) {
+      /* First strip down to single \ */
+      
+      $file = preg_replace('/\\\\+/','\\',$File);
+      
+      return $file;
+    }
+    return $File;
+  }
 
   protected function setHeader($Name, $Value) {
     return header($Name.': '.$Value);
   }
 
   protected function getUserAgent() {
+    if(!isset($_SERVER['HTTP_USER_AGENT'])) return false;
     return $_SERVER['HTTP_USER_AGENT'];
   }
 
