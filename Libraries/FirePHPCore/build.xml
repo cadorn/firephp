@@ -22,9 +22,32 @@
           <fileset dir="./lib"/>
         </copy>
 
+
+        <copy todir="./build/pear/demo" >
+          <fileset dir="./demo"/>
+        </copy>
+
+        <copy todir="./build/pear" >
+          <fileset dir="./lib/FirePHPCore"/>
+        </copy>
+
     </target>
 
+
+
+
     <target name="package" depends="build">
+
+        <propertyprompt propertyName="version" promptText="Version:" />
+
+        <phingcall target="package-default"/>
+        <phingcall target="package-pear"/>
+    
+    </target>
+    
+
+    <target name="package-default" depends="build">
+        
         <echo msg="Creating archive..." />
 
         <tar destfile="./build/FirePHPCore.tar.gz" compression="gzip">
@@ -33,17 +56,53 @@
             </fileset>
         </tar>
 
-        <echo msg="Files copied and compressed in build directory OK!" />        
+        <echo msg="Files copied and compressed in build directory OK!" />
+            
+        <echo msg="Renaming package archive to FirePHPCore-${version}.tar.gz."/>        
+      
+        <move file="./build/FirePHPCore.tar.gz" tofile="./build/FirePHPCore-${version}.tar.gz" overwrite="true"/>
+
     </target>
     
-    <target name="dist" depends="package">
-      
-      <propertyprompt propertyName="version" promptText="Version:" />
+    <target name="package-pear" depends="build">
+        
+        <php function="date" returnProperty="date">
+          <param value="Y-m-d"/>
+        </php> 
+
+        <php function="substr_count" returnProperty="version_part_count">
+          <param value="${version}"/>
+          <param value="."/>
+        </php> 
+
+        <if>
+         <equals arg1="${version_part_count}" arg2="3" />
+         <then>
+            <property name="stability" value="beta" />
+         </then>
+         <else>
+            <property name="stability" value="stable" />
+         </else>
+        </if>
+
+        <copy file="pear.package.xml" tofile="./build/pear/package2.xml" overwrite="true">
+         
+          <filterchain>
+            <replacetokens begintoken="##" endtoken="##">
+              <token key="DATE" value="${date}" />
+              <token key="VERSION" value="${version}" />
+              <token key="STABILITY" value="${stability}" />
+            </replacetokens>
+          </filterchain>          
+        
+        </copy>
+        
+        <exec command="pear package package2.xml" dir="./build/pear" passthru="true"/>
+                  
+    </target>    
     
-      <echo msg="Renaming package archive to FirePHPCore-${version}.tar.gz."/>        
-      
-      <move file="./build/FirePHPCore.tar.gz" tofile="./build/FirePHPCore-${version}.tar.gz" overwrite="true"/>
-      
+    <target name="dist" depends="package">
+            
       <phing phingfile="./../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="upload">
         <property name="LibraryName" value="FirePHPCore"/>
         <property name="LibraryVersion" value="${version}"/>
