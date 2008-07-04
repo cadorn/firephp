@@ -44,18 +44,18 @@ $data = $_SERVER;
 //$data = array('VarName'=>'VarValue22','var2'=>'val2');
 
 if($_GET['var']==1) {
-	
-  fb('Hello World');
-  
-  fb('Log message',FirePHP::LOG);
-  fb('Info message',FirePHP::INFO);
-  fb('Warn message',FirePHP::WARN);
-  fb('Error message',FirePHP::ERROR);
-  
+
+//  fb('Hello World');
+
+//  fb('Log message',FirePHP::LOG);
+//  fb('Info message',FirePHP::INFO);
+//  fb('Warn message',FirePHP::WARN);
+//  fb('Error message',FirePHP::ERROR);
+
 } else {
 
-  fb($data);  
-  
+  fb($data);
+
   fb($data,'$_SERVER',FirePHP::DUMP);  
 }
 
