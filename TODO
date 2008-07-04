@@ -23,8 +23,10 @@
  Version 0.1.x
 -------------------------------
 
-- Automatic updates for FF3
+- Automatic updates for FF3 (Done via mozilla site - not done via FirePHP site yet)
 
+- Show line number and file for log messages
+  http://groups.google.com/group/FirePHP/browse_frm/thread/e943c0df9cce23d5
 
 
 -------------------------------
