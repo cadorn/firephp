@@ -1,0 +1,35 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://firephp/skin/firephp.css" type="text/css"?>
+
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <script type="application/x-javascript" src="chrome://firephp/content/md5.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/json_parse.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHPLib.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/jquery.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirePHP.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/FirebugNetOverride.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/reps.js"/>
+
+	<script>
+FBL.ns(function() { with (FBL) {
+
+		top.FirePHP.initialize();
+}});
+	</script>
+
+
+    <vbox id="appcontent">
+	
+			<vbox class="firephp-variable-inspector-overlay" id="firephp-variable-inspector-overlay" hidden="true">
+		
+				<iframe src="chrome://firephp/content/VariableInspectorPanel.htm" id="firephp-variable-inspector-iframe" class="firephp-variable-inspector-iframe"/>
+					
+			</vbox>
+
+		</vbox>
+
+</overlay>
