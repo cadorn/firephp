@@ -73,7 +73,7 @@ var FirePHP = top.FirePHP = {
 
     if (FB_NEW) {
       /* Do not enable this yet. It will break the Net panel in 1.2.0b3 */
-//      Firebug.NetMonitor.addListener(this);
+      Firebug.NetMonitor.addListener(this);
     }
   },
   disable: function() {
@@ -85,22 +85,28 @@ var FirePHP = top.FirePHP = {
       
     if (FB_NEW) {
       /* Do not enable this yet. It will break the Net panel in 1.2.0b3 */
-//      Firebug.NetMonitor.removeListener(this);
+      Firebug.NetMonitor.removeListener(this);
     }
   },
 
-  /* Used for FB1.2 */
+  /* Used for FB1.2 (>= b4) */
   onLoad: function(context, file)
   {
-//dump("--> " + file.method + " " + file.href+"\n");    
+
+//dump("--> " + file.method + " " + file.href+"\n");
+    Firebug.FirePHP._processRequest(file.href,
+                                    FirePHP.parseHeaders(file.responseHeaders,'array'));
   },
 
-  
+
   isEnabled: function() {
     
     if (FB_NEW) {
       /* FirePHP is enabled when the Firebug Net Panel is enabled */
-      return (this.enabled && Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext));
+      return (this.enabled &&
+              Firebug.FirePHP.activeContext &&
+              Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext) &&
+              Firebug.Console.isEnabled(Firebug.FirePHP.activeContext));
     }
     else {
       /* FirePHP is enabled when Firebug is enabled. */
@@ -226,7 +232,68 @@ var FirePHP = top.FirePHP = {
     }
     
     return info;
-  }	
+  },
+  
+  isLoggingData: false,
+  
+  lastInspectorVariable: null,
+  inspectorPinned: false,
+  
+  showVariableInspectorOverlay: function(object,pinned) {
+    
+    if(this.inspectorPinned && !pinned) {
+      return; 
+    }
+    this.inspectorPinned = pinned;
+    
+    if(object==this.lastInspectorVariable) {
+//      return;
+    }
+        
+    this.lastInspectorVariable = object;
+    
+    
+      var browser = FirebugChrome.getCurrentBrowser();
+      if(browser && browser.contentDocument) {
+        
+        var bx = browser.boxObject.x;
+        var by = browser.boxObject.y;
+        var bw = browser.boxObject.width;
+        var bh = browser.boxObject.height;
+        
+        var w = bw-100;
+        if(w>600) w = 600;
+        var h = bh-40;
+        
+        var obj = FirebugChrome.window.document.getElementById('firephp-variable-inspector-overlay');
+        
+        obj.hidden = false;
+        obj.setAttribute("style","left: "+(bx+(bw-w)/2)+"px; top: "+(by+(bh-h)/2)+"px; width: "+w+"px; height: "+h+"px;");
+
+        
+        var frame = FirebugChrome.window.document.getElementById('firephp-variable-inspector-iframe');
+        
+        
+        frame.contentWindow.renderVariable(object,pinned);
+        
+//        var content = frame.contentDocument.getElementById('content');
+//        content.innerHTML = object;
+        
+      }
+  },
+  
+  hideVariableInspectorOverlay: function(force) {
+    
+    if(this.inspectorPinned && !force) {
+      return;
+    }
+    
+    this.inspectorPinned = false;
+    
+    var obj = FirebugChrome.window.document.getElementById('firephp-variable-inspector-overlay');
+    obj.hidden = true;
+    
+  }
 	
 }
 
@@ -299,17 +366,11 @@ Firebug.FirePHP = extend(Firebug.Module,
 
         var panel = this.activeContext.getPanel('console');
         if(panel) {
-
-          if(!panel.customStylesheets) {
-            panel.customStylesheets = [];
-          }
           
           for( var url in this.FirePHPProcessor.consoleStylesheets ) {
-            if(!panel.customStylesheets[url] || Force==true) {
               var doc = panel.document;
-              addStyleSheet(doc, createStyleSheet(doc, url));
-              panel.customStylesheets[url] = true;
-            }
+              
+              this.addStyleSheet(panel.document,url);
           }
         }
       }
@@ -317,6 +378,16 @@ Firebug.FirePHP = extend(Firebug.Module,
     
   },
   
+  addStyleSheet: function(doc, url)
+  {
+      var id = hex_md5('Stylesheet:'+url);
+      /* Make sure the stylesheet isn't appended twice. */
+      if ($(id, doc)) return;
+
+      var styleSheet = createStyleSheet(doc,url);
+      styleSheet.setAttribute("id", id);
+      addStyleSheet(doc, styleSheet);
+  },
   
   showContext: function(browser, context)
   {
@@ -378,6 +449,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 						_Init: function() {
 							if(this.initialized) return;
               try {
+                this.consoleStylesheets['chrome://firephp/content/panel.css'] = true;
   							this.Init();
   							this.initialized = true;
               } catch(e) {
@@ -394,14 +466,18 @@ Firebug.FirePHP = extend(Firebug.Module,
               this.consoleTemplates[Name] = Template;
             },
 						logToFirebug: function(TemplateName, Data) {
+              var oo = false;
+              FirePHP.isLoggingData = true;
               if (this.consoleTemplates[TemplateName]) {
-                return Firebug.Console.logRow(function(object, row, rep)
+                oo = Firebug.Console.logRow(function(object, row, rep)
                   {
                     return rep.tag.append({object: object}, row);
                   }, Data, this.activeContext, this.consoleTemplates[TemplateName].className, this.consoleTemplates[TemplateName], null, true);
               } else {
-            	  return Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
+            	  oo = Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
               }
+              FirePHP.isLoggingData = false;
+              return oo;
 						}
 					}
 				}();
@@ -536,13 +612,16 @@ FirePHPProgress.prototype =
 
     observe: function(request, topic, data)
     {
+      if (!FB_NEW) {
+      
         request = QI(request, nsIHttpChannel);
-
-        if(this.context==Firebug.FirePHP.activeContext &&
-           FirebugChrome.isFocused()) {
+        
+        if (this.context == Firebug.FirePHP.activeContext &&
+        FirebugChrome.isFocused()) {
         
           Firebug.FirePHP.processRequest(request);
         }
+      }
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -550,21 +629,22 @@ FirePHPProgress.prototype =
 
     onStateChange: function(progress, request, flag, status)
     {
-        
-        if (flag & STATE_TRANSFERRING && flag & STATE_IS_DOCUMENT)
-        {
+      if (!FB_NEW) {
+      
+        if (flag & STATE_TRANSFERRING && flag & STATE_IS_DOCUMENT) {
           var win = progress.DOMWindow;
           if (win == win.parent) {
-            
+          
             if (FirebugChrome.isFocused()) {
-
+            
               Firebug.FirePHP.queRequest(request);
             }
           }
         }
-        else if (flag & STATE_STOP && flag & STATE_IS_REQUEST)
-        {
-        }
+        else 
+          if (flag & STATE_STOP && flag & STATE_IS_REQUEST) {
+          }
+      }
     },
 
     onProgressChange : function(progress, request, current, max, total, maxTotal)

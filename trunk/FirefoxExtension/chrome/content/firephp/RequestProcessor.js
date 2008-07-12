@@ -132,8 +132,16 @@ FirePHPProcessor.Init = function() {
         var items = [];
         for (var i = 0; i < call.args.length; ++i) {
           var arg = call.args[i];
-          var rep = Firebug.getRep(arg);
-          var tag = rep.shortTag ? rep.shortTag : rep.tag;
+          
+          if (arg.constructor.toString().indexOf("Array") != -1 ||
+          arg.constructor.toString().indexOf("Object") != -1) {
+            var rep = FirebugReps.PHPVariable;
+            var tag = rep.tag;
+          }
+          else {
+            var rep = Firebug.getRep(arg);
+            var tag = rep.shortTag ? rep.shortTag : rep.tag;
+          }
           var delim = (i == call.args.length - 1 ? "" : ", ");
           items.push({
             name: 'arg' + i,
@@ -251,13 +259,14 @@ FirePHPProcessor.Init = function() {
           {
               var arg = row[i];
   
-              if (arg.constructor.toString().indexOf("Array")!=-1) {
-                var rep = FirebugReps.Obj;
+              if (arg.constructor.toString().indexOf("Array")!=-1 ||
+                  arg.constructor.toString().indexOf("Object")!=-1) {
+                var rep = FirebugReps.PHPVariable;
                 var tag = rep.tag;
                 
-                obj = new Object();
-                obj.Array = arg;
-                arg = ['Click for Data',obj];
+//                obj = new Object();
+//                obj.Array = arg;
+//                arg = ['Click for Data',obj];
               } else {
                 var rep = FirebugReps.Text;
                 var tag = rep.shortTag ? rep.shortTag : rep.tag;

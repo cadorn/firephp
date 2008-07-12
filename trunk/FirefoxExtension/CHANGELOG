@@ -1,4 +1,11 @@
 
+  - Updated FirePHP::TABLE to use new variable viewer for array/object values
+  - Added variable viewer overlay
+  - Bugfix - FF3 - Logging of events when Firebug is running in its own window
+  - Bugfix - Improved custom stylesheet inclusion
+  - FF3 - Updated request monitoring to use Firebug onLoad listener
+	- Updated logo
+
 2008-06-16 - Release Version: 0.1.0.1
 
 	- Added support for FirePHP::TRACE log style

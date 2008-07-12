@@ -1,0 +1,19 @@
+
+.firephp-variable-inspector-overlay {
+	z-index:10000;
+	position:fixed;
+}
+
+.firephp-variable-inspector-iframe {
+  
+	z-index:10000;
+	position:relative;
+	opacity:1.0;
+  margin: 2px;
+	border-bottom:2px solid darkgray;
+	border-left:2px solid darkgray;
+	border-right:2px solid darkgray;
+  
+  width: 100%;
+  height: 100%;
+}
