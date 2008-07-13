@@ -86,6 +86,7 @@ TABLE.layout TR TD.content {
   vertical-align: top;
   text-align: left;
   padding: 10px;
+  border: 1px solid #FFFFFF;
 }
 #variable-div  DIV      {
   display: inline;

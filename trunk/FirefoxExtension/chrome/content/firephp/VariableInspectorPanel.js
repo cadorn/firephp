@@ -183,8 +183,8 @@ function renderVariable(body_value,pinned) {
     obj.removeClass('nodata');
     obj.removeClass('loading');
     
-    obj.height(content.height()-21);
-    obj.width(content.width()-21);
+    obj.height(content.height()-23);
+    obj.width(content.width()-23);
     
     if (body_value) {
       obj.html('&nbsp;');

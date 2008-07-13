@@ -19,9 +19,11 @@ FBL.ns(function() { with (FBL) {
 
 const FB_NEW = (Firebug.version == '1.2')?true:false;
 
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
+const nsIPrefBranch = (FB_NEW)?Ci.nsIPrefBranch:FirebugLib.CI("nsIPrefBranch");
 const nsIPrefBranch2 = (FB_NEW)?Ci.nsIPrefBranch2:FirebugLib.CI("nsIPrefBranch2");
 const nsIPermissionManager = (FB_NEW)?Ci.nsIPermissionManager:FirebugLib.CI("nsIPermissionManager");
 
@@ -37,13 +39,22 @@ const nsISupports = (FB_NEW)?Ci.nsISupport:CI("nsISupports");
 const ioService = (FB_NEW)?Ci.nsIIOService:FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
   
 const observerService = CCSV("@mozilla.org/observer-service;1", "nsIObserverService");
-  
+
 
 const STATE_TRANSFERRING = nsIWebProgressListener.STATE_TRANSFERRING;
 const STATE_IS_DOCUMENT = nsIWebProgressListener.STATE_IS_DOCUMENT;
 const STATE_STOP = nsIWebProgressListener.STATE_STOP;
 const STATE_IS_REQUEST = nsIWebProgressListener.STATE_IS_REQUEST;
 const NOTIFY_ALL = nsIWebProgress.NOTIFY_ALL;
+
+
+const firephpURLs =
+{
+    main: "http://www.firephp.org/",
+    docs: "http://www.firephp.org/Wiki/Reference/Fb",
+    discuss: "http://groups.google.com/group/FirePHP",
+    issues: "http://code.google.com/p/firephp/issues/list"
+};
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -54,6 +65,9 @@ const pm = PermManager.getService(nsIPermissionManager);
 var FirePHP = top.FirePHP = {
 
   version: '0.1.0',
+
+  prefDomain: "extensions.firephp",
+  
   
   /* This variable is only used for ff2 */
   enabled: false,
@@ -94,24 +108,24 @@ var FirePHP = top.FirePHP = {
   {
 
 //dump("--> " + file.method + " " + file.href+"\n");
-    Firebug.FirePHP._processRequest(file.href,
-                                    FirePHP.parseHeaders(file.responseHeaders,'array'));
+
+    if(Firebug.FirePHP.processQueOnWatchWindow) {
+      /* Process right away as context is already initialized */
+      Firebug.FirePHP._processRequest(file.href,
+                                      FirePHP.parseHeaders(file.responseHeaders,'array'));
+    } else {
+      /* Que processing until after context is initialized. This is for whenever a new page is loaded. */
+      Firebug.FirePHP.queFile(file);
+    }
+                                    
+                                    
   },
 
 
   isEnabled: function() {
     
-    if (FB_NEW) {
-      /* FirePHP is enabled when the Firebug Net Panel is enabled */
-      return (this.enabled &&
-              Firebug.FirePHP.activeContext &&
-              Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext) &&
-              Firebug.Console.isEnabled(Firebug.FirePHP.activeContext));
-    }
-    else {
-      /* FirePHP is enabled when Firebug is enabled. */
-      return this.enabled;
-    }
+    return FirePHP.getPref(FirePHP.prefDomain, "enabled");
+    
   },
   
     
@@ -139,7 +153,7 @@ var FirePHP = top.FirePHP = {
     var params = {
         permissionType: "firephp",
         windowTitle: "FirePHP Allowed Sites",
-        introText: "Choose which web sites are allowed to be used with FirePHP.",
+        introText: "Choose which web sites are allowed to load custom functionality into FirePHP.",
         blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
     };
 
@@ -274,7 +288,14 @@ var FirePHP = top.FirePHP = {
         var frame = FirebugChrome.window.document.getElementById('firephp-variable-inspector-iframe');
         
         
-        frame.contentWindow.renderVariable(object,pinned);
+        if(frame.contentWindow.renderVariable) {
+          frame.contentWindow.renderVariable(object,pinned);
+        } else {
+          /* Need this for FF2 */
+          setTimeout(function() {
+            frame.contentWindow.renderVariable(object,pinned);
+          }, 200);
+        }
         
 //        var content = frame.contentDocument.getElementById('content');
 //        content.innerHTML = object;
@@ -293,8 +314,87 @@ var FirePHP = top.FirePHP = {
     var obj = FirebugChrome.window.document.getElementById('firephp-variable-inspector-overlay');
     obj.hidden = true;
     
+  },
+  
+  openAboutDialog: function()
+  {
+      var extensionManager = CCSV("@mozilla.org/extensions/manager;1", "nsIExtensionManager");
+      openDialog("chrome://mozapps/content/extensions/about.xul", "",
+          "chrome,centerscreen,modal", "urn:mozilla:item:FirePHPExtension-Build@firephp.org", extensionManager.datasource);
+  },
+
+  visitWebsite: function(which)
+  {
+      openNewTab(firephpURLs[which]);
+  },
+  
+  onOptionsShowing: function(popup)
+  {
+      for (var child = popup.firstChild; child; child = child.nextSibling)
+      {
+          if (child.localName == "menuitem")
+          {
+              var option = child.getAttribute("option");
+              if (option)
+              {
+                  if(option=='enabled') {
+                    var checked = FirePHP.getPref(FirePHP.prefDomain, option);
+                    child.setAttribute("checked", checked);
+                  }
+              }
+          }
+      }
+  },
+  
+  onToggleOption: function(menuitem)
+  {
+      var option = menuitem.getAttribute("option");
+      var checked = menuitem.getAttribute("checked") == "true";
+
+      FirePHP.setPref(FirePHP.prefDomain, option, checked);
+      
+      if(option=="enabled" && checked) {
+        
+        if (FB_NEW && Firebug.FirePHP.activeContext) {
+          
+          if(!Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext) ||
+             !Firebug.Console.isEnabled(Firebug.FirePHP.activeContext)) {
+                
+            alert('You must have the Firebug Console and Net panels enabled to use FirePHP!');                
+          }
+        }
+      }
+  },
+  
+  /* Can use Firebug.getPref() for FB 1.2+ */
+  getPref: function(prefDomain, name)
+  {
+      var prefName = prefDomain + "." + name;
+
+      var type = prefs.getPrefType(prefName);
+      if (type == nsIPrefBranch.PREF_STRING)
+          return prefs.getCharPref(prefName);
+      else if (type == nsIPrefBranch.PREF_INT)
+          return prefs.getIntPref(prefName);
+      else if (type == nsIPrefBranch.PREF_BOOL)
+          return prefs.getBoolPref(prefName);
+  },
+
+  /* Can use Firebug.getPref() for FB 1.2+ */
+  setPref: function(prefDomain, name, value)
+  {
+      var prefName = prefDomain + "." + name;
+
+      var type = prefs.getPrefType(prefName);
+      if (type == nsIPrefBranch.PREF_STRING)
+          prefs.setCharPref(prefName, value);
+      else if (type == nsIPrefBranch.PREF_INT)
+          prefs.setIntPref(prefName, value);
+      else if (type == nsIPrefBranch.PREF_BOOL)
+          prefs.setBoolPref(prefName, value);
+      else if (type == nsIPrefBranch.PREF_INVALID)
+          throw "Invalid preference "+prefName+" check that it is listed in defaults/prefs.js";
   }
-	
 }
 
 
@@ -324,10 +424,15 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   initContext: function(context)
   {
+//dump("--> initContext"+"\n");
+    FirePHP.hideVariableInspectorOverlay(true);
+    
     monitorContext(context);
+    
   },
   destroyContext: function(context)
   {
+//dump("--> unwatchWindow"+"\n");
     unmonitorContext(context);
     
     this.processQueOnWatchWindow = false;
@@ -335,20 +440,25 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   reattachContext: function(browser, context)
   {
+//dump("--> reattachContext"+"\n");
     this.addStylesheets(true);
   },
   
   watchWindow: function(context, win)
   {
+//dump("--> watchWindow"+"\n");
     if (this.processQueOnWatchWindow) {
       this.processRequestQue();
     }
   },
   unwatchWindow: function(context, win)
   {
+//dump("--> unwatchWindow"+"\n");
   },
   showPanel: function(browser, panel)
   {
+//dump("--> showPanel"+"\n");
+    
     this.addStylesheets();
 
     this.processQueOnWatchWindow = true;
@@ -400,6 +510,10 @@ Firebug.FirePHP = extend(Firebug.Module,
 		var http = QI(Request, nsIHttpChannel);
     var info = FirePHP.parseHeaders(http,'visit');
     this.requestBuffer.push([Request.name,info]);
+  },
+
+	queFile: function(File) {
+    this.requestBuffer.push([File.href,FirePHP.parseHeaders(File.responseHeaders,'array')]);
   },
 
 	processRequest: function(Request) {

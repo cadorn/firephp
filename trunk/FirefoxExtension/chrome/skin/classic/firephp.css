@@ -17,3 +17,28 @@
   width: 100%;
   height: 100%;
 }
+
+#firephpMenu {
+    margin: 0px;
+    padding: 0;
+    list-style-image: url(chrome://firephp/skin/firephpMenu.png);
+}
+
+#firephpMenu > .toolbarbutton-icon {
+    padding: 0;
+}
+
+#firephpMenu:hover {
+    list-style-image: url(chrome://firephp/skin/firephpMenuHover.png);
+}
+
+#firephpMenu:hover:active,
+#firephpMenu[open="true"] {
+    list-style-image: url(chrome://firephp/skin/firephpMenuOpen.png);
+}
+
+#firephpMenu > .toolbarbutton-text,
+#firephpMenu > .toolbarbutton-menu-dropmarker {
+    display: none;
+}
+
