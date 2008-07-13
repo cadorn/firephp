@@ -10,15 +10,16 @@ fb('Main Page');
   <script type="application/x-javascript" src="jquery.js"></script>
 </head>
 
-<body>
+<body bgcolor="red">
   
-<iframe src="Version1.php?frame=1" width="500" height="300"></iframe>
+<iframe id="frame1" name="frame1" src="Version1.php?frame=1" width="500" height="300"></iframe>
 
 <iframe src="Version1.php?frame=2" width="500" height="300"></iframe>
 
 <p><a href="#" onClick="$.get('Version1.php?var=1');">Version1.php?var=1</a></p>
 <p><a href="#" onClick="$.get('ConsoleTest.php', {var1:'val1'});">ConsoleTest.php (GET)</a></p>
 <p><a href="#" onClick="$.post('ConsoleTest.php', {var1:'val1'});">ConsoleTest.php (POST)</a></p>
+<p><a target="frame1" href="TableTest.php">TableTest.php (GET)</a></p>
 <p><a href="#" onClick="$.get('ZendTest.php');">ZendTest.php</a></p>
 
 <p><a href="#" onClick="$.get('NoContentTest.php');">AJAX - NoContentTest.php</a></p>
