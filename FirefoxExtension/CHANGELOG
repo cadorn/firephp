@@ -1,4 +1,7 @@
 
+	- Added links to important sites to menu
+	- Added ability to enable and disable FirePHP from menu
+	- Added FirePHP menu next to Firebug menu in Firebug UI
   - Updated FirePHP::TABLE to use new variable viewer for array/object values
   - Added variable viewer overlay
   - Bugfix - FF3 - Logging of events when Firebug is running in its own window
