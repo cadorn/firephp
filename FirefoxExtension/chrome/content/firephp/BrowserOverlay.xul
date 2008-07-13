@@ -2,7 +2,6 @@
 
 <?xml-stylesheet href="chrome://firephp/skin/firephp.css" type="text/css"?>
 
-
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          xmlns:html="http://www.w3.org/1999/xhtml">
 
