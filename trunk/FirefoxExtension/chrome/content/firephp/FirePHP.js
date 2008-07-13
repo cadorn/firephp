@@ -50,6 +50,7 @@ const NOTIFY_ALL = nsIWebProgress.NOTIFY_ALL;
 
 const firephpURLs =
 {
+    welcome: "http://www.firephp.org/Welcome",
     main: "http://www.firephp.org/",
     docs: "http://www.firephp.org/Wiki/Reference/Fb",
     discuss: "http://groups.google.com/group/FirePHP",
@@ -73,6 +74,21 @@ var FirePHP = top.FirePHP = {
   enabled: false,
 
   initialize: function() {
+    
+    var previousVersion = FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
+    if(previousVersion!=this.version) {
+
+      var url = firephpURLs['welcome'];
+      url += "?Version="+this.version;
+      url += "&PreviousVersion="+previousVersion;
+
+      setTimeout(function() {
+                   openNewTab(url);
+                 },2000);
+      
+      FirePHP.setPref(FirePHP.prefDomain,'previousVersion',this.version);
+    }
+    
   },
   
   /* Enable and disable FirePHP
@@ -325,7 +341,15 @@ var FirePHP = top.FirePHP = {
 
   visitWebsite: function(which)
   {
-      openNewTab(firephpURLs[which]);
+      if(which=="welcome") {
+
+        var url = firephpURLs[which];
+        url += "?Version="+FirePHP.version;
+        openNewTab(url);
+
+      } else {
+        openNewTab(firephpURLs[which]);
+      }
   },
   
   onOptionsShowing: function(popup)

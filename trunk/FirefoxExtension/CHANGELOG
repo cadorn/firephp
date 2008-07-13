@@ -1,4 +1,6 @@
 
+	- Launch Welcome page once every time FirePHP is upgraded
+	- Added link to welcome page in menus
 	- Added links to important sites to menu
 	- Added ability to enable and disable FirePHP from menu
 	- Added FirePHP menu next to Firebug menu in Firebug UI
