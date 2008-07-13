@@ -41,8 +41,6 @@
 				- Add FirePHP panel that is disabled by default and asks users to enable it for each website
           just like the Net panel does in FB1.2
 
-- Optionally allow variable inspection in sidebar or browser overaly instead of the DOM tab
-
 - Refactor FirePHPRenderer API to introduce:
 	 - ProcessRequest - to be called automatically after every request load (DONE)
 	 - RenderRequest - to be called when "Server" tab is clicked
@@ -59,9 +57,6 @@
   and thus allow debugging of renderer code using firebug.
   
 - Plugin system for default renderer and processor to add custom functionality easily  
-  
-- Expanding of stack trace does not work after Firebug is detached.
-  Need to reload page at the moment.
 
 - Add option to hide all the X-FirePHP- headers from the Firebug response headers viewer
 
@@ -69,8 +64,6 @@
  Deferred
 -------------------------------
 
-- New style/template for console groups. The spacing between characters is irritating
-	=> Looked into this. Cannot be done without modifying Firebug at this time.
 	
 -------------------------------
  Known Issues
