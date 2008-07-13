@@ -75,18 +75,20 @@ var FirePHP = top.FirePHP = {
 
   initialize: function() {
     
-    var previousVersion = FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
-    if(previousVersion!=this.version) {
+    var currentVersion = FirePHP.getPref(FirePHP.prefDomain,'currentVersion');
+    if(currentVersion!=FirePHP.version) {
 
       var url = firephpURLs['welcome'];
-      url += "?Version="+this.version;
-      url += "&PreviousVersion="+previousVersion;
+      url += "?Version="+FirePHP.version;
+      url += "&PreviousVersion="+FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
+      url += "&Trigger=Install";
 
       setTimeout(function() {
                    openNewTab(url);
                  },2000);
-      
-      FirePHP.setPref(FirePHP.prefDomain,'previousVersion',this.version);
+
+      FirePHP.setPref(FirePHP.prefDomain,'previousVersion',''+currentVersion);
+      FirePHP.setPref(FirePHP.prefDomain,'currentVersion',''+FirePHP.version);
     }
     
   },
@@ -345,6 +347,8 @@ var FirePHP = top.FirePHP = {
 
         var url = firephpURLs[which];
         url += "?Version="+FirePHP.version;
+        url += "&PreviousVersion="+FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
+        url += "&Trigger=User";
         openNewTab(url);
 
       } else {
