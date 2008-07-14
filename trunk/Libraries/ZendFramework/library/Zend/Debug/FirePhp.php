@@ -66,7 +66,7 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend
      * The unique string ID identifying the Zend Framework server library.
      * @var string
      */
-    protected static $_serverID = '0002';
+    protected static $_serverID = '1001';
  
     /**
      * Plain log style.
@@ -87,6 +87,11 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend
      * Error style that increments Firebug's error counter.
      */
     const ERROR = 'ERROR';
+    
+    /**
+     * Trace style showing message and expandable full stack trace.
+     */
+    const TRACE = 'TRACE';
     
     /**
      * Exception style showing message and expandable full stack trace.
@@ -280,10 +285,38 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend
 
           $type = self::EXCEPTION;
           
+        } else
+        if ($type==self::TRACE) {
+            
+            $trace = debug_backtrace();
+            if(!$trace) return false;
+            for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
+                if(isset($trace[$i]['class']) &&
+                   $trace[$i]['class']=='Zend_Debug' &&
+                   $trace[$i]['function']=='_dispatchToMethodHandlers' &&
+                   substr($trace[$i]['file'],-14,14)=='Zend/Debug.php') {
+
+                    $i++;
+                    break;
+                }
+            }
+
+            if($i==sizeof($trace)) {
+                $i = 0;
+            }
+
+            $var = array('Class'=>$trace[$i]['class'],
+                         'Type'=>$trace[$i]['type'],
+                         'Function'=>$trace[$i]['function'],
+                         'Message'=>$trace[$i]['args'][0],
+                         'File'=>$trace[$i]['file'],
+                         'Line'=>$trace[$i]['line'],
+                         'Args'=>$trace[$i]['args'],
+                         'Trace'=>array_splice($trace,$i+1));
         } else {
-          if ($type===null) {
-            $type = self::LOG;
-          }
+            if ($type===null) {
+                $type = self::LOG;
+            }
         }
 
         switch ($type) {
@@ -292,16 +325,13 @@ class Zend_Debug_FirePhp extends Zend_Controller_Plugin_Abstract implements Zend
             case self::WARN:
             case self::ERROR:
             case self::EXCEPTION:
+            case self::TRACE:
             case self::TABLE:
             case self::DUMP:
                 break;
             default:
                 throw new Zend_Debug_FirePhp_Exception('Log type "'.$type.'" not recognized!');
                 break;
-        }
-      
-        if ($type == self::EXCEPTION) {
-          $type = 'TRACE';
         }
         
         if ($type == self::DUMP) {

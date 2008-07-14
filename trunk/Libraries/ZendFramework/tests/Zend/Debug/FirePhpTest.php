@@ -136,27 +136,95 @@ class Zend_Debug_FirePhpTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->_firephp->getEnabled());
     }
 
-    public function testFire()
+    public function testTrace()
     {
         $var = 'Hello World';
+        $label = 'Test Label';
 
-        $this->assertFalse($this->_firephp->fire($var),'fire() when not enabled and wrong user-agent');
+        $this->assertFalse($this->_firephp->trace($var),'trace() when not enabled and wrong user-agent');
         $this->_firephp->setEnabled(true);
-        $this->assertFalse($this->_firephp->fire($var),'fire() when enabled and wrong user-agent');
+        $this->assertFalse($this->_firephp->trace($var),'trace() when enabled and wrong user-agent');
         $this->_request->setUserAgentExtensionEnabled(true);
         
-        $this->assertTrue($this->_firephp->fire($var),'fire() when enabled and correct user-agent');
+        $this->assertTrue($this->_firephp->trace($var),'trace($var) when enabled and correct user-agent');
         $this->assertTrue($this->_firephp->verifyHeaderMessage('FirePHP.Firebug.Console',
                                                                array(Zend_Debug_FirePhp::LOG, $var)),
-                          'fire() generated valid message in response headers');
+                          'trace() generated valid message in response headers');
         $this->_firephp->clearHeaders();
         
-        $this->assertTrue($this->_firephp->fire($var,'Label'),'fire() when enabled and correct user-agent');
+        $this->assertTrue($this->_firephp->trace($var,$label),'trace($var,$label)');
         $this->assertTrue($this->_firephp->verifyHeaderMessage('FirePHP.Firebug.Console',
-                                                               array(Zend_Debug_FirePhp::LOG,
-                                                                     array('Label', $var))),
-                          'fire() generated valid message in response headers');
+                                                               array(Zend_Debug_FirePhp::LOG,array($label, $var))),
+                          'trace() generated valid message in response headers');
         $this->_firephp->clearHeaders();
+        
+
+        $class = new ReflectionClass('Zend_Debug_FirePhp');
+        $class_constants = $class->getConstants();
+/*
+        foreach( array('LOG', 'INFO', 'WARN', 'ERROR') as $style ) {
+         
+            $this->assertTrue($class_constants[$style]==$style,'Zend_Debug_FirePhp::'.$style.' is defined and set to '.$style);
+            
+            $this->assertTrue($this->_firephp->trace($var,$label,$style),'trace($var,$label,Zend_Debug_FirePhp::'.$style.')');
+            $this->assertTrue($this->_firephp->verifyHeaderMessage('FirePHP.Firebug.Console',
+                                                                   array($style,array($label, $var))),
+                              'trace() generated valid message in response headers');
+            $this->_firephp->clearHeaders();
+        }
+        
+        $style = 'DUMP';
+        
+        $this->assertTrue($class_constants[$style]==$style,'Zend_Debug_FirePhp::'.$style.' is defined and set to '.$style);
+        
+        $this->assertTrue($this->_firephp->trace($var,$label,$style),'trace($var,$label,Zend_Debug_FirePhp::'.$style.')');
+        $this->assertTrue($this->_firephp->verifyHeaderMessage('FirePHP.Dump',
+                                                               array($label=>$var)),
+                          'trace() generated valid message in response headers');
+        $this->_firephp->clearHeaders();
+        
+
+        $style = 'TABLE';
+        $var = array(
+                      array('Column1','Column2','Column3'),
+                      array('Row 1 Column 1','Row 1 Column 2',array('row1','row2')),
+                      array('Row 2 Column 1','Row 2 Column 2',array('row1','row2'))
+                    );
+        
+        $this->assertTrue($class_constants[$style]==$style,'Zend_Debug_FirePhp::'.$style.' is defined and set to '.$style);
+        
+        $this->assertTrue($this->_firephp->trace($var,$label,$style),'trace($var,$label,Zend_Debug_FirePhp::'.$style.')');
+        $this->assertTrue($this->_firephp->verifyHeaderMessage('FirePHP.Firebug.Console',
+                                                               array($style,array($label,$var))),
+                          'trace() generated valid message in response headers');
+        $this->_firephp->clearHeaders();
+*/        
+        
+                
+        $style = 'TRACE';
+        
+        $this->assertTrue($class_constants[$style]==$style,'Zend_Debug_FirePhp::'.$style.' is defined and set to '.$style);
+        
+        $this->assertTrue($this->_firephp->trace($var,null,$style),'trace($var,$label,Zend_Debug_FirePhp::'.$style.')');
+        $this->assertTrue($this->_firephp->verifyHeaderMessage('FirePHP.Firebug.Console',
+                                                               array($style,array('Class'=>'',
+                                                                                  'Type'=>'',
+                                                                                  'Function'=>'',
+                                                                                  'Message'=>'',
+                                                                                  'File'=>'',
+                                                                                  'Line'=>'',
+                                                                                  'Args'=>'',
+                                                                                  'Trace'=>
+                                                                                 ))),
+                          'trace() generated valid message in response headers');
+        $this->_firephp->clearHeaders();
+
+        
+/*
+    const TRACE = 'TRACE';
+    const EXCEPTION = 'EXCEPTION';
+*/
+        
         
     }
 
@@ -176,18 +244,30 @@ class Zend_Debug_FirePhpTest_FirePhp extends Zend_Debug_FirePhp {
     
     public function verifyHeaderMessage($register, $message)
     {
+var_dump($message);
         $message = serialize($message);
-        
         $payload = $this->_getHeaderPayloadObject();
-        
+
         if (!$payload || !$payload[$register]) {
             return false;
         }
- 
-        foreach ($payload[$register] as $msg) {
-            if (serialize($msg)==$message) {
-                return true;
-            }
+
+        switch($register) {
+            case 'FirePHP.Firebug.Console':
+                foreach ($payload[$register] as $msg) {
+var_dump($msg);
+                    if (serialize($msg)==$message) {
+                        return true;
+                    }
+                }
+                break;
+            case 'FirePHP.Dump':
+                foreach ($payload[$register] as $key => $msg) {
+                    if (serialize(array($key=>$msg))==$message) {
+                        return true;
+                    }
+                }
+                break;
         }
         return false;      
     }
