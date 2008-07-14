@@ -76,7 +76,9 @@ class IndexController extends Zend_Controller_Action
         Zend_Debug::trace(array('key1'=>'val1',
                                 'key2'=>array(array('v1','v2'),'v3')),
                           'TestArray', Zend_Debug_FirePhp::LOG);
-        
+
+        Zend_Debug::trace('Trace to here', Zend_Debug_FirePhp::TRACE);
+
         try {
             throw new Exception('Test Exception');
         } catch(Exception $e) {
@@ -89,7 +91,7 @@ class IndexController extends Zend_Controller_Action
                             array('Row 2 Column 1','Row 2 Column 2',array('row1','row2'))
                           ),
                           'This is a Sample Table',
-                          'TABLE');        
+                          Zend_Debug_FirePhp::TABLE);        
 
         Zend_Debug::trace(apache_request_headers(),'RequestHeaders',Zend_Debug_FirePhp::DUMP);
 
