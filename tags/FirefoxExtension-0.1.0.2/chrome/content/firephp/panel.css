@@ -1,0 +1,10 @@
+
+
+.objectLink-PHPVariable {
+  color: DarkGreen;
+  font-family: Monaco, monospace;
+}
+
+.objectLink-PHPVariable:hover {
+  cursor: pointer;
+}
