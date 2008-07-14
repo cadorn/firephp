@@ -1,4 +1,6 @@
 
+2008-07-13 - Release Version: 0.1.0.2
+
 	- Added X-FirePHP-Agent request header when visiting FirePHP related sites
 	- Launch Welcome page once every time FirePHP is upgraded
 	- Added link to welcome page in menus

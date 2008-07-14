@@ -66,7 +66,7 @@
         <echo msg="Creating archive..." />
 
         <tar destfile="./build/FirePHPCore.tar.gz" compression="gzip">
-            <fileset dir="./build">
+            <fileset dir="./build/FirePHPCore">
                 <include name="*" />
             </fileset>
         </tar>
