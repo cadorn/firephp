@@ -1,4 +1,5 @@
 
+	- Added X-FirePHP-Agent request header when visiting FirePHP related sites
 	- Launch Welcome page once every time FirePHP is upgraded
 	- Added link to welcome page in menus
 	- Added links to important sites to menu

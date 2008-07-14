@@ -50,7 +50,7 @@ const NOTIFY_ALL = nsIWebProgress.NOTIFY_ALL;
 
 const firephpURLs =
 {
-    welcome: "http://www.firephp.org/Welcome",
+    hq: "http://www.firephp.org/HQ",
     main: "http://www.firephp.org/",
     docs: "http://www.firephp.org/Wiki/Reference/Fb",
     discuss: "http://groups.google.com/group/FirePHP",
@@ -78,10 +78,8 @@ var FirePHP = top.FirePHP = {
     var currentVersion = FirePHP.getPref(FirePHP.prefDomain,'currentVersion');
     if(currentVersion!=FirePHP.version) {
 
-      var url = firephpURLs['welcome'];
-      url += "?Version="+FirePHP.version;
-      url += "&PreviousVersion="+FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
-      url += "&Trigger=Install";
+      var url = firephpURLs['hq'];
+      url += "?Trigger=Install";
 
       setTimeout(function() {
                    openNewTab(url);
@@ -91,6 +89,10 @@ var FirePHP = top.FirePHP = {
       FirePHP.setPref(FirePHP.prefDomain,'currentVersion',''+FirePHP.version);
     }
     
+  },
+  
+  getPreviousVersion: function() {
+    return FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
   },
   
   /* Enable and disable FirePHP
@@ -158,26 +160,26 @@ var FirePHP = top.FirePHP = {
 
       if(httpChannel.getRequestHeader("User-Agent").match(/\sFirePHP\/([\.|\d]*)\s?/)==null) {
         if (this.isEnabled()) {
-          httpChannel.setRequestHeader("User-Agent", httpChannel.getRequestHeader("User-Agent") + ' ' +
-            "FirePHP/" +
-            this.version, false);
+          httpChannel.setRequestHeader("User-Agent",httpChannel.getRequestHeader("User-Agent") + ' '+
+            "FirePHP/" + this.version, false);
         }
+      }
+      
+      /* Add some info about FirePHP and Firebug into a header to be sent to FirePHP
+       * related sites.
+       */
+      
+      switch(httpChannel.URI.host.toLowerCase()) {
+        case "www.firephp.org":
+        case 'com.cadorn.websites.firephp.macbook.home.cadorn.net':
+          httpChannel.setRequestHeader("X-FirePHP-Agent",
+            '{"firephp.version":"'+FirePHP.version+'","firephp.version.previous":"'+FirePHP.getPreviousVersion()+'","firebug.version":"'+Firebug.version+'"}'
+            , false);
+          break;
       }
     }
   },  
-	
-  openPermissions: function()
-  {
-    var params = {
-        permissionType: "firephp",
-        windowTitle: "FirePHP Allowed Sites",
-        introText: "Choose which web sites are allowed to load custom functionality into FirePHP.",
-        blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
-    };
-
-    openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",'', params);
-  },
-	
+		
   isURIAllowed: function(host)
   {
     if(!host) return false;
@@ -332,66 +334,6 @@ var FirePHP = top.FirePHP = {
     var obj = FirebugChrome.window.document.getElementById('firephp-variable-inspector-overlay');
     obj.hidden = true;
     
-  },
-  
-  openAboutDialog: function()
-  {
-      var extensionManager = CCSV("@mozilla.org/extensions/manager;1", "nsIExtensionManager");
-      openDialog("chrome://mozapps/content/extensions/about.xul", "",
-          "chrome,centerscreen,modal", "urn:mozilla:item:FirePHPExtension-Build@firephp.org", extensionManager.datasource);
-  },
-
-  visitWebsite: function(which)
-  {
-      if(which=="welcome") {
-
-        var url = firephpURLs[which];
-        url += "?Version="+FirePHP.version;
-        url += "&PreviousVersion="+FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
-        url += "&Trigger=User";
-        openNewTab(url);
-
-      } else {
-        openNewTab(firephpURLs[which]);
-      }
-  },
-  
-  onOptionsShowing: function(popup)
-  {
-      for (var child = popup.firstChild; child; child = child.nextSibling)
-      {
-          if (child.localName == "menuitem")
-          {
-              var option = child.getAttribute("option");
-              if (option)
-              {
-                  if(option=='enabled') {
-                    var checked = FirePHP.getPref(FirePHP.prefDomain, option);
-                    child.setAttribute("checked", checked);
-                  }
-              }
-          }
-      }
-  },
-  
-  onToggleOption: function(menuitem)
-  {
-      var option = menuitem.getAttribute("option");
-      var checked = menuitem.getAttribute("checked") == "true";
-
-      FirePHP.setPref(FirePHP.prefDomain, option, checked);
-      
-      if(option=="enabled" && checked) {
-        
-        if (FB_NEW && Firebug.FirePHP.activeContext) {
-          
-          if(!Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext) ||
-             !Firebug.Console.isEnabled(Firebug.FirePHP.activeContext)) {
-                
-            alert('You must have the Firebug Console and Net panels enabled to use FirePHP!');                
-          }
-        }
-      }
   },
   
   /* Can use Firebug.getPref() for FB 1.2+ */
@@ -712,7 +654,79 @@ Firebug.FirePHP = extend(Firebug.Module,
   logWarning: function(args)
   {
 	  return Firebug.Console.logFormatted(args, this.activeContext, 'warn', false, null);
+  },
+  
+  visitWebsite: function(which)
+  {
+      if(which=='hq') {
+
+        var url = firephpURLs[which];
+        url += "?Trigger=User";
+        openNewTab(url);
+
+      } else {
+        openNewTab(firephpURLs[which]);
+      }
+  },
+
+  
+  openAboutDialog: function()
+  {
+      var extensionManager = CCSV("@mozilla.org/extensions/manager;1", "nsIExtensionManager");
+      openDialog("chrome://mozapps/content/extensions/about.xul", "",
+          "chrome,centerscreen,modal", "urn:mozilla:item:FirePHPExtension-Build@firephp.org", extensionManager.datasource);
+  },
+  
+  onOptionsShowing: function(popup)
+  {
+      for (var child = popup.firstChild; child; child = child.nextSibling)
+      {
+          if (child.localName == "menuitem")
+          {
+              var option = child.getAttribute("option");
+              if (option)
+              {
+                  if(option=='enabled') {
+                    var checked = FirePHP.getPref(FirePHP.prefDomain, option);
+                    child.setAttribute("checked", checked);
+                  }
+              }
+          }
+      }
+  },
+  
+  onToggleOption: function(menuitem)
+  {
+      var option = menuitem.getAttribute("option");
+      var checked = menuitem.getAttribute("checked") == "true";
+
+      FirePHP.setPref(FirePHP.prefDomain, option, checked);
+      
+      if(option=="enabled" && checked) {
+        
+        if (FB_NEW && Firebug.FirePHP.activeContext) {
+          
+          if(!Firebug.NetMonitor.isEnabled(Firebug.FirePHP.activeContext) ||
+             !Firebug.Console.isEnabled(Firebug.FirePHP.activeContext)) {
+                
+            alert('You must have the Firebug Console and Net panels enabled to use FirePHP!');                
+          }
+        }
+      }
+  },
+
+  openPermissions: function()
+  {
+    var params = {
+        permissionType: "firephp",
+        windowTitle: "FirePHP Allowed Sites",
+        introText: "Choose which web sites are allowed to load custom functionality into FirePHP.",
+        blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: ""
+    };
+
+    openWindow("Browser:Permissions", "chrome://browser/content/preferences/permissions.xul",'', params);
   }
+  
     		   
 });
 
