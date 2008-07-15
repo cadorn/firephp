@@ -13,8 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -25,39 +24,39 @@ require_once 'Zend/Log.php';
 /** Zend_Log_Writer_Abstract */
 require_once 'Zend/Log/Writer/Abstract.php';
 
-/** Zend_Debug_FirePhp */
-require_once 'Zend/Debug/FirePhp.php';
+/** Zend_Wildfire_FirePhp */
+require_once 'Zend/Wildfire/FirePhp.php';
 
 /**
  * Writes log messages to the Firebug Console via FirePHP.
  * 
  * @category   Zend
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Debug_FirePhp_LogWriter extends Zend_Log_Writer_Abstract
+class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
 {
+
     /**
      * Maps logging priorities to logging display styles
      * @var array
      */
-    protected $_logStyleMap = array(Zend_Log::EMERG => Zend_Debug_FirePhp::ERROR,
-                                    Zend_Log::EMERG => Zend_Debug_FirePhp::ERROR,
-                                    Zend_Log::ALERT => Zend_Debug_FirePhp::ERROR,
-                                    Zend_Log::CRIT => Zend_Debug_FirePhp::ERROR,
-                                    Zend_Log::ERR => Zend_Debug_FirePhp::ERROR,
-                                    Zend_Log::WARN => Zend_Debug_FirePhp::WARN,
-                                    Zend_Log::NOTICE => Zend_Debug_FirePhp::INFO,
-                                    Zend_Log::INFO => Zend_Debug_FirePhp::INFO,
-                                    Zend_Log::DEBUG => Zend_Debug_FirePhp::LOG);
+    protected $_logStyleMap = array(Zend_Log::EMERG => Zend_Wildfire_FirePHP::ERROR,
+                                    Zend_Log::EMERG => Zend_Wildfire_FirePHP::ERROR,
+                                    Zend_Log::ALERT => Zend_Wildfire_FirePHP::ERROR,
+                                    Zend_Log::CRIT => Zend_Wildfire_FirePHP::ERROR,
+                                    Zend_Log::ERR => Zend_Wildfire_FirePHP::ERROR,
+                                    Zend_Log::WARN => Zend_Wildfire_FirePHP::WARN,
+                                    Zend_Log::NOTICE => Zend_Wildfire_FirePHP::INFO,
+                                    Zend_Log::INFO => Zend_Wildfire_FirePHP::INFO,
+                                    Zend_Log::DEBUG => Zend_Wildfire_FirePHP::LOG);
     
     /**
      * The default logging style for un-mapped priorities
      * @var string
      */    
-    protected $_defaultLogStyle = Zend_Debug_FirePhp::LOG;
+    protected $_defaultLogStyle = Zend_Wildfire_FirePHP::LOG;
     
     /**
      * Set the default log style for un-mapped priorities
@@ -101,7 +100,7 @@ class Zend_Debug_FirePhp_LogWriter extends Zend_Log_Writer_Abstract
     }
 
     /**
-     * Log a message to FirePHP.
+     * Log a message to the Firebug Console.
      *
      * @param array $event The event data
      * @return void
@@ -113,6 +112,6 @@ class Zend_Debug_FirePhp_LogWriter extends Zend_Log_Writer_Abstract
         } else {
             $type = $this->_defaultLogStyle;
         }
-        Zend_Debug_FirePhp::getInstance()->trace($event['message'], null, $type);
+        Zend_Wildfire_FirePhp::getInstance()->send($event['message'], null, $type);
     }
 }

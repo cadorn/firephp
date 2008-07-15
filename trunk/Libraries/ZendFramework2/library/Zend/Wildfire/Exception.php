@@ -12,28 +12,24 @@
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
  *
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @category   Zend
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Exception.php 8064 2008-02-16 10:58:39Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+
+/** Zend_Exception */
+require_once 'Zend/Exception.php';
 
 
 /**
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @category   Zend
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Debug_FirePhp_Plugin_Interface
-{
-  
-    /**
-     * Flush all profiling data to FirePHP.
-     * 
-     * @param Zend_Debug_FirePhp $firephp The FirePHP instance
-     * @return void
-     */
-    public function flush(Zend_Debug_FirePhp $firephp);
-    
-}
+class Zend_Wildfire_Exception extends Zend_Exception
+{}
+

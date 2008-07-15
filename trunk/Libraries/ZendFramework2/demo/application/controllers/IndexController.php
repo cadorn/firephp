@@ -13,8 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -29,8 +28,7 @@ require_once 'Zend/Exception.php';
  * Sample index controller.
  *
  * @category   Zend
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -38,88 +36,25 @@ class IndexController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-        /*
-         * Zend_Log_Writer_FirePhp
-         */
+
+        /* Log some messages */
 
         $logger = Zend_Registry::get('logger');
 
-        $logger->log('Emergency: system is unusable', Zend_Log::EMERG);
-        $logger->log('Alert: action must be taken immediately', Zend_Log::ALERT);
-        $logger->log('Critical: critical conditions', Zend_Log::CRIT);
-        $logger->log('Error: error conditions', Zend_Log::ERR);
-        $logger->log('Warning: warning conditions', Zend_Log::WARN);
+        $logger->log('Emergency: system is unusable',            Zend_Log::EMERG);
+        $logger->log('Alert: action must be taken immediately',  Zend_Log::ALERT);
+        $logger->log('Critical: critical conditions',            Zend_Log::CRIT);
+        $logger->log('Error: error conditions',                  Zend_Log::ERR);
+        $logger->log('Warning: warning conditions',              Zend_Log::WARN);
         $logger->log('Notice: normal but significant condition', Zend_Log::NOTICE);
-        $logger->log('Informational: informational messages', Zend_Log::INFO);
-        $logger->log('Debug: debug messages', Zend_Log::DEBUG);
-        $logger->log(array('$_SERVER',$_SERVER), Zend_Log::DEBUG);
+        $logger->log('Informational: informational messages',    Zend_Log::INFO);
+        $logger->log('Debug: debug messages',                    Zend_Log::DEBUG);
+        $logger->log(array('$_SERVER',$_SERVER),                 Zend_Log::DEBUG);
         
-        
-        /*
-         * Zend_Debug
-         */
-        
-        Zend_Debug::trace('Hello World'); /* Defaults to Zend_Debug_FirePhp::LOG */
-        
-        Zend_Debug::trace('Log message'  , Zend_Debug_FirePhp::LOG);
-        Zend_Debug::trace('Log message'  , 'LOG');
-        Zend_Debug::trace('Info message' , Zend_Debug_FirePhp::INFO);
-        Zend_Debug::trace('Info message' , 'INFO');
-        Zend_Debug::trace('Warn message' , Zend_Debug_FirePhp::WARN);
-        Zend_Debug::trace('Warn message' , 'WARN');
-        Zend_Debug::trace('Error message', Zend_Debug_FirePhp::ERROR);
-        Zend_Debug::trace('Error message', 'ERROR');
-        
-        Zend_Debug::trace('Message with label','Label', Zend_Debug_FirePhp::LOG);
-        Zend_Debug::trace('Message with label','Label', 'LOG');
-        
-        Zend_Debug::trace(array('key1'=>'val1',
-                                'key2'=>array(array('v1','v2'),'v3')),
-                          'TestArray', Zend_Debug_FirePhp::LOG);
+        /* Throw an exception to test the default error handler. */
+       
+        throw new Zend_Exception('Test Exception');
 
-        Zend_Debug::trace('Trace to here', Zend_Debug_FirePhp::TRACE);
-
-        try {
-            throw new Exception('Test Exception');
-        } catch(Exception $e) {
-            Zend_Debug::trace($e);
-        }
-                
-        Zend_Debug::trace(array(
-                            array('Column1','Column2','Column3'),
-                            array('Row 1 Column 1','Row 1 Column 2',array('row1','row2')),
-                            array('Row 2 Column 1','Row 2 Column 2',array('row1','row2'))
-                          ),
-                          'This is a Sample Table',
-                          Zend_Debug_FirePhp::TABLE);        
-
-        Zend_Debug::trace(apache_request_headers(),'RequestHeaders',Zend_Debug_FirePhp::DUMP);
-
-  
-        /* Run some SQL so we can log the queries using Zend_Db_Profiler_FirePhp */
-
-        $db = Zend_Registry::get('db');
-
-        $db->getConnection()->exec('CREATE TABLE foo (
-                                      id      INTEGNER NOT NULL,
-                                      col1    VARCHAR(10) NOT NULL  
-                                    )');
-
-        $db->insert('foo', array('id'=>1,'col1'=>'original'));
-
-        $db->fetchAll('SELECT * FROM foo WHERE id = ?', 1);
-
-        $db->update('foo', array('col1'=>'new'), 'id = 1');
-
-        $db->fetchAll('SELECT * FROM foo WHERE id = ?', 1);
-
-        $db->delete('foo', 'id = 1');
-
-        $db->getConnection()->exec('DROP TABLE foo');
-          
-        
-        /* Throw an exception so that or error controller can log it. */
-        throw new Zend_Exception('Zend Test Exception');
-        
     }
 }
+
