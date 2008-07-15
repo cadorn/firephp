@@ -13,24 +13,16 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-
-/** Zend_Debug */
-require_once 'Zend/Debug.php';
-
-/** Zend_Debug_FirePhp_Exception */
-require_once 'Zend/Debug/FirePhp/Exception.php';
 
 /**
  * A sample error controller.
  *
  * @category   Zend
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -40,23 +32,17 @@ class ErrorController extends Zend_Controller_Action
     {
         /*
          * Make sure we don't log exceptions thrown during the exception logging.
-         * If we do we will create an infinite loop.
+         * If we do we will create an infinite loop!
          */
 
         try {
-          
+
             Zend_Registry::get('logger')->err($this->_getParam('error_handler')->exception);
-            /* 
-             * OR
-             * 
-             * Zend_Debug::trace($errors->exception);
-             * 
-             */
           
         } catch(Exception $e) {
           
           /* TODO: You can log this exception somewhere or display it during development.
-           *       DO NOT USE THE FirePHP error logging functionality here!
+           *       DO NOT USE THE logger here as it will create an infinite loop!
            */
           
         }

@@ -11,25 +11,35 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
- *
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * 
+ * @category   Zend
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Exception.php 8064 2008-02-16 10:58:39Z thomas $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-
-
-/** Zend_Controller_Exception */
-require_once 'Zend/Controller/Exception.php';
-
 
 /**
- * @package    Zend_Debug
- * @subpackage FirePhp
+ * @category   Zend
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Debug_FirePhp_Exception extends Zend_Controller_Exception
-{}
-
+interface Zend_Wildfire_PluginInterface
+{
+    
+    /**
+     * Get the unique indentifier for this plugin.
+     * 
+     * @return string Returns the URI of the plugin.
+     */
+    public function getUri();
+  
+    /**
+     * Retrieves all formatted data ready to be sent by the channel.
+     * 
+     * @param Zend_Wildfire_ChannelInterface $channel The instance of the channel that will be transmitting the data
+     * @return mixed Returns the data to be sent by the channel.
+     */
+    public function getPayload(Zend_Wildfire_ChannelInterface $channel);
+    
+}

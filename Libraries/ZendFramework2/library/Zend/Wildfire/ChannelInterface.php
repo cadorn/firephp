@@ -11,28 +11,27 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
- *
- * @package    Zend_Debug
+ * 
+ * @category   Zend
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-
 
 /**
- * @package    Zend_Debug
+ * @category   Zend
+ * @package    Zend_Wildfire
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Debug_MethodHandler_Interface
+interface Zend_Wildfire_ChannelInterface
 {
   
     /**
-     * Handle a debug call.
+     * Determine if channel is ready.
      * 
-     * @param string $method The debug method that was called
-     * @param array $arguments List of arguments passed to the debug method
-     * @return void
+     * @return boolean Returns TRUE if channel is ready.
      */
-    public function handleDebugMethod($method, $arguments);
+    public function isReady();
     
 }
