@@ -88,7 +88,6 @@ var FirePHP = top.FirePHP = {
       FirePHP.setPref(FirePHP.prefDomain,'previousVersion',''+currentVersion);
       FirePHP.setPref(FirePHP.prefDomain,'currentVersion',''+FirePHP.version);
     }
-    
   },
   
   getPreviousVersion: function() {
@@ -230,23 +229,30 @@ var FirePHP = top.FirePHP = {
 				}      
     }
     
+    /* New Wildfire HttpHeaders Channel */
+    var plugin = new Wildfire.Plugin.FirePHP;
+    plugin.init();
+
+    info['plugin'] = plugin;
     
     if(parser=='visit') {
 
       headers_in.visitResponseHeaders({
         visitHeader: function(name, value)
         {
+          plugin.channel.messageReceived(name, value);
           parseHeader(name,value);
         }
       });						
       
     } else
     if(parser=='array') {
-      
       for( var index in headers_in ) {
+        plugin.channel.messageReceived(headers_in[index].name, headers_in[index].value);
         parseHeader(headers_in[index].name,headers_in[index].value);
       }
     }
+            
     
 		/* Sort the header and create final data object */
 		
@@ -510,10 +516,11 @@ Firebug.FirePHP = extend(Firebug.Module,
     
     var mask = info['processorurl'];
     var data = info['data'];
+    var wildfire =  info['plugin'];
 
 		var domain = getDomain(mask);
     
-		if(data) {
+		if(data || wildfire.hasMessages()) {
 			if(!mask) {
 				mask = 'chrome://firephp/content/RequestProcessor.js';
 			} else {
@@ -570,6 +577,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 			var proecessor_context = {FirePHPProcessor: this.FirePHPProcessor,
 										 Firebug: Firebug,
 										 data: data,
+                     wildfire: wildfire,
 										 context: this.activeContext,
 										 url: url};
 
@@ -587,7 +595,7 @@ Firebug.FirePHP = extend(Firebug.Module,
           try {
             eval(FirePHPProcessor.code);
             
-            FirePHPProcessor.ProcessRequest(url,data);
+            FirePHPProcessor.ProcessRequest(wildfire,url,data);
           } 
           catch (e) {
             Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!', e]);
@@ -598,6 +606,8 @@ Firebug.FirePHP = extend(Firebug.Module,
 
         FirePHPLib.jQuery.ajax({
           type: 'GET',
+          dataType: 'text',
+          cache: false,
           url: mask,
           success: function(ReturnData){
             with (proecessor_context) {
@@ -610,7 +620,7 @@ Firebug.FirePHP = extend(Firebug.Module,
                 eval(ReturnData);
                 
                 FirePHPProcessor._Init();
-                FirePHPProcessor.ProcessRequest(url,data);
+                FirePHPProcessor.ProcessRequest(wildfire,url,data);
               } 
               catch (e) {
                 Firebug.FirePHP.logWarning(['Error executing custom FirePHP processor!', e]);
@@ -631,7 +641,7 @@ Firebug.FirePHP = extend(Firebug.Module,
                   eval(XMLHttpRequest.responseText);
                   
                   FirePHPProcessor._Init();
-                  FirePHPProcessor.ProcessRequest(url,data);
+                  FirePHPProcessor.ProcessRequest(wildfire,url,data);
                 } 
                 catch (e) {
                   Firebug.FirePHP.logWarning(['Error executing default FirePHP processor!', e]);
@@ -665,6 +675,26 @@ Firebug.FirePHP = extend(Firebug.Module,
         openNewTab(url);
 
       } else {
+  
+/*  
+function handler() {
+ if(this.readyState == 4 && this.status == 200) {
+  
+  Firebug.Console.log(this.responseText);
+  
+ } else if (this.readyState == 4 && this.status != 200) {
+  Firebug.Console.log('oops error: '+this.status);
+  Firebug.Console.log(this.responseText);
+ }
+}
+
+var client = new XMLHttpRequest();
+client.onreadystatechange = handler;
+client.open("GET", "chrome://firephp/content/FirePHP.js");
+//client.open("GET", "http://www.firephp.org/js/jquery.js");
+client.send(null);
+*/
+        
         openNewTab(firephpURLs[which]);
       }
   },

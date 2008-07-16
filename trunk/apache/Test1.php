@@ -14,7 +14,7 @@ fb('Main Page');
   
 <iframe id="frame1" name="frame1" src="Version1.php?frame=1" width="500" height="300"></iframe>
 
-<iframe src="Version1.php?frame=2" width="500" height="300"></iframe>
+<iframe src="http://com.googlecode.firephp.macbook.home.cadorn.net/Libraries/ZendFramework2/demo/public/" width="500" height="300"></iframe>
 
 <p><a href="#" onClick="$.get('Version1.php?var=1');">Version1.php?var=1</a></p>
 <p><a href="#" onClick="$.get('ConsoleTest.php', {var1:'val1'});">ConsoleTest.php (GET)</a></p>

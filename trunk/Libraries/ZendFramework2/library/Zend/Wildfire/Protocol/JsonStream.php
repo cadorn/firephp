@@ -40,15 +40,16 @@ require_once 'Zend/Json/Encoder.php';
 
 class Zend_Wildfire_Protocol_JsonStream
 {
+    /**
+     * The protocol URI for this protocol
+     */
+    const PROTOCOL_URI = 'http://meta.wildfirehq.org/Protocol/JsonStream/0.1';
 
-    
     /**
      * All messages to be sent.
      * @var array
      */
     protected $_messages = array();
-
-
 
     /**
      * Record a message with the given data in the given structure
@@ -77,11 +78,23 @@ class Zend_Wildfire_Protocol_JsonStream
     /**
      * Remove all qued messages
      * 
-     * @return boolean Returns TRUE
+     * @param Zend_Wildfire_PluginInterface $plugin The plugin for which to clear messages
+     * @return boolean Returns TRUE if messages were present
      */
-    public function clearMessages()
+    public function clearMessages(Zend_Wildfire_PluginInterface $plugin)
     {
-        $this->_messages = array();
+        if(!isset($this->_messages[$structure])) {
+            return false;
+        }
+      
+        $uri = $plugin->getUri();
+      
+        if(!isset($this->_messages[$structure][$uri])) {
+            return false;
+        }
+        
+        unset($this->_messages[$structure][$uri]);
+
         return true;
     }
 
@@ -111,35 +124,34 @@ class Zend_Wildfire_Protocol_JsonStream
         if (!$this->_messages) {
             return false;
         }
-        
-        $payload = array();
-        
+                
+        $protocol_index = 1;
         $structure_index = 1;
         $plugin_index = 1;
         $message_index = 1;
+
+        $payload = array();
+
+        $payload[] = array('Protocol-'.$protocol_index, self::PROTOCOL_URI);
         
         foreach ($this->_messages as $structure_uri => $plugin_messages ) {
-
-            $structure_id = str_pad($structure_index,3,'0',STR_PAD_LEFT);
-            $structure_index++;
             
-            $payload[] = array('S-'.$structure_id, $structure_uri);
+            $payload[] = array($protocol_index.'-Structure-'.$structure_index, $structure_uri);
 
             foreach ($plugin_messages as $plugin_uri => $messages ) {
-          
-                $plugin_id = str_pad($plugin_index,3,'0',STR_PAD_LEFT);
-                $plugin_index++;
                 
-                $payload[] = array('P-'.$plugin_id, $plugin_uri);
+                $payload[] = array($protocol_index.'-Plugin-'.$plugin_index, $plugin_uri);
           
                 foreach( $messages as $message ) {
                   
                     foreach (explode("\n",chunk_split($message, 5000, "\n")) as $part) {
+
                         if ($part) {
                   
-                            $payload[] = array($structure_id.'-'.
-                                               $plugin_id.'-'.
-                                               str_pad($message_index,5,'0',STR_PAD_LEFT),
+                            $payload[] = array($protocol_index.'-'.
+                                               $structure_index.'-'.
+                                               $plugin_index.'-'.
+                                               $message_index,
                                                $part);
                             
                             $message_index++;
@@ -150,10 +162,12 @@ class Zend_Wildfire_Protocol_JsonStream
                         }
                     }
                 }
+                $plugin_index++;
             }
+            $structure_index++;
         }
         
-        $payload[] = array('I', $message_index-1);
+        $payload[] = array($protocol_index.'-Index', $message_index-1);
 
         return $payload;
     }

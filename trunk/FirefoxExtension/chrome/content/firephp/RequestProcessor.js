@@ -291,11 +291,9 @@ FirePHPProcessor.Init = function() {
 /* 
  * Called once for each request as it comes in
  */
-FirePHPProcessor.ProcessRequest = function(URL,Data) {
-
-  var data = json_parse(Data);
-
-  if (data['FirePHP.Firebug.Console']) {
+FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
+  
+  if (Data || Wildfire.hasMessages()) {
 
     Firebug.Console.openGroup([URL], null, "firephpRequestGroup", null, false);
 
@@ -305,44 +303,78 @@ FirePHPProcessor.ProcessRequest = function(URL,Data) {
      */
     try {
 			
-	    for (var index in data['FirePHP.Firebug.Console']) {
-	
-	      var item = data['FirePHP.Firebug.Console'][index];
-        if (item && item.length==2) {
+      if(Data) {
+        var data = json_parse(Data);
+      
+        if (data['FirePHP.Firebug.Console']) {
         
-          var mode = item[0].toLowerCase();
-          
-          /* Change mode from TRACE to EXCEPTION for backwards compatibility */
-          if (mode == 'trace') {
-            var change = true;
-            for (var key in item[1]) {
-              if (key == 'Type') {
-                change = false;
-              }
-            }
-            if (change) {
-              mode = 'exception';
-              item[1].Type = 'throw';
-            }
-          }
-                    
-          if (mode == 'log' || mode == 'info' || mode == 'warn' || mode == 'table' || mode == 'trace') {
-          
-            this.logToFirebug(mode, item[1]);
+    	    for (var index in data['FirePHP.Firebug.Console']) {
+    	
+    	      var item = data['FirePHP.Firebug.Console'][index];
+            if (item && item.length==2) {
             
-          } else 
-          if (mode == 'error' || mode == 'exception') {
-          
-            Firebug.Errors.increaseCount(this.context);
-            
-            this.logToFirebug(mode, item[1]);
-          }
+              this.processMessage(item[0], item[1]);
+            }
+    	    }
         }
-	    }
+      }      
 		} catch(e) {
       this.logToFirebug('error', ['There was a problem writing your data from X-FirePHP-Data[\'FirePHP.Firebug.Console\'] to the console.',e]);
 		}
 
+
+    try {
+			
+      if(Wildfire.hasMessages()) {
+           
+        var messages = Wildfire.getMessages('http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1');
+           
+        for( var index in messages ) {
+          
+          var item = json_parse(messages[index]);
+          
+          this.processMessage(item[0].Type, item[1]);
+        }
+      }
+ 
+ 		} catch(e) {
+      this.logToFirebug('error', ['There was a problem writing your data from the Wildfire Plugin http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1',e]);
+		}
+
     Firebug.Console.closeGroup();
-  } 	
+    
+  }
+}
+
+
+
+FirePHPProcessor.processMessage = function(mode, data) {
+
+  mode = mode.toLowerCase();
+
+  /* Change mode from TRACE to EXCEPTION for backwards compatibility */
+  if (mode == 'trace') {
+    var change = true;
+    for (var key in data) {
+      if (key == 'Type') {
+        change = false;
+      }
+    }
+    if (change) {
+      mode = 'exception';
+      item[1].Type = 'throw';
+    }
+  }
+            
+  if (mode == 'log' || mode == 'info' || mode == 'warn' || mode == 'table' || mode == 'trace') {
+  
+    this.logToFirebug(mode, data);
+    
+  } else 
+  if (mode == 'error' || mode == 'exception') {
+  
+    Firebug.Errors.increaseCount(this.context);
+    
+    this.logToFirebug(mode, data);
+  }
 }
