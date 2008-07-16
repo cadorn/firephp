@@ -91,17 +91,22 @@ class Zend_Wildfire_FirePhp
     /**
      * The plugin URI for this plugin
      */
-    const PLUGIN_URI = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP';
+    const PLUGIN_URI = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/1.6';
+    
+    /**
+     * The protocol URI for this plugin
+     */
+    const PROTOCOL_URI = Zend_Wildfire_Protocol_JsonStream::PROTOCOL_URI;
     
     /**
      * The structure URI for the Dump structure
      */
-    const STRUCTURE_URI_DUMP = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/Dump';
+    const STRUCTURE_URI_DUMP = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/Dump/0.1';
 
     /**
      * The structure URI for the Firebug Console structure
      */
-    const STRUCTURE_URI_FIREBUGCONSOLE = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole';
+    const STRUCTURE_URI_FIREBUGCONSOLE = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1';
   
     /**
      * Singleton instance
@@ -115,12 +120,6 @@ class Zend_Wildfire_FirePhp
      */
     protected $_enabled = true;
     
-    /**
-     * The protocol to be used to encode the messages.
-     * @var Zend_Wildfire_Protocol
-     */
-    protected $_protocol = null;
-
     /**
      * The channel via which to send the encoded messages.
      * @var Zend_Wildfire_ChannelInterface
@@ -163,9 +162,6 @@ class Zend_Wildfire_FirePhp
     protected function __construct()
     {
         $this->_channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
-        $this->_channel->registerPlugin($this);
-
-        $this->_protocol = new Zend_Wildfire_Protocol_JsonStream();
     }
 
     /**
@@ -205,7 +201,7 @@ class Zend_Wildfire_FirePhp
         $previous = $this->_enabled;
         $this->_enabled = $enabled;
         if (!$this->_enabled) {
-            $this->_protocol->clearMessages();
+            $this->_channel->getProtocol(self::PROTOCOL_URI)->clearMessages($this);
         }
         return $previous;
     }
@@ -230,10 +226,10 @@ class Zend_Wildfire_FirePhp
      * @return boolean Returns TRUE if the variable was added to the response headers.
      * @throws Zend_Debug_FirePhp_Exception
      */
-    public function send($var, $label=null, $type=null)
+    public static function send($var, $label=null, $type=null)
     {
-        if (!$this->_enabled ||
-            !$this->_channel->isReady()) {
+        if (!self::$_instance->_enabled ||
+            !self::$_instance->_channel->isReady()) {
             return false; 
         }
 
@@ -300,9 +296,9 @@ class Zend_Wildfire_FirePhp
         
         if ($type == self::DUMP) {
           
-          return $this->_recordMessage(self::STRUCTURE_URI_DUMP,
-                                       array('key'=>$label,
-                                             'data'=>$var));
+          return self::$_instance->_recordMessage(self::STRUCTURE_URI_DUMP,
+                                                  array('key'=>$label,
+                                                        'data'=>$var));
           
         } else {
           
@@ -310,9 +306,9 @@ class Zend_Wildfire_FirePhp
             $var = array($label,$var);
           }
           
-          return $this->_recordMessage(self::STRUCTURE_URI_FIREBUGCONSOLE,
-                                       array('data'=>$var,
-                                             'meta'=>array('Type'=>$type)));
+          return self::$_instance->_recordMessage(self::STRUCTURE_URI_FIREBUGCONSOLE,
+                                                  array('data'=>$var,
+                                                        'meta'=>array('Type'=>$type)));
         }
     }
     
@@ -341,9 +337,10 @@ class Zend_Wildfire_FirePhp
                     $this->_messages[$structure] = array();
                 }
                 
-                return $this->_protocol->recordMessage($this,
-                                                       $structure,
-                                                       array($data['key']=>$data['data']));
+                return $this->_channel->getProtocol(self::PROTOCOL_URI)->
+                           recordMessage($this,
+                                         $structure,
+                                         array($data['key']=>$data['data']));
                 
             case self::STRUCTURE_URI_FIREBUGCONSOLE:
             
@@ -357,10 +354,11 @@ class Zend_Wildfire_FirePhp
                     throw new Zend_Wildfire_Exception('You must supply data.');
                 }
               
-                return $this->_protocol->recordMessage($this,
-                                                       $structure,
-                                                       array($data['meta'],
-                                                             $data['data']));
+                return $this->_channel->getProtocol(self::PROTOCOL_URI)->
+                           recordMessage($this,
+                                         $structure,
+                                         array($data['meta'],
+                                               $data['data']));
 
             default:
                 throw new Zend_Wildfire_Exception('Structure of name "'.$structure.'" is not recognized.');
@@ -374,7 +372,7 @@ class Zend_Wildfire_FirePhp
     /*
      * Zend_Wildfire_PluginInterface
      */
-  
+
     /**
      * Get the unique indentifier for this plugin.
      * 
@@ -383,17 +381,6 @@ class Zend_Wildfire_FirePhp
     public function getUri()
     {
         return self::PLUGIN_URI;
-    }
-  
-    /**
-     * Retrieves all formatted data ready to be sent by the channel.
-     * 
-     * @param Zend_Wildfire_ChannelInterface $channel The instance of the channel that will be transmitting the data
-     * @return mixed Returns the data to be sent by the channel.
-     */
-    public function getPayload(Zend_Wildfire_ChannelInterface $channel)
-    {
-        return $this->_protocol->getPayload($channel);
     }
 }
 

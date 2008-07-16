@@ -34,6 +34,9 @@ require_once('Zend/Controller/Response/Abstract.php');
 /** Zend_Controller_Plugin_Abstract */
 require_once 'Zend/Controller/Plugin/Abstract.php';
 
+/** Zend_Wildfire_Protocol_JsonStream */
+require_once 'Zend/Wildfire/Protocol/JsonStream.php';
+
 /**
  * Implements communication via HTTP request and response headers for Wildfire Protocols.
  * 
@@ -50,7 +53,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      * The string to be used to prefix the headers.
      * @var string
      */
-    protected static $_headerPrefix = 'X-WF01-';
+    protected static $_headerPrefix = 'X-WF-';
  
     /**
      * Singleton instance
@@ -71,11 +74,11 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
     protected $_response = null;
     
     /**
-     * List of plugins that will receive/send data
+     * The protocol instances for this channel
      * @var array
      */
-    protected $_plugins = array();
-                
+    protected $_protocols = null;
+    
     /**
      * Initialize singleton instance.
      *
@@ -130,20 +133,35 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
         }
         return self::$_instance;
     }
-
+    
     /**
-     * Register a plugin that will receive and send data
+     * Get the instance of a give protocol for this channel
      * 
-     * @param Zend_Wildfire_PluginInterface $plugin The plugin to be added
-     * @return boolean Returns TRUE if added, false if already present
+     * @param string $uri The URI for the protocol
+     * @return object Returns the protocol instance for the diven URI
      */
-    public function registerPlugin(Zend_Wildfire_PluginInterface $plugin)
+    public function getProtocol($uri)
     {
-        if (in_array($plugin, $this->_plugins)) {
-            return false;
+        if (!isset($this->_protocols[$uri])) {
+            $this->_protocols[$uri] = $this->_initProtocol($uri);
         }
-        array_push($this->_plugins, $plugin);
-        return true;
+ 
+        return $this->_protocols[$uri];
+    }
+    
+    /**
+     * Initialize a new protocol
+     * 
+     * @param string $uri The URI for the protocol to be initialized
+     * @return object Returns the new initialized protocol instance
+     */
+    protected function _initProtocol($uri)
+    {
+        switch ($uri) {
+            case Zend_Wildfire_Protocol_JsonStream::PROTOCOL_URI;
+                return new Zend_Wildfire_Protocol_JsonStream();
+        }
+        throw new Zend_Wildfire_Exception('Tyring to initialize unknown protocol for URI "'.$uri.'".');
     }
     
     
@@ -176,12 +194,13 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
-        if (!$this->isReady() || !$this->_plugins) {
+        if (!$this->isReady()) {
             return;
         }
 
-        foreach ( $this->_plugins as $plugin ) {
-            $payload = $plugin->getPayload($this);
+        foreach ( $this->_protocols as $protocol ) {
+
+            $payload = $protocol->getPayload($this);
             
             if ($payload) {
                 foreach( $payload as $message ) {

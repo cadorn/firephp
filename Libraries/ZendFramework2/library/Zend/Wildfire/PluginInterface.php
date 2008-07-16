@@ -33,13 +33,5 @@ interface Zend_Wildfire_PluginInterface
      * @return string Returns the URI of the plugin.
      */
     public function getUri();
-  
-    /**
-     * Retrieves all formatted data ready to be sent by the channel.
-     * 
-     * @param Zend_Wildfire_ChannelInterface $channel The instance of the channel that will be transmitting the data
-     * @return mixed Returns the data to be sent by the channel.
-     */
-    public function getPayload(Zend_Wildfire_ChannelInterface $channel);
     
 }

@@ -11,6 +11,10 @@
   <script type="application/x-javascript" src="chrome://firephp/content/json_parse.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHPLib.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/jquery.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/Wildfire/Wildfire.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/Wildfire/Channel/HttpHeaders.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/Wildfire/Protocol/JsonStream.js"/>
+  <script type="application/x-javascript" src="chrome://firephp/content/Wildfire/Plugin/FirePHP.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirePHP.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/FirebugNetOverride.js"/>
   <script type="application/x-javascript" src="chrome://firephp/content/reps.js"/>
