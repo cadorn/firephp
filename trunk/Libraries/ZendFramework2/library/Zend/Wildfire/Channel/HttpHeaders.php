@@ -60,19 +60,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      * @var Zend_Wildfire_Channel_HttpHeaders
      */
     protected static $_instance = null;
- 
-    /**
-     * Instance of Zend_Controller_Request_Abstract
-     * @var Zend_Controller_Request_Abstract
-     */
-    protected $_request = null;
-
-    /**
-     * Instance of Zend_Controller_Response_Abstract
-     * @var Zend_Controller_Response_Abstract
-     */
-    protected $_response = null;
-    
+     
     /**
      * The protocol instances for this channel
      * @var array
@@ -106,25 +94,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
         
         return self::$_instance;
     }
-    
-    /**
-     * Constructor
-     * @return void
-     * @throws Zend_Wildfire_Exception
-     */
-    protected function __construct()
-    {
-        $controller = Zend_Controller_Front::getInstance();
 
-        $controller->registerPlugin($this);
-
-        $this->_request = $controller->getRequest();
-        $this->_response = $controller->getResponse();
-        
-        if (!$this->_request || !$this->_response) {
-            throw new Zend_Wildfire_Exception('Zend_Controller_Front request and response objects not initialized.');
-        }
-    }
 
     /**
      * Get or create singleton instance
@@ -182,6 +152,32 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
     }
     
     
+    /**
+     * Flush all data from all registered plugins and send all data to response headers.
+     *
+     * @return void
+     */
+    public function flush()
+    {
+        if (!$this->_protocols || !$this->isReady()) {
+            return;
+        }
+
+        foreach ( $this->_protocols as $protocol ) {
+
+            $payload = $protocol->getPayload($this);
+
+            if ($payload) {
+                foreach( $payload as $message ) {
+
+                    $this->getResponse()->setHeader(self::$_headerPrefix.$message[0],
+                                                    $message[1], true);
+                }
+            }
+        }
+    }
+
+    
     /*
      * Zend_Wildfire_ChannelInterface 
      */
@@ -193,9 +189,9 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      */
     public function isReady()
     {
-        return ($this->_response->canSendHeaders() &&
+        return ($this->getResponse()->canSendHeaders() &&
                 preg_match_all('/\s?FirePHP\/([\.|\d]*)\s?/si',
-                               $this->_request->getHeader('User-Agent'),$m));
+                               $this->getRequest()->getHeader('User-Agent'),$m));
     }
 
 
@@ -204,30 +200,54 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      */
 
     /**
-     * Flush all data from all registered plugins and send all data to response headers.
+     * Flush messages to headers after request has been dispatched but before headers have been sent.
      *
      * @param  Zend_Controller_Request_Abstract  $request  The controller request
      * @return void
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
-        if (!$this->_protocols || !$this->isReady()) {
-            return;
-        }
-
-        foreach ( $this->_protocols as $protocol ) {
-
-            $payload = $protocol->getPayload($this);
-            
-            if ($payload) {
-                foreach( $payload as $message ) {
-
-                    $this->_response->setHeader(self::$_headerPrefix.$message[0],
-                                                $message[1], true);
-                }
-            }
-        }
+        $this->flush();
     }
+    
+    /**
+     * Get the request object
+     * 
+     * @return Zend_Controller_Request_Abstract
+     */
+    public function getRequest()
+    {
+        if (!$this->_request) {
+            $controller = Zend_Controller_Front::getInstance();
+            $this->setRequest($controller->getRequest());
+        }
+        if (!$this->_request) {
+            throw new Zend_Wildfire_Exception('Request objects not initialized.');
+        }
+        return $this->_request;
+    }
+
+    /**
+     * Get the response object
+     * 
+     * @return Zend_Controller_Response_Abstract
+     */
+    public function getResponse()
+    {
+        if (!$this->_response) {
+            $controller = Zend_Controller_Front::getInstance();
+            try {
+                $controller->registerPlugin($this);
+            } catch (Exception $e) {
+            }
+            $this->setResponse($controller->getResponse());
+        }
+        if (!$this->_response) {
+            throw new Zend_Wildfire_Exception('Response objects not initialized.');
+        }
+        return $this->_response;
+    }    
+    
 }
 
 ?>

@@ -1,7 +1,12 @@
 
+2008-06-13 - Release Version: 0.1.1.1
+
 	- Bugfix - Standardize windows paths in stack traces
 	- Bugfix - Display correct stack trace info in windows environments
 	- Bugfix - Check $_SERVER['HTTP_USER_AGENT'] before returning
+
+2008-06-13 - Release Version: 0.1.1
+
 	- Added support for FirePHP::TRACE log style
 	- Changed license to New BSD License
 

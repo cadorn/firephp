@@ -53,14 +53,9 @@
           <ulink url="http://www.firephp.org/">http://www.firephp.org/</ulink>.
         </para>
       </listitem>
-      <listitem>
-        <para>
-          <code>Zend_Controller_Front</code> initialized with request and response objects.
-        </para>
-      </listitem>
     </itemizedlist>
     <para>
-      Logging from model, view and controller files.
+      Logging from model, view and controller files when using <code>Zend_Controller_Front</code>.
     </para>
     <programlisting role="php"><![CDATA[
 /**
@@ -75,8 +70,7 @@ $logger = new Zend_Log($writer);
 $logger->log('This is a log message!', Zend_Log::INFO);]]>
     </programlisting>	
     <para>
-      Logging from bootstrap file. The <code>Zend_Controller_Front</code> must be initialized
-      with a request and response object before making calls to the logger.
+      Logging without <code>Zend_Controller_Front</code>.
     </para>
     <programlisting role="php"><![CDATA[
 $writer = new Zend_Wildfire_FirebugLogWriter();
@@ -84,16 +78,20 @@ $logger = new Zend_Log($writer);
 
 $request = new Zend_Controller_Request_Http();
 $response = new Zend_Controller_Response_Http();
-$controller = Zend_Controller_Front::getInstance();
-$controller->setRequest($request);
-$controller->setResponse($response);
-
+$channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
+$channel->setRequest($request);
+$channel->setResponse($response);
 /**
  * Now you can make calls to the logger
- */		
+ */
+ 
 $logger->log('This is a log message!', Zend_Log::INFO);
 
-$controller->run('./../application/controllers');]]>
+/**
+ * Flush log data to browser
+ */
+$channel->flush();
+$response->sendHeaders();]]>
     </programlisting>
   </sect2>
 

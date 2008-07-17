@@ -134,7 +134,7 @@ FirePHPProcessor.Init = function() {
           var arg = call.args[i];
           
           if (arg.constructor.toString().indexOf("Array") != -1 ||
-          arg.constructor.toString().indexOf("Object") != -1) {
+              arg.constructor.toString().indexOf("Object") != -1) {
             var rep = FirebugReps.PHPVariable;
             var tag = rep.tag;
           }
