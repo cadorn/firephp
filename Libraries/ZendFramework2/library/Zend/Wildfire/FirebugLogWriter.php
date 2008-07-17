@@ -24,8 +24,8 @@ require_once 'Zend/Log.php';
 /** Zend_Log_Writer_Abstract */
 require_once 'Zend/Log/Writer/Abstract.php';
 
-/** Zend_Wildfire_FirePhp */
-require_once 'Zend/Wildfire/FirePhp.php';
+/** Zend_Wildfire_Plugin_FirePhp */
+require_once 'Zend/Wildfire/Plugin/FirePhp.php';
 
 /**
  * Writes log messages to the Firebug Console via FirePHP.
@@ -42,20 +42,20 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
      * Maps logging priorities to logging display styles
      * @var array
      */
-    protected $_priorityStyles = array(Zend_Log::EMERG  => Zend_Wildfire_FirePHP::ERROR,
-                                       Zend_Log::ALERT  => Zend_Wildfire_FirePHP::ERROR,
-                                       Zend_Log::CRIT   => Zend_Wildfire_FirePHP::ERROR,
-                                       Zend_Log::ERR    => Zend_Wildfire_FirePHP::ERROR,
-                                       Zend_Log::WARN   => Zend_Wildfire_FirePHP::WARN,
-                                       Zend_Log::NOTICE => Zend_Wildfire_FirePHP::INFO,
-                                       Zend_Log::INFO   => Zend_Wildfire_FirePHP::INFO,
-                                       Zend_Log::DEBUG  => Zend_Wildfire_FirePHP::LOG);
+    protected $_priorityStyles = array(Zend_Log::EMERG  => Zend_Wildfire_Plugin_FirePhp::ERROR,
+                                       Zend_Log::ALERT  => Zend_Wildfire_Plugin_FirePhp::ERROR,
+                                       Zend_Log::CRIT   => Zend_Wildfire_Plugin_FirePhp::ERROR,
+                                       Zend_Log::ERR    => Zend_Wildfire_Plugin_FirePhp::ERROR,
+                                       Zend_Log::WARN   => Zend_Wildfire_Plugin_FirePhp::WARN,
+                                       Zend_Log::NOTICE => Zend_Wildfire_Plugin_FirePhp::INFO,
+                                       Zend_Log::INFO   => Zend_Wildfire_Plugin_FirePhp::INFO,
+                                       Zend_Log::DEBUG  => Zend_Wildfire_Plugin_FirePhp::LOG);
     
     /**
      * The default logging style for un-mapped priorities
      * @var string
      */    
-    protected $_defaultPriorityStyle = Zend_Wildfire_FirePHP::LOG;
+    protected $_defaultPriorityStyle = Zend_Wildfire_Plugin_FirePhp::LOG;
     
     /**
      * Set the default display style for user-defined priorities
@@ -114,7 +114,7 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
         
         try {
           
-            Zend_Wildfire_FirePhp::getInstance()->send($event['message'], null, $type);
+            Zend_Wildfire_Plugin_FirePhp::getInstance()->send($event['message'], null, $type);
             
         } catch (Exception $e) {
             throw new Zend_Wildfire_Exception('You must initialize Zend_Controller_Front with a request and response object before logging messages that will be sent to Zend_Wildfire_FirebugLogWriter. You can do this manually or you can use just Zend_Wildfire_FirebugLogWriter in your model, view or controller files.');

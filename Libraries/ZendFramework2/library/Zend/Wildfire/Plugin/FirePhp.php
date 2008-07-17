@@ -36,8 +36,8 @@ require_once 'Zend/Wildfire/Channel/HttpHeaders.php';
 /** Zend_Wildfire_Protocol_JsonStream */
 require_once 'Zend/Wildfire/Protocol/JsonStream.php';
 
-/** Zend_Wildfire_PluginInterface */
-require_once 'Zend/Wildfire/PluginInterface.php';
+/** Zend_Wildfire_Plugin_Interface */
+require_once 'Zend/Wildfire/Plugin/Interface.php';
 
 /**
  * Primary class for communicating with the FirePHP Firefox Extension.
@@ -48,7 +48,7 @@ require_once 'Zend/Wildfire/PluginInterface.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
+class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
 {
     /**
      * Plain log style.
@@ -113,7 +113,7 @@ class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
   
     /**
      * Singleton instance
-     * @var Zend_Wildfire_FirePhp
+     * @var Zend_Wildfire_Plugin_FirePhp
      */
     protected static $_instance = null;
 
@@ -125,22 +125,22 @@ class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
     
     /**
      * The channel via which to send the encoded messages.
-     * @var Zend_Wildfire_ChannelInterface
+     * @var Zend_Wildfire_Channel_Interface
      */
     protected $_channel = null;
     
     /**
      * Create singleton instance.
      *
-     * @param string $class OPTIONAL Subclass of Zend_Wildfire_FirePhp
-     * @return Zend_Wildfire_FirePhp Returns the singleton Zend_Wildfire_FirePhp instance
+     * @param string $class OPTIONAL Subclass of Zend_Wildfire_Plugin_FirePhp
+     * @return Zend_Wildfire_Plugin_FirePhp Returns the singleton Zend_Wildfire_Plugin_FirePhp instance
      * @throws Zend_Wildfire_Exception
      */
     public static function init($class = null)
     {
       
         if (self::$_instance!==null) {
-            throw new Zend_Wildfire_Exception('Singleton instance of Zend_Wildfire_FirePhp already exists!');
+            throw new Zend_Wildfire_Exception('Singleton instance of Zend_Wildfire_Plugin_FirePhp already exists!');
         }
         if ($class!==null) {
             if (!is_string($class)) {
@@ -148,8 +148,8 @@ class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
             }
             Zend_Loader::loadClass($class);
             self::$_instance = new $class();
-            if (!self::$_instance instanceof Zend_Wildfire_FirePhp) {
-                throw new Zend_Wildfire_Exception('Invalid class to third argument. Must be subclass of Zend_Wildfire_FirePhp.');
+            if (!self::$_instance instanceof Zend_Wildfire_Plugin_FirePhp) {
+                throw new Zend_Wildfire_Exception('Invalid class to third argument. Must be subclass of Zend_Wildfire_Plugin_FirePhp.');
             }
         } else {
             self::$_instance = new self();
@@ -374,7 +374,7 @@ class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
     
     
     /*
-     * Zend_Wildfire_PluginInterface
+     * Zend_Wildfire_Plugin_Interface
      */
 
     /**
