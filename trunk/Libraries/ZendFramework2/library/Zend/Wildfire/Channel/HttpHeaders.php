@@ -110,6 +110,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
     /**
      * Constructor
      * @return void
+     * @throws Zend_Wildfire_Exception
      */
     protected function __construct()
     {
@@ -119,6 +120,10 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
 
         $this->_request = $controller->getRequest();
         $this->_response = $controller->getResponse();
+        
+        if (!$this->_request || !$this->_response) {
+            throw new Zend_Wildfire_Exception('Zend_Controller_Front request and response objects not initialized.');
+        }
     }
 
     /**
@@ -194,7 +199,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
-        if (!$this->isReady()) {
+        if (!$this->_protocols || !$this->isReady()) {
             return;
         }
 

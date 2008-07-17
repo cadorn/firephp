@@ -30,7 +30,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_AllTests::main');
 }
 
-require_once 'Zend/Debug/FirePhpTest.php';
+require_once 'Zend/Wildfire/FirebugLogWriterTest.php';
 
 
 /**
@@ -51,7 +51,7 @@ class Zend_AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('Zend Framework - Zend');
 
-        $suite->addTestSuite('Zend_Debug_FirePhpTest');
+        $suite->addTestSuite('Zend_Wildfire_FirebugLogWriterTest');
 
         return $suite;
     }

@@ -31,7 +31,13 @@ require_once 'Zend/Registry.php';
 require_once 'Zend/Log.php';
 require_once 'Zend/Wildfire/FirebugLogWriter.php';
 
-Zend_Registry::set('logger',new Zend_Log(new Zend_Wildfire_FirebugLogWriter()));
+$writer = new Zend_Wildfire_FirebugLogWriter();
+$writer->setPriorityStyle(8, 'TABLE');
+
+$logger = new Zend_Log($writer);
+$logger->addPriority('TABLE', 8);
+
+Zend_Registry::set('logger',$logger);
 
 /*
  * Run the front controller
