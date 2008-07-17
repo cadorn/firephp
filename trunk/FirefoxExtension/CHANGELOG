@@ -1,5 +1,8 @@
 
-	- Added support for wildfire to communicate with Zend Framework component
+2008-07-17 - Release Version: 0.1.0.3
+
+	- Minor bugfix in request processor
+	- Added support for the wildfire JsonStream protocol to communicate with the Zend Framework component
 
 2008-07-13 - Release Version: 0.1.0.2
 
