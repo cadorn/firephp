@@ -1,0 +1,205 @@
+<sect1 id="zend.wildfire.chapter">
+  <title>Zend_Wildfire</title>
+
+    <para>
+      <code>Zend_Wildfire</code> is a component that facilitates communication
+      between PHP code and
+	  <ulink url="http://www.wildfirehq.org/">Wildfire</ulink> client components.
+    </para>
+    <para>
+	  The goal of the Wildfire project is to develop standardized communication channels and
+      a dynamic and scriptable remote plugin architecture. At this time the primary
+	  focus is to provide a system to allow server-side PHP code to inject logging
+	  messages into the <ulink url="http://www.getfirebug.com/">Firebug</ulink>
+	  <ulink url="http://getfirebug.com/logging.html">Console</ulink>.
+    
+    <inlinegraphic align="right" fileref="figures/zend.wildfire.firebug.console.png" format="PNG" scale="100" valign="top" width="310" height="151" />
+
+    
+    </para>
+    <para>
+	  For the purpose of logging to Firebug a communication protocol has been developed
+	  that uses HTTP request and response headers to send data between the server and
+	  client components. It is great for logging intelligence data generated during script
+	  execution to the client browser without interfering with the page content. Debugging
+	  AJAX requests that require clean JSON and XML responses is possible with this approach.
+    </para>
+
+  <sect2 id="zend.wildfire.logging-to-firebug-console">
+    <title>Logging to Firebug's Console</title>
+    <para>
+	  Use <code>Zend_Wildfire_FirebugLogWriter</code> to write log messages to the Firebug Console.
+    </para>
+    <para>
+	  Requirements:
+    </para>
+	<itemizedlist>
+        <listitem>
+            <para>
+                Firefox Browser ideally version 3 but version 2 is also supported.
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                Firebug Firefox Extension which you can download from
+                <ulink url="http://www.getfirebug.com/">http://www.getfirebug.com/</ulink>.
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                FirePHP Firefox Extension version 0.1.0.3 or above which you can download from
+                <ulink url="http://www.firephp.org/">http://www.firephp.org/</ulink>.
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <code>Zend_Controller_Front</code> initialized with request and response objects.
+            </para>
+        </listitem>
+    </itemizedlist>
+    <para>
+      Logging from model, view and controller files.
+    </para>
+	<programlisting role="php"><![CDATA[
+/**
+ * Place this in your bootstrap file
+ */		
+$writer = new Zend_Wildfire_FirebugLogWriter();
+$logger = new Zend_Log($writer);
+
+/**
+ * Use this in your model, view and controller files
+ */		
+$logger->log('This is a log message!', Zend_Log::INFO);]]>
+    </programlisting>	
+    <para>
+      Logging from bootstrap file. The <code>Zend_Controller_Front</code> must be initialized
+      with a request and response object before making calls to the logger.
+	</para>
+	<programlisting role="php"><![CDATA[
+$writer = new Zend_Wildfire_FirebugLogWriter();
+$logger = new Zend_Log($writer);
+
+$request = new Zend_Controller_Request_Http();
+$response = new Zend_Controller_Response_Http();
+$controller = Zend_Controller_Front::getInstance();
+$controller->setRequest($request);
+$controller->setResponse($response);
+
+/**
+ * Now you can make calls to the logger
+ */		
+$logger->log('This is a log message!', Zend_Log::INFO);
+
+$controller->run('./../application/controllers');]]>
+    </programlisting>
+  </sect2>
+
+  <sect2 id="zend.wildfire.logging-to-firebug-console.priority-styles">
+    <title>Setting Styles for Priorities</title>
+    <para>
+ 	  Built-in and user-defined priorities can be styled with the <code>setPriorityStyle()</code> method.
+    </para>
+    <programlisting role="php"><![CDATA[
+$logger->addPriority('FOO', 8);
+$writer->setPriorityStyle(8, 'TRACE');
+$logger->foo('Foo Message');]]>
+    </programlisting>	
+    <para>
+	  The default style for user-defined priorities can be set with the <code>setDefaultPriorityStyle()</code> method.
+    </para>
+    <programlisting role="php"><![CDATA[
+$writer->setDefaultPriorityStyle('TRACE');]]>
+    </programlisting>
+    <para>
+	  The supported styles are as follows:
+    </para>
+	<itemizedlist>
+        <listitem>
+            <para>
+                <code>LOG</code> - Displays a plain log message
+            </para>
+	    </listitem>
+        <listitem>
+            <para>
+                <code>INFO</code> - Displays an info log message
+            </para>
+	    </listitem>
+        <listitem>
+            <para>
+                <code>WARN</code> - Displays a warning log message
+            </para>
+	    </listitem>
+        <listitem>
+            <para>
+                <code>ERROR</code> - Displays an error log message that increments Firebug's error count
+            </para>
+	    </listitem>
+        <listitem>
+            <para>
+                <code>TRACE</code> - Displays a log message with an expandable stack trace 
+            </para>
+	    </listitem>
+        <listitem>
+            <para>
+                <code>EXCEPTION</code> - Displays an error long message with an expandable stack trace 
+            </para>
+	    </listitem>
+        <listitem>
+            <para>
+                <code>TABLE</code> - Displays a log message with an expandable table 
+            </para>
+        </listitem>
+    </itemizedlist>
+  </sect2>
+
+  <sect2 id="zend.wildfire.logging-to-firebug-console.preparing-data">
+    <title>Preparing data for Logging</title>
+    <para>
+ 	  While any PHP variable can be logged with the built-in priorities, some special formatting
+      is required if using some of the more specialized log styles.
+    </para>
+    <para>
+ 	  The <code>LOG</code>, <code>INFO</code>, <code>WARN</code>, <code>ERROR</code>
+      and <code>TRACE</code> styles require no special formatting.
+    </para>
+  </sect2>
+
+  <sect2 id="zend.wildfire.logging-to-firebug-console.preparing-data.exception">
+    <title>Exception Logging</title>
+    <para>
+	  To log a <code>Zend_Exception</code> simply pass the exception object to the logger.
+	  It does not matter which priority or style you have set as the exception is automatically
+	  recognized.
+    </para>
+    <programlisting role="php"><![CDATA[
+$exception = new Zend_Exception('Test exception');
+$logger->err($exception);]]>
+    </programlisting>
+  </sect2>
+
+  <sect2 id="zend.wildfire.logging-to-firebug-console.preparing-data.table">
+    <title>Table Logging</title>
+    <para>
+	  You can also log data and format it in a table style. Columns are automatically recognized and
+	  the first row of data automatically becomes the header.
+    </para>
+    <programlisting role="php"><![CDATA[
+$writer->setPriorityStyle(8, 'TABLE');
+$logger->addPriority('TABLE', 8);
+
+$table = array('Summary line for the table',
+               array(
+                   array('Column 1', 'Column 2'),
+                   array('Row 1 c 1',' Row 1 c 2'),
+                   array('Row 2 c 1',' Row 2 c 2')
+               )
+              );
+$logger->table($table);]]>
+    </programlisting>
+  </sect2>
+
+</sect1>
+<!--
+vim:se ts=4 sw=4 et:
+-->

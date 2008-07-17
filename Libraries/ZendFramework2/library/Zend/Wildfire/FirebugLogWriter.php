@@ -42,49 +42,48 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
      * Maps logging priorities to logging display styles
      * @var array
      */
-    protected $_logStyleMap = array(Zend_Log::EMERG => Zend_Wildfire_FirePHP::ERROR,
-                                    Zend_Log::EMERG => Zend_Wildfire_FirePHP::ERROR,
-                                    Zend_Log::ALERT => Zend_Wildfire_FirePHP::ERROR,
-                                    Zend_Log::CRIT => Zend_Wildfire_FirePHP::ERROR,
-                                    Zend_Log::ERR => Zend_Wildfire_FirePHP::ERROR,
-                                    Zend_Log::WARN => Zend_Wildfire_FirePHP::WARN,
-                                    Zend_Log::NOTICE => Zend_Wildfire_FirePHP::INFO,
-                                    Zend_Log::INFO => Zend_Wildfire_FirePHP::INFO,
-                                    Zend_Log::DEBUG => Zend_Wildfire_FirePHP::LOG);
+    protected $_priorityStyles = array(Zend_Log::EMERG  => Zend_Wildfire_FirePHP::ERROR,
+                                       Zend_Log::ALERT  => Zend_Wildfire_FirePHP::ERROR,
+                                       Zend_Log::CRIT   => Zend_Wildfire_FirePHP::ERROR,
+                                       Zend_Log::ERR    => Zend_Wildfire_FirePHP::ERROR,
+                                       Zend_Log::WARN   => Zend_Wildfire_FirePHP::WARN,
+                                       Zend_Log::NOTICE => Zend_Wildfire_FirePHP::INFO,
+                                       Zend_Log::INFO   => Zend_Wildfire_FirePHP::INFO,
+                                       Zend_Log::DEBUG  => Zend_Wildfire_FirePHP::LOG);
     
     /**
      * The default logging style for un-mapped priorities
      * @var string
      */    
-    protected $_defaultLogStyle = Zend_Wildfire_FirePHP::LOG;
+    protected $_defaultPriorityStyle = Zend_Wildfire_FirePHP::LOG;
     
     /**
-     * Set the default log style for un-mapped priorities
+     * Set the default display style for user-defined priorities
      * 
      * @param string $style The default log display style
      * @return string Returns previous default log display style
      */    
-    public function setDefaultLogStyle($style)
+    public function setDefaultPriorityStyle($style)
     {
-        $previous = $this->_defaultLogStyle;
-        $this->_defaultLogStyle = $style;
+        $previous = $this->_defaultPriorityStyle;
+        $this->_defaultPriorityStyle = $style;
         return $previous;
     }
     
     /**
-     * Map a logging priority to a logging display style
+     * Set a display style for a logging priority
      * 
      * @param int $priority The logging priority
      * @param string $style The logging display style
      * @return string|boolean The previous logging display style if defined or TRUE otherwise
      */
-    public function mapLogStyle($priority, $style)
+    public function setPriorityStyle($priority, $style)
     {
         $previous = true;
-        if (array_key_exists($priority,$this->_logStyleMap)) {
-            $previous = $this->_logStyleMap[$priority];
+        if (array_key_exists($priority,$this->_priorityStyles)) {
+            $previous = $this->_priorityStyles[$priority];
         }
-        $this->_logStyleMap[$priority] = $style;
+        $this->_priorityStyles[$priority] = $style;
         return $previous;
     }
 
@@ -107,11 +106,18 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
      */
     protected function _write($event)
     {
-        if (array_key_exists($event['priority'],$this->_logStyleMap)) {
-            $type = $this->_logStyleMap[$event['priority']];
+        if (array_key_exists($event['priority'],$this->_priorityStyles)) {
+            $type = $this->_priorityStyles[$event['priority']];
         } else {
-            $type = $this->_defaultLogStyle;
+            $type = $this->_defaultPriorityStyle;
         }
-        Zend_Wildfire_FirePhp::getInstance()->send($event['message'], null, $type);
+        
+        try {
+          
+            Zend_Wildfire_FirePhp::getInstance()->send($event['message'], null, $type);
+            
+        } catch (Exception $e) {
+            throw new Zend_Wildfire_Exception('You must initialize Zend_Controller_Front with a request and response object before logging messages that will be sent to Zend_Wildfire_FirebugLogWriter. You can do this manually or you can use just Zend_Wildfire_FirebugLogWriter in your model, view or controller files.');
+        }
     }
 }

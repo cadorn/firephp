@@ -36,7 +36,6 @@ class IndexController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-
         /* Log some messages */
 
         $logger = Zend_Registry::get('logger');
@@ -51,10 +50,18 @@ class IndexController extends Zend_Controller_Action
         $logger->log('Debug: debug messages',                    Zend_Log::DEBUG);
         $logger->log(array('$_SERVER',$_SERVER),                 Zend_Log::DEBUG);
         
+        $table = array('Summary line for the table',
+                       array(
+                           array('Column 1', 'Column 2'),
+                           array('Row 1 c 1',' Row 1 c 2'),
+                           array('Row 2 c 1',' Row 2 c 2')
+                       )
+                      );
+        $logger->table($table);
+        
         /* Throw an exception to test the default error handler. */
        
         throw new Zend_Exception('Test Exception');
-
     }
 }
 
