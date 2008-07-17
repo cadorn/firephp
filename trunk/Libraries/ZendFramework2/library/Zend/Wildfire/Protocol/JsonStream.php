@@ -22,8 +22,8 @@
 /** Zend_Wildfire_Exception */
 require_once 'Zend/Wildfire/Exception.php';
 
-/** Zend_Wildfire_PluginInterface */
-require_once 'Zend/Wildfire/PluginInterface.php';
+/** Zend_Wildfire_Plugin_Interface */
+require_once 'Zend/Wildfire/Plugin/Interface.php';
 
 /** Zend_Json_Encoder */
 require_once 'Zend/Json/Encoder.php';
@@ -54,12 +54,12 @@ class Zend_Wildfire_Protocol_JsonStream
     /**
      * Record a message with the given data in the given structure
      * 
-     * @param Zend_Wildfire_PluginInterface $plugin The plugin recording the message
+     * @param Zend_Wildfire_Plugin_Interface $plugin The plugin recording the message
      * @param string $structure The structure to be used for the data
      * @param array $data The data to be recorded
      * @return boolean Returns TRUE if message was recorded
      */
-    public function recordMessage(Zend_Wildfire_PluginInterface $plugin, $structure, $data)
+    public function recordMessage(Zend_Wildfire_Plugin_Interface $plugin, $structure, $data)
     {
         if(!isset($this->_messages[$structure])) {
             $this->_messages[$structure] = array();  
@@ -78,10 +78,10 @@ class Zend_Wildfire_Protocol_JsonStream
     /**
      * Remove all qued messages
      * 
-     * @param Zend_Wildfire_PluginInterface $plugin The plugin for which to clear messages
+     * @param Zend_Wildfire_Plugin_Interface $plugin The plugin for which to clear messages
      * @return boolean Returns TRUE if messages were present
      */
-    public function clearMessages(Zend_Wildfire_PluginInterface $plugin)
+    public function clearMessages(Zend_Wildfire_Plugin_Interface $plugin)
     {
         if(!isset($this->_messages[$structure])) {
             return false;
@@ -112,10 +112,10 @@ class Zend_Wildfire_Protocol_JsonStream
     /**
      * Retrieves all formatted data ready to be sent by the channel.
      * 
-     * @param Zend_Wildfire_ChannelInterface $channel The instance of the channel that will be transmitting the data
+     * @param Zend_Wildfire_Channel_Interface $channel The instance of the channel that will be transmitting the data
      * @return mixed Returns the data to be sent by the channel.
      */
-    public function getPayload(Zend_Wildfire_ChannelInterface $channel)
+    public function getPayload(Zend_Wildfire_Channel_Interface $channel)
     {
         if (!$channel instanceof Zend_Wildfire_Channel_HttpHeaders) {
             throw new Zend_Wildfire_Exception('The '.get_class($channel).' channel is not supported by the '.get_class($this).' protocol.');          

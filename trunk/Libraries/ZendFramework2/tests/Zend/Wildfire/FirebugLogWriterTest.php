@@ -31,8 +31,8 @@ require_once 'Zend/Wildfire/FirebugLogWriter.php';
 /** Zend_Wildfire_Channel_HttpHeaders */
 require_once 'Zend/Wildfire/Channel/HttpHeaders.php';
 
-/** Zend_Wildfire_FirePhp */
-require_once 'Zend/Wildfire/FirePhp.php';
+/** Zend_Wildfire_Plugin_FirePhp */
+require_once 'Zend/Wildfire/Plugin/FirePhp.php';
 
 /** Zend_Controller_Request_Http */
 require_once 'Zend/Controller/Request/Http.php';
@@ -85,7 +85,7 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
     {
         Zend_Controller_Front::getInstance()->resetInstance();
         Zend_Wildfire_Channel_HttpHeaders::destroyInstance();
-        Zend_Wildfire_FirePhp::destroyInstance();
+        Zend_Wildfire_Plugin_FirePhp::destroyInstance();
     }
     
     protected function _setupWithFrontController()

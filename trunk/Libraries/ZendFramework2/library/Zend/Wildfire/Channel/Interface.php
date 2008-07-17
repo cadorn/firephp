@@ -24,14 +24,14 @@
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Wildfire_PluginInterface
+interface Zend_Wildfire_Channel_Interface
 {
-    
+  
     /**
-     * Get the unique indentifier for this plugin.
+     * Determine if channel is ready.
      * 
-     * @return string Returns the URI of the plugin.
+     * @return boolean Returns TRUE if channel is ready.
      */
-    public function getUri();
+    public function isReady();
     
 }

@@ -19,8 +19,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/** Zend_Wildfire_ChannelInterface */
-require_once 'Zend/Wildfire/ChannelInterface.php';
+/** Zend_Wildfire_Channel_Interface */
+require_once 'Zend/Wildfire/Channel/Interface.php';
 
 /** Zend_Wildfire_Exception */
 require_once 'Zend/Wildfire/Exception.php';
@@ -47,7 +47,7 @@ require_once 'Zend/Wildfire/Protocol/JsonStream.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract implements Zend_Wildfire_ChannelInterface
+class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract implements Zend_Wildfire_Channel_Interface
 {
     /**
      * The string to be used to prefix the headers.
@@ -179,7 +179,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
 
     
     /*
-     * Zend_Wildfire_ChannelInterface 
+     * Zend_Wildfire_Channel_Interface 
      */
 
     /**
