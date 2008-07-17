@@ -140,6 +140,18 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
     }
     
     /**
+     * Destroys the singleton instance
+     *
+     * Primarily used for testing.
+     *
+     * @return void
+     */
+    public static function destroyInstance()
+    {
+        self::$_instance = null;
+    }
+    
+    /**
      * Get the instance of a give protocol for this channel
      * 
      * @param string $uri The URI for the protocol

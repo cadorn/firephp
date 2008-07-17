@@ -28,11 +28,20 @@ require_once dirname(__FILE__) . '/../../TestHelper.php';
 /** Zend_Wildfire_FirebugLogWriter */
 require_once 'Zend/Wildfire/FirebugLogWriter.php';
 
+/** Zend_Wildfire_Channel_HttpHeaders */
+require_once 'Zend/Wildfire/Channel/HttpHeaders.php';
+
+/** Zend_Wildfire_FirePhp */
+require_once 'Zend/Wildfire/FirePhp.php';
+
 /** Zend_Controller_Request_Http */
 require_once 'Zend/Controller/Request/Http.php';
 
 /** Zend_Controller_Response_Http */
 require_once 'Zend/Controller/Response/Http.php';
+
+/** Zend_Controller_Front **/
+require_once 'Zend/Controller/Front.php';
 
 /** Zend_Json_Decoder */
 require_once 'Zend/Json/Decoder.php';
@@ -47,8 +56,11 @@ require_once 'Zend/Json/Decoder.php';
 class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
 {
   
+    protected $_controller = null;
     protected $_request = null;
     protected $_response = null;
+    protected $_writer = null;
+    protected $_logger = null;
 
     /**
      * Runs the test methods of this class.
@@ -66,15 +78,128 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
     
     public function setUp()
     {
+        date_default_timezone_set('America/Los_Angeles');
+
+        $this->_request = new Zend_Wildfire_FirebugLogWriterTest_Request();
+        $this->_response = new Zend_Wildfire_FirebugLogWriterTest_Reponse();
+        $this->_controller = Zend_Controller_Front::getInstance();
+        $this->_controller->setControllerDirectory(dirname(__FILE__) . DIRECTORY_SEPARATOR . '_files')
+                          ->setRequest($this->_request)
+                          ->setResponse($this->_response)
+                          ->setParam('noErrorHandler', true)
+                          ->setParam('noViewRenderer', true)
+                          ->throwExceptions(false);
+
+        $this->_writer = new Zend_Wildfire_FirebugLogWriter();
+        $this->_logger = new Zend_Log($this->_writer);
+
+        $this->_request->setUserAgentExtensionEnabled(true);
     }
 
     public function tearDown()
     {
+        $this->_controller->resetInstance();
+        Zend_Wildfire_Channel_HttpHeaders::destroyInstance();
+        Zend_Wildfire_FirePhp::destroyInstance();
     }
     
-    public function testInit()
+    public function testIsReady()
     {
+        $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
+
+        $this->assertTrue($channel->isReady());
+
+        $this->_request->setUserAgentExtensionEnabled(false);
+
+        $this->assertFalse($channel->isReady());
     }
+    
+    
+    public function testLogging()
+    {
+        $message = 'This is a log message!';
+           
+        $this->_logger->log($message, Zend_Log::INFO);
+
+        $this->_controller->dispatch();
+        
+        $headers = array();
+        $headers['X-Wf-Protocol-1'] = 'http://meta.wildfirehq.org/Protocol/JsonStream/0.1';
+        $headers['X-Wf-1-Structure-1'] = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1';
+        $headers['X-Wf-1-Plugin-1'] = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/1.6';
+        $headers['X-Wf-1-1-1-1'] = '[{"Type":"INFO"},"This is a log message!"]';
+        $headers['X-Wf-1-Index'] = '1';
+        
+        $this->assertTrue($this->_response->verifyHeaders($headers));                
+    }
+}
+
+class Zend_Wildfire_FirebugLogWriterTest_Request extends Zend_Controller_Request_Http
+{
+    
+    protected $_enabled = false;
+    
+    public function setUserAgentExtensionEnabled($enabled) {
+        $this->_enabled = $enabled;
+    }
+    
+    public function getHeader($header)
+    {
+        if ($header == 'User-Agent') {
+            if ($this->_enabled) {
+                return 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14 FirePHP/0.1.0';
+            } else {
+                return 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14';
+            }         
+        }
+    }
+}
+
+
+class Zend_Wildfire_FirebugLogWriterTest_Reponse extends Zend_Controller_Response_Http
+{
+
+    public function verifyHeaders($headers)
+    {
+
+        $response_headers = $this->getHeaders();
+        if (!$response_headers) {
+            return false;
+        }
+
+        $keys1 = array_keys($headers);
+        sort($keys1);
+        $keys1 = serialize($keys1);
+
+        $keys2 = array();
+        foreach ($response_headers as $header ) {
+            $keys2[] = $header['name'];
+        }
+        sort($keys2);
+        $keys2 = serialize($keys2);
+
+        if ($keys1 != $keys2) {
+            return false;
+        }
+
+        $values1 = array_values($headers);
+        sort($values1);
+        $values1 = serialize($values1);
+
+        $values2 = array();
+        foreach ($response_headers as $header ) {
+            $values2[] = $header['value'];
+        }
+        sort($values2);
+        $values2 = serialize($values2);
+
+        if ($values1 != $values2) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
 
 
