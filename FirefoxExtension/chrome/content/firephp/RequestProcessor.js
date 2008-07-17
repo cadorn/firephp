@@ -362,7 +362,7 @@ FirePHPProcessor.processMessage = function(mode, data) {
     }
     if (change) {
       mode = 'exception';
-      item[1].Type = 'throw';
+      data.Type = 'throw';
     }
   }
             
