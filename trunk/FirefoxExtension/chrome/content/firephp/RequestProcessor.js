@@ -133,6 +133,10 @@ FirePHPProcessor.Init = function() {
         for (var i = 0; i < call.args.length; ++i) {
           var arg = call.args[i];
           
+          if(!arg) {
+            var rep = Firebug.getRep(arg);
+            var tag = rep.shortTag ? rep.shortTag : rep.tag;
+          } else
           if (arg.constructor.toString().indexOf("Array") != -1 ||
               arg.constructor.toString().indexOf("Object") != -1) {
             var rep = FirebugReps.PHPVariable;
@@ -259,6 +263,10 @@ FirePHPProcessor.Init = function() {
           {
               var arg = row[i];
   
+              if(!arg) {
+                var rep = Firebug.getRep(arg);
+                var tag = rep.shortTag ? rep.shortTag : rep.tag;
+              } else
               if (arg.constructor.toString().indexOf("Array")!=-1 ||
                   arg.constructor.toString().indexOf("Object")!=-1) {
                 var rep = FirebugReps.PHPVariable;

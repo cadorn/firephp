@@ -1,4 +1,6 @@
 
+	- Bugfix - Trace and exception logging broke when function/method argument was "false" or "null"
+
 2008-07-17 - Release Version: 0.1.0.3
 
 	- Minor bugfix in request processor
