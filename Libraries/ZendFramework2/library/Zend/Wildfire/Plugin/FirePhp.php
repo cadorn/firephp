@@ -253,17 +253,17 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
             $trace = debug_backtrace();
             if(!$trace) return false;
 
-            for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
-                if(isset($trace[$i]['class']) &&
-                   substr($trace[$i]['class'],0,8)!='Zend_Log' &&
-                   substr($trace[$i]['class'],0,13)!='Zend_Wildfire') {
+            for ( $i=0 ; $i<sizeof($trace) ; $i++ ) {
+                if (isset($trace[$i]['class']) &&
+                    substr($trace[$i]['class'],0,8)!='Zend_Log' &&
+                    substr($trace[$i]['class'],0,13)!='Zend_Wildfire') {
                   
                     $i--;
                     break;
                 }
             }
 
-            if($i==sizeof($trace)) {
+            if ($i==sizeof($trace)) {
                 $i = 0;
             }
 
