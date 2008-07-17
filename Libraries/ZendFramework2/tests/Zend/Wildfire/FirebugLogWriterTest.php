@@ -79,7 +79,17 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         date_default_timezone_set('America/Los_Angeles');
+    }
 
+    public function tearDown()
+    {
+        Zend_Controller_Front::getInstance()->resetInstance();
+        Zend_Wildfire_Channel_HttpHeaders::destroyInstance();
+        Zend_Wildfire_FirePhp::destroyInstance();
+    }
+    
+    protected function _setupWithFrontController()
+    {
         $this->_request = new Zend_Wildfire_FirebugLogWriterTest_Request();
         $this->_response = new Zend_Wildfire_FirebugLogWriterTest_Reponse();
         $this->_controller = Zend_Controller_Front::getInstance();
@@ -95,16 +105,26 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
 
         $this->_request->setUserAgentExtensionEnabled(true);
     }
-
-    public function tearDown()
+    
+    protected function _setupWithoutFrontController()
     {
-        $this->_controller->resetInstance();
-        Zend_Wildfire_Channel_HttpHeaders::destroyInstance();
-        Zend_Wildfire_FirePhp::destroyInstance();
+        $this->_request = new Zend_Wildfire_FirebugLogWriterTest_Request();
+        $this->_response = new Zend_Wildfire_FirebugLogWriterTest_Reponse();
+
+        $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
+        $channel->setRequest($this->_request);
+        $channel->setResponse($this->_response);
+
+        $this->_writer = new Zend_Wildfire_FirebugLogWriter();
+        $this->_logger = new Zend_Log($this->_writer);
+
+        $this->_request->setUserAgentExtensionEnabled(true);
     }
     
-    public function testIsReady()
+    public function testIsReady1()
     {
+        $this->_setupWithFrontController();
+      
         $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
 
         $this->assertTrue($channel->isReady());
@@ -114,9 +134,24 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($channel->isReady());
     }
     
-    
-    public function testLogging()
+    public function testIsReady2()
     {
+        $this->_setupWithoutFrontController();
+      
+        $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
+
+        $this->assertTrue($channel->isReady());
+
+        $this->_request->setUserAgentExtensionEnabled(false);
+
+        $this->assertFalse($channel->isReady());
+    }
+
+    
+    public function testLogging1()
+    {
+        $this->_setupWithFrontController();
+      
         $message = 'This is a log message!';
            
         $this->_logger->log($message, Zend_Log::INFO);
@@ -132,6 +167,26 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
         
         $this->assertTrue($this->_response->verifyHeaders($headers));                
     }
+    
+    public function testLogging2()
+    {
+        $this->_setupWithoutFrontController();
+      
+        $message = 'This is a log message!';
+           
+        $this->_logger->log($message, Zend_Log::INFO);
+        
+        Zend_Wildfire_Channel_HttpHeaders::getInstance()->flush();
+        
+        $headers = array();
+        $headers['X-Wf-Protocol-1'] = 'http://meta.wildfirehq.org/Protocol/JsonStream/0.1';
+        $headers['X-Wf-1-Structure-1'] = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1';
+        $headers['X-Wf-1-Plugin-1'] = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/1.6';
+        $headers['X-Wf-1-1-1-1'] = '[{"Type":"INFO"},"This is a log message!"]';
+        $headers['X-Wf-1-Index'] = '1';
+                
+        $this->assertTrue($this->_response->verifyHeaders($headers));                
+    }    
 }
 
 class Zend_Wildfire_FirebugLogWriterTest_Request extends Zend_Controller_Request_Http

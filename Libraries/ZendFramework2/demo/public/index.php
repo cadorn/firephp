@@ -33,9 +33,11 @@ require_once 'Zend/Wildfire/FirebugLogWriter.php';
 
 $writer = new Zend_Wildfire_FirebugLogWriter();
 $writer->setPriorityStyle(8, 'TABLE');
+$writer->setPriorityStyle(9, 'TRACE');
 
 $logger = new Zend_Log($writer);
 $logger->addPriority('TABLE', 8);
+$logger->addPriority('TRACE', 9);
 
 Zend_Registry::set('logger',$logger);
 

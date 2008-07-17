@@ -242,6 +242,7 @@ class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
                          'Message'=>$var->getMessage(),
                          'File'=>$var->getFile(),
                          'Line'=>$var->getLine(),
+                         'Type'=>'throw',
                          'Trace'=>$var->getTrace());
   
             $type = self::EXCEPTION;
