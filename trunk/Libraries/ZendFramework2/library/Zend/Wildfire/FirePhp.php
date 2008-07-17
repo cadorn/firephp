@@ -36,6 +36,9 @@ require_once 'Zend/Wildfire/Channel/HttpHeaders.php';
 /** Zend_Wildfire_Protocol_JsonStream */
 require_once 'Zend/Wildfire/Protocol/JsonStream.php';
 
+/** Zend_Wildfire_PluginInterface */
+require_once 'Zend/Wildfire/PluginInterface.php';
+
 /**
  * Primary class for communicating with the FirePHP Firefox Extension.
  * 
@@ -45,7 +48,7 @@ require_once 'Zend/Wildfire/Protocol/JsonStream.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-class Zend_Wildfire_FirePhp
+class Zend_Wildfire_FirePhp implements Zend_Wildfire_PluginInterface
 {
     /**
      * Plain log style.
