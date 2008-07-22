@@ -33,7 +33,7 @@ FBL.ns(function() { with (FBL) {
               label="FirePHP" insertafter="menu_firebug">
             <menupopup onpopupshowing="return Firebug.FirePHP.onOptionsShowing(this);">
 		
-			        <menuitem label="FirePHP Headquarters" oncommand="Firebug.FirePHP.visitWebsite('hq')"/>
+			        <menuitem class="menuitem-iconic firephpMenuWelcomeItem" label="FirePHP Headquarters" oncommand="Firebug.FirePHP.visitWebsite('hq')"/>
 			        <menuseparator/>
 	            <menuitem type="checkbox" label="FirePHP Enabled"
 	                       oncommand="Firebug.FirePHP.onToggleOption(this)"
@@ -58,7 +58,7 @@ FBL.ns(function() { with (FBL) {
             
 	        <menupopup id="firephpMenuPopup" onpopupshowing="return Firebug.FirePHP.onOptionsShowing(this);">
             
-		        <menuitem class="firephpMenuWelcomeItem" label="FirePHP Headquarters" oncommand="Firebug.FirePHP.visitWebsite('hq')"/>
+		        <menuitem class="menuitem-iconic firephpMenuWelcomeItem" label="FirePHP Headquarters" oncommand="Firebug.FirePHP.visitWebsite('hq')"/>
 		        <menuseparator/>
             <menuitem type="checkbox" label="FirePHP Enabled"
                        oncommand="Firebug.FirePHP.onToggleOption(this)"

@@ -75,6 +75,8 @@ fb('Error message',FirePHP::ERROR);
 
 fb('Message with label','Label',FirePHP::LOG);
 
+fb('Trace to here',FirePHP::TRACE);
+
 fb(array('key1'=>'val1','key2'=>array(array('v1','v2'),'v3')),'TestArray',FirePHP::LOG);
 
 function test($Arg1) {

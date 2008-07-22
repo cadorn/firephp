@@ -1,4 +1,8 @@
 
+2008-07-22 - Release Version: 0.1.0.4
+
+  - Bugfix - Gray background for variable viewer on windows
+  - Added icon for FirePHP Headquarters link in FirePHP menu and updated style
 	- Bugfix - Trace and exception logging broke when function/method argument was "false" or "null"
 
 2008-07-17 - Release Version: 0.1.0.3
