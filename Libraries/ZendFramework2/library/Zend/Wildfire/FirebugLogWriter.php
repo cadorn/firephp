@@ -136,12 +136,12 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
             $type = $this->_defaultPriorityStyle;
         }
         
-        try {
+//        try {
           
             Zend_Wildfire_Plugin_FirePhp::getInstance()->send($event['message'], null, $type);
             
-        } catch (Exception $e) {
-            throw new Zend_Wildfire_Exception('You must initialize Zend_Controller_Front with a request and response object before logging messages that will be sent to Zend_Wildfire_FirebugLogWriter. You can do this manually or you can use just Zend_Wildfire_FirebugLogWriter in your model, view or controller files.');
-        }
+//        } catch (Exception $e) {
+//            throw new Zend_Wildfire_Exception('You must initialize Zend_Controller_Front with a request and response object before logging messages that will be sent to Zend_Wildfire_FirebugLogWriter. You can do this manually or you can use just Zend_Wildfire_FirebugLogWriter in your model, view or controller files.');
+//        }
     }
 }

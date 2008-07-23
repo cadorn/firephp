@@ -87,9 +87,6 @@ class Zend_Wildfire_Protocol_JsonStream
         
         $present = false;
         foreach ($this->_messages as $structure => $messages) {
-            if(!isset($this->_messages[$structure])) {
-                continue;
-            }
                 
             if(!isset($this->_messages[$structure][$uri])) {
                 continue;
@@ -135,6 +132,7 @@ class Zend_Wildfire_Protocol_JsonStream
      * 
      * @param Zend_Wildfire_Channel_Interface $channel The instance of the channel that will be transmitting the data
      * @return mixed Returns the data to be sent by the channel.
+     * @throws Zend_Wildfire_Exception
      */
     public function getPayload(Zend_Wildfire_Channel_Interface $channel)
     {

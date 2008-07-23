@@ -149,6 +149,7 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
             Zend_Loader::loadClass($class);
             self::$_instance = new $class();
             if (!self::$_instance instanceof Zend_Wildfire_Plugin_FirePhp) {
+                self::$_instance = null;
                 throw new Zend_Wildfire_Exception('Invalid class to third argument. Must be subclass of Zend_Wildfire_Plugin_FirePhp.');
             }
         } else {
@@ -170,11 +171,12 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
     /**
      * Get or create singleton instance
      * 
+     * @param $skipCreate boolean True if an instance should not be created
      * @return Zend_Debug_FirePhp
      */
-    public static function getInstance()
+    public static function getInstance($skipCreate=false)
     {  
-        if (self::$_instance===null) {
+        if (self::$_instance===null && $skipCreate!==true) {
             return self::init();               
         }
         return self::$_instance;
@@ -227,7 +229,7 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
      * @param  string  $label OPTIONAL Label to prepend to the log event.
      * @param  string  $type  OPTIONAL Type specifying the style of the log event.
      * @return boolean Returns TRUE if the variable was added to the response headers.
-     * @throws Zend_Debug_FirePhp_Exception
+     * @throws Zend_Wildfire_Exception
      */
     public static function send($var, $label=null, $type=null)
     {
@@ -274,9 +276,9 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
             $var = array('Class'=>$trace[$i]['class'],
                          'Type'=>$trace[$i]['type'],
                          'Function'=>$trace[$i]['function'],
-                         'Message'=>$trace[$i]['args'][0],
-                         'File'=>$trace[$i]['file'],
-                         'Line'=>$trace[$i]['line'],
+                         'Message'=>(isset($trace[$i]['args'][0]))?$trace[$i]['args'][0]:'',
+                         'File'=>(isset($trace[$i]['file']))?$trace[$i]['file']:'',
+                         'Line'=>(isset($trace[$i]['line']))?$trace[$i]['line']:'',
                          'Args'=>$trace[$i]['args'],
                          'Trace'=>array_splice($trace,$i+1));
         } else {
@@ -325,6 +327,7 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
      * @param string $structure The structure to be used for the data
      * @param array $data The data to be recorded
      * @return boolean Returns TRUE if message was recorded
+     * @throws Zend_Wildfire_Exception
      */
     protected function _recordMessage($structure, $data)
     {

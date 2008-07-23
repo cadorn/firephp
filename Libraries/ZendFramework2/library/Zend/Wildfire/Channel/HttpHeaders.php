@@ -141,6 +141,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      * 
      * @param string $uri The URI for the protocol to be initialized
      * @return object Returns the new initialized protocol instance
+     * @throws Zend_Wildfire_Exception
      */
     protected function _initProtocol($uri)
     {
@@ -215,6 +216,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      * Get the request object
      * 
      * @return Zend_Controller_Request_Abstract
+     * @throws Zend_Wildfire_Exception
      */
     public function getRequest()
     {
@@ -232,6 +234,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
      * Get the response object
      * 
      * @return Zend_Controller_Response_Abstract
+     * @throws Zend_Wildfire_Exception
      */
     public function getResponse()
     {
