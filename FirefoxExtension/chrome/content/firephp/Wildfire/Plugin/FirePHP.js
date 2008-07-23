@@ -2,7 +2,7 @@
 Wildfire.Plugin.FirePHP = function() {
   
 
-  this.PLUGINL_URI = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/1.6';
+  this.PLUGINL_URI = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/0.1';
   this.STRUCTURE_URI_DUMP = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/Dump/0.1';
   this.STRUCTURE_URI_FIREBUGCONSOLE = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1';
 

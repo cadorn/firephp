@@ -169,6 +169,7 @@ var FirePHP = top.FirePHP = {
        */
       
       switch(httpChannel.URI.host.toLowerCase()) {
+        case "meta.firephp.org":
         case "www.firephp.org":
         case 'com.cadorn.websites.firephp.macbook.home.cadorn.net':
           httpChannel.setRequestHeader("X-FirePHP-Agent",
