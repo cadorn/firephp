@@ -261,9 +261,20 @@ class Zend_Wildfire_FirebugLogWriterTest extends PHPUnit_Framework_TestCase
         $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
         $protocol = $channel->getProtocol(Zend_Wildfire_Plugin_FirePhp::PROTOCOL_URI);
 
-var_dump($protocol->getMessages());
-
+        $messages = array(Zend_Wildfire_Plugin_FirePhp::STRUCTURE_URI_FIREBUGCONSOLE=>
+                          array(Zend_Wildfire_Plugin_FirePhp::PLUGIN_URI=>
+                                array(1=>'[{"Type":"TABLE"},["Summary line for the table",[["Column 1","Column 2"],["Row 1 c 1"," Row 1 c 2"],["Row 2 c 1"," Row 2 c 2"]]]]',
+                                      2=>'[{"Type":"LOG"},["Test Label","This is a log message!"]]')),
+                          Zend_Wildfire_Plugin_FirePhp::STRUCTURE_URI_DUMP=>
+                          array(Zend_Wildfire_Plugin_FirePhp::PLUGIN_URI=>
+                                array('{"Test Label":"This is a log message!"}')));
         
+        $qued_messages = $protocol->getMessages();
+        unset($qued_messages[Zend_Wildfire_Plugin_FirePhp::STRUCTURE_URI_FIREBUGCONSOLE][Zend_Wildfire_Plugin_FirePhp::PLUGIN_URI][0]);
+        unset($qued_messages[Zend_Wildfire_Plugin_FirePhp::STRUCTURE_URI_FIREBUGCONSOLE][Zend_Wildfire_Plugin_FirePhp::PLUGIN_URI][3]);
+
+        $this->assertEquals(serialize($qued_messages),
+                            serialize($messages));
     }    
     
         
@@ -366,9 +377,42 @@ var_dump($protocol->getMessages());
                             
         $this->assertNull(Zend_Wildfire_Plugin_FirePhp::getInstance(true));
     }
+    
+    public function testHttpHeadersChannelSubclass()
+    {
+      
+        $firephp = Zend_Wildfire_Channel_HttpHeaders::init('Zend_Wildfire_FirebugLogWriterTest_HttpHeadersChannel');
+      
+        $this->assertEquals(get_class($firephp),
+                            'Zend_Wildfire_FirebugLogWriterTest_HttpHeadersChannel');
+                            
+        Zend_Wildfire_Channel_HttpHeaders::destroyInstance();
+
+        try {
+            Zend_Wildfire_Channel_HttpHeaders::init('Zend_Wildfire_FirebugLogWriterTest_Request');
+            $this->fail('Should not be able to initialize');
+        } catch (Exception $e) {
+            // success
+        }
+        
+        $this->assertNull(Zend_Wildfire_Channel_HttpHeaders::getInstance(true));
+                            
+        try {
+            Zend_Wildfire_Channel_HttpHeaders::init(array());
+            $this->fail('Should not be able to initialize');
+        } catch (Exception $e) {
+            // success
+        }
+                            
+        $this->assertNull(Zend_Wildfire_Channel_HttpHeaders::getInstance(true));
+    }    
 }
 
 class Zend_Wildfire_FirebugLogWriterTest_FirePhpPlugin extends Zend_Wildfire_Plugin_FirePhp
+{
+}
+
+class Zend_Wildfire_FirebugLogWriterTest_HttpHeadersChannel extends Zend_Wildfire_Channel_HttpHeaders
 {
 }
 
