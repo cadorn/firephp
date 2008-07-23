@@ -155,12 +155,12 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
     /**
      * Flush all data from all registered plugins and send all data to response headers.
      *
-     * @return void
+     * @return boolean Returns TRUE if data was flushed
      */
     public function flush()
     {
         if (!$this->_protocols || !$this->isReady()) {
-            return;
+            return false;
         }
 
         foreach ( $this->_protocols as $protocol ) {
@@ -175,6 +175,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
                 }
             }
         }
+        return true;
     }
 
     

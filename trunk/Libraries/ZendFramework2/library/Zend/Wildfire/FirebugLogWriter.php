@@ -71,6 +71,16 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
     }
     
     /**
+     * Get the default display style for user-defined priorities
+     * 
+     * @return string Returns the default log display style
+     */    
+    public function getDefaultPriorityStyle()
+    {
+        return $this->_defaultPriorityStyle;
+    }
+    
+    /**
      * Set a display style for a logging priority
      * 
      * @param int $priority The logging priority
@@ -85,6 +95,20 @@ class Zend_Wildfire_FirebugLogWriter extends Zend_Log_Writer_Abstract
         }
         $this->_priorityStyles[$priority] = $style;
         return $previous;
+    }
+
+    /**
+     * Get a display style for a logging priority
+     * 
+     * @param int $priority The logging priority
+     * @return string|boolean The logging display style if defined or FALSE otherwise
+     */
+    public function getPriorityStyle($priority)
+    {
+        if (array_key_exists($priority,$this->_priorityStyles)) {
+            return $this->_priorityStyles[$priority];
+        }
+        return false;
     }
 
     /**
