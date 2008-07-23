@@ -83,19 +83,40 @@ class Zend_Wildfire_Protocol_JsonStream
      */
     public function clearMessages(Zend_Wildfire_Plugin_Interface $plugin)
     {
-        if(!isset($this->_messages[$structure])) {
-            return false;
-        }
-      
         $uri = $plugin->getUri();
-      
-        if(!isset($this->_messages[$structure][$uri])) {
+        
+        $present = false;
+        foreach ($this->_messages as $structure => $messages) {
+            if(!isset($this->_messages[$structure])) {
+                continue;
+            }
+                
+            if(!isset($this->_messages[$structure][$uri])) {
+                continue;
+            }
+            
+            $present = true;
+            
+            unset($this->_messages[$structure][$uri]);
+            
+            if (!$this->_messages[$structure]) {
+                unset($this->_messages[$structure]);
+            }
+        }
+        return $present;
+    }
+
+    /**
+     * Get all qued messages
+     * 
+     * @return mixed Returns qued messages or FALSE if no messages are qued
+     */
+    public function getMessages()
+    {
+        if (!$this->_messages) {
             return false;
         }
-        
-        unset($this->_messages[$structure][$uri]);
-
-        return true;
+        return $this->_messages;
     }
 
     /**

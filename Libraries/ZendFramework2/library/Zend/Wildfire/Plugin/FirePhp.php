@@ -231,6 +231,10 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
      */
     public static function send($var, $label=null, $type=null)
     {
+        if (self::$_instance===null) {
+            self::getInstance();
+        }
+      
         if (!self::$_instance->_enabled ||
             !self::$_instance->_channel->isReady()) {
             return false; 
