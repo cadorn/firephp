@@ -86,6 +86,7 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
             Zend_Loader::loadClass($class);
             self::$_instance = new $class();
             if (!self::$_instance instanceof Zend_Wildfire_Channel_HttpHeaders) {
+                self::$_instance = null;
                 throw new Zend_Wildfire_Exception('Invalid class to third argument. Must be subclass of Zend_Wildfire_Channel_HttpHeaders.');
             }
         } else {
@@ -99,11 +100,12 @@ class Zend_Wildfire_Channel_HttpHeaders extends Zend_Controller_Plugin_Abstract 
     /**
      * Get or create singleton instance
      * 
+     * @param $skipCreate boolean True if an instance should not be created
      * @return Zend_Wildfire_Channel_HttpHeaders
      */
-    public static function getInstance()
+    public static function getInstance($skipCreate=false)
     {  
-        if (self::$_instance===null) {
+        if (self::$_instance===null && $skipCreate!==true) {
             return self::init();               
         }
         return self::$_instance;
