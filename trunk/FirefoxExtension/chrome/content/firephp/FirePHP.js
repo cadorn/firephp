@@ -461,15 +461,18 @@ Firebug.FirePHP = extend(Firebug.Module,
  
     /* Add any stylesheets if not added yet */
     try {
-      if(this.activeContext && this.FirePHPProcessor) {
+      if(this.activeContext) {
 
         var panel = this.activeContext.getPanel('console');
         if(panel) {
-          
-          for( var url in this.FirePHPProcessor.consoleStylesheets ) {
-              var doc = panel.document;
-              
-              this.addStyleSheet(panel.document,url);
+        
+          this.addStyleSheet(panel.document,'chrome://firephp/content/panel.css');
+          this.addStyleSheet(panel.document,'chrome://firephp/content/RequestProcessor.css');
+        
+          if(this.FirePHPProcessor) {
+            for( var url in this.FirePHPProcessor.consoleStylesheets ) {
+                this.addStyleSheet(panel.document,url);
+            }
           }
         }
       }
@@ -569,7 +572,6 @@ Firebug.FirePHP = extend(Firebug.Module,
 						_Init: function() {
 							if(this.initialized) return;
               try {
-                this.consoleStylesheets['chrome://firephp/content/panel.css'] = true;
   							this.Init();
   							this.initialized = true;
               } catch(e) {
