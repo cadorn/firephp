@@ -3,41 +3,11 @@
 <project name="FirePHPCore" default="package" basedir=".">
 
     <target name="prepare">
+      
         <echo msg="Making directory ./build" />
         <delete dir="./build" includeemptydirs="true" failonerror="true" />
         <mkdir dir="./build" />
-    </target>
-
-    <target name="build" depends="prepare">
-        <echo msg="Copying files to build directory..." />
-
-        <copy file="./README" tofile="./build/FirePHPCore/README"/>
-        <copy file="./CHANGELOG" tofile="./build/FirePHPCore/CHANGELOG"/>
-
-        <copy todir="./build/FirePHPCore/demo" >
-          <fileset dir="./demo"/>
-        </copy>
-
-        <copy todir="./build/FirePHPCore/lib" >
-          <fileset dir="./lib"/>
-        </copy>
-
-
-        <copy todir="./build/pear/demo" >
-          <fileset dir="./demo"/>
-        </copy>
-
-        <copy todir="./build/pear" >
-          <fileset dir="./lib/FirePHPCore"/>
-        </copy>
-
-    </target>
-
-
-
-
-    <target name="package" depends="build">
-
+        
         <propertyprompt propertyName="version" promptText="Version:" />
 
         <php function="substr_count" returnProperty="version_part_count">
@@ -54,6 +24,48 @@
             <property name="stability" value="stable" />
          </else>
         </if>
+        
+    </target>
+
+    <target name="build" depends="prepare">
+        <echo msg="Copying files to build directory..." />
+
+        <copy file="./README" tofile="./build/FirePHPCore/README"/>
+        <copy file="./CHANGELOG" tofile="./build/FirePHPCore/CHANGELOG"/>
+
+        <copy todir="./build/FirePHPCore/demo" >
+          <fileset dir="./demo"/>
+        </copy>
+
+        <copy todir="./build/FirePHPCore/lib" >
+          <fileset dir="./lib"/>
+          <filterchain>
+            <replacetokens begintoken="##" endtoken="##">
+              <token key="VERSION" value="${version}" />
+            </replacetokens>
+          </filterchain>          
+        </copy>
+
+
+        <copy todir="./build/pear/demo" >
+          <fileset dir="./demo"/>
+        </copy>
+
+        <copy todir="./build/pear" >
+          <fileset dir="./lib/FirePHPCore"/>
+          <filterchain>
+            <replacetokens begintoken="##" endtoken="##">
+              <token key="VERSION" value="${version}" />
+            </replacetokens>
+          </filterchain>          
+        </copy>
+
+    </target>
+
+
+
+
+    <target name="package" depends="build">
 
         <phingcall target="package-default"/>
         <phingcall target="package-pear"/>
