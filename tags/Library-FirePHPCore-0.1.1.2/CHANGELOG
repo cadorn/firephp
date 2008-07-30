@@ -1,0 +1,22 @@
+
+  - Include __className property in JSON string if variable was an object
+	- Bugfix - Mis-spelt "Exception" in JSON encoding code
+
+2008-06-13 - Release Version: 0.1.1.1
+
+	- Bugfix - Standardize windows paths in stack traces
+	- Bugfix - Display correct stack trace info in windows environments
+	- Bugfix - Check $_SERVER['HTTP_USER_AGENT'] before returning
+
+2008-06-13 - Release Version: 0.1.1
+
+	- Added support for FirePHP::TRACE log style
+	- Changed license to New BSD License
+
+2008-06-06 - Release Version: 0.0.2
+
+  - Bugfix - Added usleep() to header writing loop to ensure unique index
+  - Bugfix - Ensure chunk_split does not generate trailing "\n" with empty data header
+  - Added support for FirePHP::TABLE log style
+  
+ 
