@@ -704,6 +704,7 @@ function netInfoServerTab(netInfoBox, file, context) {
       var info = FirePHP.parseHeaders(file.responseHeaders,'array');
       var mask = info['rendererurl'];
       var data = info['data'];
+      var wildfire =  info['plugin'];
       
 			var hash = hex_md5(item_index+':'+url);
       
@@ -719,13 +720,13 @@ function netInfoServerTab(netInfoBox, file, context) {
         var processorurl_allowed = false;
 
         if(info['rendererurl']) {
-          rendererurl_domain = FirebugLib.getDomain(info['rendererurl']);
+          rendererurl_domain = FBL.getDomain(info['rendererurl']);
           rendererurl_allowed = top.FirePHP.isURIAllowed(rendererurl_domain);
         } else {
           rendererurl_allowed = true;
         }
         if(info['processorurl']) {
-          processorurl_domain = FirebugLib.getDomain(info['processorurl']);
+          processorurl_domain = FBL.getDomain(info['processorurl']);
           processorurl_allowed = top.FirePHP.isURIAllowed(processorurl_domain);
         } else {
           processorurl_allowed = true;
@@ -733,8 +734,8 @@ function netInfoServerTab(netInfoBox, file, context) {
                     
 				if( rendererurl_allowed && processorurl_allowed ) {
           
-					if(data) {
-            parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+					if(data || wildfire.hasMessages()) {
+            parseAndPrintData(wildfire, data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
 					} else {
 						responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
 					}
@@ -748,16 +749,23 @@ function netInfoServerTab(netInfoBox, file, context) {
 					  msg += '<p>To allow custom loading from host <b>'+processorurl_domain+'</b> <a onclick="top.FirePHP.enableSite(\''+processorurl_domain+'\'); alert(\'Custom loading for FirePHP has been enabled for host '+processorurl_domain+' and will start working with the next request!\');" href="#">click here</a>.</p>';
           }
 					msg += '<p><font color="red"><b>WARNING:</b> FirePHP customizing works by allowing a server script to insert code into your browser. <b>Only enable this for hosts you trust!</b> If enabled for a malicious host your browser may be hijacked!</font></p>';
-					msg += '<p>FirePHP is distributed subject to the Mozilla Public License on an "AS IS" basis,<br>';
-					msg += '<b>WITHOUT WARRANTY OF ANY KIND</b>, either express or implied. <b>USE AT YOUR OWN RISK</b>.<br>';
-					msg += 'IN NO EVENT WILL ANY COPYRIGHT HOLDER OR ANY OTHER PARTY BE LIABLE TO YOU FOR DAMAGES.<br>';
-					msg += 'By using FirePHP you agree to all terms of the Mozilla Public License.<br>';
-					msg += 'You can view the License at <a target="_blank" href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</p>';
+					msg += '<p>FirePHP is distributed subject to the New BSD License.<br><br>';
+					msg += 'THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND<br>';
+					msg += 'ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED<br>';
+					msg += 'WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE<br>';
+					msg += 'DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR<br>';
+					msg += 'ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES<br>';
+					msg += '(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;<br>';
+					msg += 'LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON<br>';
+					msg += 'ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT<br>';
+					msg += '(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS<br>';
+					msg += 'SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br><br>';
+					msg += 'You can view the License at <a target="_blank" href="http://www.opensource.org/licenses/bsd-license.php">http://www.opensource.org/licenses/bsd-license.php</a>.</p>';
 					responseTextBox.innerHTML = msg;													
 				}                
     	} else {
-				if(data) {
-          parseAndPrintData(data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
+				if(data || wildfire.hasMessages()) {
+          parseAndPrintData(wildfire, data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
 				} else {
 					responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
 				}
@@ -767,7 +775,7 @@ function netInfoServerTab(netInfoBox, file, context) {
 
 
 
-function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
+function parseAndPrintData(wildfire, Data, Mask, responseTextBox,doc,hash) {
         	
 	if(!doc.defaultView.FirePHPRenderer) {
 		doc.defaultView.FirePHPRenderer = function() {
@@ -792,6 +800,7 @@ function parseAndPrintData(Data, Mask, responseTextBox,doc,hash) {
 	var context = {document:doc,
 								 window:doc.defaultView,
 								 key:'k'+hash,
+                 wildfire: wildfire,
 								 FirePHPRenderer:doc.defaultView.FirePHPRenderer};
 		
 	with(context) {

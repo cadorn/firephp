@@ -1,4 +1,12 @@
 
+2008-07-30 - Release Version: 0.1.0.6
+
+  - Display object class name if __className key found in data
+	- Bugfix - Display null values properly in variable inspector
+  - Bugfix - Show dumped variables in "Server" request tab if using wildfire
+	- Bugfix - FF3 - Messages not showing in console when Firebug is detached
+	- Bugfix - Fix loading of custom processors and renderers
+
 2008-07-23 - Release Version: 0.1.0.5
 
 	- Updated plugin URI for FirePHP Wildfire plugin

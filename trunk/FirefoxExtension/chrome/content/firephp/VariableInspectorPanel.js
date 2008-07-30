@@ -51,8 +51,15 @@ function print_r(obj, indent, depth) {
   }
   if (typeof(obj) == "object") {
     
+    var isClass = false;
+    
     if(indent == 0) {
-      output += 'array(' + nl;
+      if(obj['__className']) {
+        output +=  '<font color="brown"><b>' + obj['__className'] + '(</b></font>' + nl;
+        isClass = true;
+      } else {
+        output += 'array(' + nl;
+      }
     }
     
     indent++;
@@ -60,6 +67,8 @@ function print_r(obj, indent, depth) {
     var child_count = countAttributes(obj);
     var child_index = 0;
     for (var key in obj) {
+      
+      if(key=='__className') continue;
       
       UniqueIndex++;
       
@@ -90,15 +99,23 @@ function print_r(obj, indent, depth) {
         
         output += '</div>';
         
-        if (typeof(child) == "object") {
+        if (child!=null && typeof(child) == "object") {
           indent++;
 
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
-          
-          output += 'array(';
+              
+          if(child['__className']) {
+            output +=  '<font color="brown"><b>' + child['__className'] + '(</b></font>';
+          } else {
+            output += 'array(';
+          }
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
           var count = countAttributes(child);
-          output += ' <font color="blue">... ' + count + ' element' + ((count > 1 || count == 0) ? 's' : '') + ' ...</font> )';
+          if(child['__className']) {
+            output += ' <font color="blue">... ' + (count-1) + ' propert' + (((count-1) > 1 || count == 1) ? 'ies' : 'y') + ' ...</font> <font color="brown"><b>)</b></font>';
+          } else {
+            output += ' <font color="blue">... ' + count + ' element' + ((count > 1 || count == 0) ? 's' : '') + ' ...</font> )';
+          }
           output += '</div>';
           output += nl;
           
@@ -111,13 +128,17 @@ function print_r(obj, indent, depth) {
           
           output += print_r(child, indent, depth + 1);
           
-          output += str_repeat(ws, indent) + ')' + nl;
+          if(child['__className']) {
+            output += str_repeat(ws, indent) + '<font color="brown"><b>)</b></font>' + nl;
+          } else {         
+            output += str_repeat(ws, indent) + ')' + nl;
+          }
           
           output += '</div>';
           indent--;
         }
         else 
-        if (IsNumeric(child)) {
+        if (child!=null && IsNumeric(child)) {
         
           output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
           output += '<font color="green">' + child + '</font>';
@@ -131,7 +152,7 @@ function print_r(obj, indent, depth) {
           
         }
         else 
-        if (typeof(child) == "string") {
+        if (child!=null && typeof(child) == "string") {
         
           output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
           output += '<font color="red">\'' + child + '\'</font>';
@@ -160,7 +181,12 @@ function print_r(obj, indent, depth) {
       child_index++;
     }
     indent--;
-    output += (indent == 0) ? ')' + nl : '';
+    
+    if(isClass) {
+      output += (indent == 0) ? '<font color="brown"><b>)</b></font>' + nl : '';
+    } else {
+      output += (indent == 0) ? ')' + nl : '';
+    }
     return output;
   }
   else {
