@@ -1,5 +1,5 @@
 
-2008-07-30 - Release Version: 0.1.0.6
+2008-07-30 - Release Version: 0.1.0.7
 
   - Display object class name if __className key found in data
 	- Bugfix - Display null values properly in variable inspector

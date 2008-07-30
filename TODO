@@ -26,9 +26,6 @@
 - Show line number and file for log messages
   http://groups.google.com/group/FirePHP/browse_frm/thread/e943c0df9cce23d5
 
-- Object/Array types are not maintained when serializing to JSON
-
-
 -------------------------------
  Version 0.2.x
 -------------------------------
