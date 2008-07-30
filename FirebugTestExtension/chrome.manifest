@@ -1,3 +1,0 @@
-content firebugtestextension chrome/content/FirebugTestExtension/ xpcnativewrappers=no
-
-overlay chrome://firebug/content/firebugOverlay.xul         chrome://firebugtestextension/content/FirebugOverlay.xul
