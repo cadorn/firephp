@@ -45,7 +45,7 @@ $data = $_SERVER;
 
 if($_GET['var']==1) {
 
-//  fb('Hello World');
+  fb('Hello World');
 
 //  fb('Log message',FirePHP::LOG);
 //  fb('Info message',FirePHP::INFO);
@@ -66,7 +66,7 @@ if($_GET['var']==1) {
 
 //header('X-FirePHP-ProcessorURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Processor.js');
 
-//header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
+header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
 
 var_dump($data);
 

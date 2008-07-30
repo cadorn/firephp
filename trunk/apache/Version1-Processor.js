@@ -2,21 +2,21 @@
 /* 
  * Called once for each request as it comes in
  */
-FirePHPProcessor.ProcessRequest = function() {
+FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
 
-  this.data = json_parse(this.data);
+  var data = json_parse(Data);
 
-	if (this.data['FirePHP.Firebug.Console']) {
+	if (data['FirePHP.Firebug.Console']) {
   
-  	Firebug.Console.openGroup(this.url, null, "group", null, false);
+  	Firebug.Console.openGroup(URL, null, "group", null, false);
 	
-		for (var index in this.data['FirePHP.Firebug.Console']) {
+		for (var index in data['FirePHP.Firebug.Console']) {
 			
-			var item = this.data['FirePHP.Firebug.Console'][index];
+			var item = data['FirePHP.Firebug.Console'][index];
 			
       if (item) {
 	  
-		  	if (item[0] == 'log' || item[0] == 'info' || item[0] == 'warn') {
+		  	if (item[0] == 'LOG' || item[0] == 'info' || item[0] == 'warn') {
 		  	
 		  		this.logToFirebug(item[0], 'TEST: ' + item[1]);
 		  		
