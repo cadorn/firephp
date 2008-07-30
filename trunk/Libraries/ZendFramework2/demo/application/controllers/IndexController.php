@@ -61,6 +61,10 @@ class IndexController extends Zend_Controller_Action
                       );
         $logger->table($table);
         
+        Zend_Wildfire_Plugin_FirePhp::send('Value1','Key1','DUMP');
+        Zend_Wildfire_Plugin_FirePhp::send('Value2','Key2','DUMP');
+        
+        
         /* Throw an exception to test the default error handler. */
        
         throw new Zend_Exception('Test Exception');
