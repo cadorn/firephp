@@ -84,6 +84,7 @@ function print_r(obj, indent, depth) {
       }
       else {
       
+      
         output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
         
         if (IsNumeric(key)) {
@@ -99,7 +100,23 @@ function print_r(obj, indent, depth) {
         
         output += '</div>';
         
-        if (child!=null && typeof(child) == "object") {
+        
+        if(child==null || child==false || child==true) {
+          
+          output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
+          output += '<font color="navy">';
+          output += child;
+          output += '</font>';
+          output += '</div>';
+          output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
+          output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
+          output += ' <font color="blue">...</font>';
+          output += '</div>';
+          output += '</div>';
+          output += nl;
+          
+        } else
+        if (typeof(child) == "object") {
           indent++;
 
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
@@ -138,7 +155,7 @@ function print_r(obj, indent, depth) {
           indent--;
         }
         else 
-        if (child!=null && IsNumeric(child)) {
+        if (IsNumeric(child)) {
         
           output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
           output += '<font color="green">' + child + '</font>';
@@ -152,7 +169,7 @@ function print_r(obj, indent, depth) {
           
         }
         else 
-        if (child!=null && typeof(child) == "string") {
+        if (typeof(child) == "string") {
         
           output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
           output += '<font color="red">\'' + child + '\'</font>';

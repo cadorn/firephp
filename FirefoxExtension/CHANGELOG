@@ -1,4 +1,9 @@
 
+2008-07-30 - Release Version: 0.1.0.8
+
+	- Bugfix - CSS style not added when FirePHP first loads
+	- Updated rendering of null, false and true in Variable Viewer
+
 2008-07-30 - Release Version: 0.1.0.7
 
   - Display object class name if __className key found in data
