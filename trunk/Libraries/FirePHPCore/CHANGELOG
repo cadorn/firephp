@@ -1,4 +1,7 @@
 
+  - Include __className property in JSON string if variable was an object
+	- Bugfix - Mis-spelt "Exception" in JSON encoding code
+
 2008-06-13 - Release Version: 0.1.1.1
 
 	- Bugfix - Standardize windows paths in stack traces

@@ -39,50 +39,11 @@
  
  
 /**
- * Sends the given data to FirePHP Firefox Extension.
+ * Sends the given data to the FirePHP Firefox Extension.
  * The data can be displayed in the Firebug Console or in the
  * "Server" request tab.
  * 
- * Usage:
- * 
- * require('FirePHP.class.php')
- * 
- * // NOTE: You must have Output Buffering enabled via
- * //       ob_start() or output_buffering ini directive.
- * 
- * $firephp = FirePHP::getInstance(true);
- * 
- * $firephp->fb('Hello World'); // Defaults to FirePHP::LOG
- * 
- * $firephp->fb('Log message'  ,FirePHP::LOG);
- * $firephp->fb('Info message' ,FirePHP::INFO);
- * $firephp->fb('Warn message' ,FirePHP::WARN);
- * $firephp->fb('Error message',FirePHP::ERROR);
- * 
- * $firephp->fb('Message with label','Label',FirePHP::LOG);
- * 
- * $firephp->fb(array('key1'=>'val1',
- *          'key2'=>array(array('v1','v2'),'v3')),
- *    'TestArray',FB_LOG);
- * 
- * function test($Arg1) {
- *   throw new Exception('Test Exception');
- * }
- * try {
- *   test(array('Hello'=>'World'));
- * } catch(Exception $e) {
- *   $firephp->fb($e);
- * }
- * 
- * $firephp->fb(array('2 SQL queries took 0.06 seconds',array(
- *    array('SQL Statement','Time','Result'),
- *    array('SELECT * FROM Foo','0.02',array('row1','row2')),
- *    array('SELECT * FROM Bar','0.04',array('row1','row2'))
- *   )),FirePHP::TABLE);
- * 
- * // Will show only in "Server" tab for the request
- * $firephp->fb(apache_request_headers(),'RequestHeaders',FirePHP::DUMP);
- * 
+ * For more informtion see: http://www.firephp.org/
  * 
  * @copyright   Copyright (C) 2007-2008 Christoph Dorn
  * @author      Christoph Dorn <christoph@christophdorn.com>
@@ -572,7 +533,7 @@ class FirePHP {
                   array_pop($this->json_objectStack);
 
                   foreach($properties as $property) {
-                      if($property instanceof Exeption) {
+                      if($property instanceof Exception) {
                           return $property;
                       }
                   }
@@ -612,7 +573,9 @@ class FirePHP {
                   }
               }
 
-              return '{' . join(',', $properties) . '}';
+              return '{'.$this->json_encode('__className') . ':' . $this->json_encode(get_class($var)) .
+                     (($properties)?',':'') .
+                     join(',', $properties) . '}';
 
           default:
               return null;
