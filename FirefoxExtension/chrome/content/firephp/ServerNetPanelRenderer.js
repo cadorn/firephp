@@ -205,16 +205,34 @@ function print_r(RequestKey,obj, indent, depth) {
  * Variable: FirePHPRenderer    The FirePHPRenderer object
  */
 
-data = json_parse(data);
-
 html = '<style>                                  '+
        '  #'+key+' DIV      { display: inline; } '+
        '  #'+key+' DIV.name { cursor:pointer;  } '+
        '  #'+key+' DIV.hide { display: none;   } '+
        '</style>                                 '+
        '<div id="'+key+'">                       ';
+
+if(wildfire.hasMessages()) {
+  
+  var items = new Array();
+  var messages = wildfire.getMessages('http://meta.firephp.org/Wildfire/Structure/FirePHP/Dump/0.1');
+     
+  for( var index in messages ) {
+    
+    var item = json_parse(messages[index]);
+    for( var name in item ) {
+      items[name] = item[name];
+    }
+    
+  }
+
+  html += print_r(key,items);
+  
+} else {
+  data = json_parse(data);
+  html += print_r(key,data);
+}
 			 
-html += print_r(key,data);
 html += '</div>';
 
 /* 

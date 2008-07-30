@@ -7,6 +7,8 @@ Wildfire.Channel.HttpHeaders = function() {
 
   this.protocol_ids = new Array();
   
+  this.messages = new Array();
+  
   this.messageReceived = function(Key, Value)
   {
     Key = Key.toLowerCase();
@@ -17,14 +19,39 @@ Wildfire.Channel.HttpHeaders = function() {
         var id = parseInt(Key.substr(this.headerPrefix.length+9));
         
         this.protocol_ids[id] = Value;
+  
+        /* Flush the messages to the protocol */
+       
+        if(this.messages[id]) {
+
+          var protocol = this.getProtocol(Value);
+                    
+          for( var index in this.messages[id] ) {
+
+            protocol.receiveMessage(this.messages[id][index][0][1], this.messages[id][index][1]);
+  
+          }
+
+          this.messages[id] = new Array();
+        }
+              
 
       } else {
         
         var parsed_key = this.parseKey(Key);
         
         var protocol = this.getProtocol(this.protocol_ids[parsed_key[0]]);
-
-        protocol.receiveMessage(parsed_key[1], Value);
+        
+        if(protocol) {
+          protocol.receiveMessage(parsed_key[1], Value);
+          
+        } else {
+          
+          if(!this.messages[parsed_key[0]]) {
+            this.messages[parsed_key[0]] = new Array();
+          }
+          this.messages[parsed_key[0]].push([parsed_key,Value]);
+        }
       }
     }
   };

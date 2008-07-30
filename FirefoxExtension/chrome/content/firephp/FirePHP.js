@@ -36,7 +36,7 @@ const nsIWebProgressListener = (FB_NEW)?Ci.nsIWebProgressListener:CI("nsIWebProg
 const nsISupportsWeakReference = (FB_NEW)?Ci.nsISupportsWeakReference:CI("nsISupportsWeakReference");
 const nsISupports = (FB_NEW)?Ci.nsISupport:CI("nsISupports");
   
-const ioService = (FB_NEW)?Ci.nsIIOService:FirebugLib.CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
+const ioService = CCSV("@mozilla.org/network/io-service;1", "nsIIOService");
   
 const observerService = CCSV("@mozilla.org/observer-service;1", "nsIObserverService");
 
@@ -62,6 +62,9 @@ const firephpURLs =
 
 const prefs = PrefService.getService(nsIPrefBranch2);
 const pm = PermManager.getService(nsIPermissionManager);
+
+const DEBUG = false;
+
 
 var FirePHP = top.FirePHP = {
 
@@ -125,6 +128,7 @@ var FirePHP = top.FirePHP = {
   /* Used for FB1.2 (>= b4) */
   onLoad: function(context, file)
   {
+    if(DEBUG) dump("--> FirePHP.onLoad"+"\n");
 
 //dump("--> " + file.method + " " + file.href+"\n");
 
@@ -385,6 +389,7 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   processQueOnWatchWindow: false,
 
+  contextShowing: 0,
     
   enable: function()
   {
@@ -401,7 +406,8 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   initContext: function(context)
   {
-//dump("--> initContext"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.initContext"+"\n");
+    
     FirePHP.hideVariableInspectorOverlay(true);
     
     monitorContext(context);
@@ -409,38 +415,44 @@ Firebug.FirePHP = extend(Firebug.Module,
   },
   destroyContext: function(context)
   {
-//dump("--> unwatchWindow"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.destroyContext"+"\n");
+
     unmonitorContext(context);
     
     this.processQueOnWatchWindow = false;
+    this.contextShowing = 0;
   },
   
   reattachContext: function(browser, context)
   {
-//dump("--> reattachContext"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.reattachContext"+"\n");
+
     this.addStylesheets(true);
   },
   
   watchWindow: function(context, win)
   {
-//dump("--> watchWindow"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.watchWindow"+"\n");
+
     if (this.processQueOnWatchWindow) {
       this.processRequestQue();
     }
   },
   unwatchWindow: function(context, win)
   {
-//dump("--> unwatchWindow"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.unwatchWindow"+"\n");
   },
   showPanel: function(browser, panel)
   {
-//dump("--> showPanel"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.showPanel (contextShowing: "+this.contextShowing+")"+"\n");
     
-    this.addStylesheets();
-
-    this.processQueOnWatchWindow = true;
-    
-    this.processRequestQue();    
+    if(!FB_NEW || this.contextShowing>=2) {
+      this.addStylesheets();
+  
+      this.processQueOnWatchWindow = true;
+      
+      this.processRequestQue();    
+    }
   },
   
   addStylesheets: function(Force) {
@@ -478,22 +490,35 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   showContext: function(browser, context)
   {
+    if(DEBUG) dump("--> Firebug.FirePHP.showContext (externalMode: "+((externalMode)?'true':'false')+")"+"\n");
+    
     this.activeBrowser = browser;
     this.activeContext = context;
+    
+    this.contextShowing++;
+    
+//FirePHPLib.dump(context,'context',false, true);    
+    
   },
 	 
 
 	queRequest: function(Request) {
+    if(DEBUG) dump("--> Firebug.FirePHP.queRequest"+"\n");
+
 		var http = QI(Request, nsIHttpChannel);
     var info = FirePHP.parseHeaders(http,'visit');
     this.requestBuffer.push([Request.name,info]);
   },
 
 	queFile: function(File) {
+    if(DEBUG) dump("--> Firebug.FirePHP.queFile ("+File.href+")"+"\n");
+
     this.requestBuffer.push([File.href,FirePHP.parseHeaders(File.responseHeaders,'array')]);
   },
 
 	processRequest: function(Request) {
+    if(DEBUG) dump("--> Firebug.FirePHP.processRequest"+"\n");
+
 		var url = Request.name;
 		var http = QI(Request, nsIHttpChannel);
     var info = FirePHP.parseHeaders(http,'visit');
@@ -503,6 +528,8 @@ Firebug.FirePHP = extend(Firebug.Module,
    
    
 	processRequestQue: function() {
+    if(DEBUG) dump("--> Firebug.FirePHP.processRequestQue (requestBuffer: "+((this.requestBuffer)?'true':'false')+")"+"\n");
+
     if(!this.requestBuffer) return;
 
     for( var index in this.requestBuffer ) {
@@ -514,6 +541,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 
   
 	_processRequest: function(url,info) {
+    if(DEBUG) dump("--> Firebug.FirePHP._processRequest ("+url+")"+"\n");
     
     var mask = info['processorurl'];
     var data = info['data'];
@@ -526,7 +554,7 @@ Firebug.FirePHP = extend(Firebug.Module,
 				mask = 'chrome://firephp/content/RequestProcessor.js';
 			} else {
   			if(!FirePHP.isURIAllowed(domain)) {
-          this.logWarning('By default FirePHP is not allowed to load your custom processor from "'+mask+'". You can allow this by going to the "Net" panel and clicking on the "Server" tab for this request.');
+          this.logWarning(['By default FirePHP is not allowed to load your custom processor from "'+mask+'". You can allow this by going to the "Net" panel and clicking on the "Server" tab for this request.']);
   				mask = 'chrome://firephp/content/RequestProcessor.js';
         }
       }
