@@ -16,7 +16,8 @@
 ------------------------------------------------------
 	SVN Operations
 ------------------------------------------------------
+
+	svn copy https://firephp.googlecode.com/svn/trunk https://firephp.googlecode.com/svn/branches/0.1.x
 	
 	svn copy https://firephp.googlecode.com/svn/trunk https://firephp.googlecode.com/svn/branches/0.2.x
-	
 	
