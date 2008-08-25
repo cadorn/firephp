@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-
-set_include_path(get_include_path().PATH_SEPARATOR.'/pinf/packages/com.zend.framework-standard.incubator/demos/Zend/Wildfire');
-set_include_path(get_include_path().PATH_SEPARATOR.'/pinf/packages/com.zend.framework-standard.incubator/library');
+set_include_path('.');
+set_include_path(get_include_path().PATH_SEPARATOR.'/pinf/packages/com.zend.framework-standard.trunk/demos/Zend/Wildfire');
+//set_include_path(get_include_path().PATH_SEPARATOR.'/pinf/packages/com.zend.framework-standard.incubator/library');
 set_include_path(get_include_path().PATH_SEPARATOR.'/pinf/packages/com.zend.framework-standard.trunk/library');
 
 require_once('public/index.php');

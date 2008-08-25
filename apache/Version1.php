@@ -39,13 +39,21 @@ require_once('./../Libraries/FirePHPCore/lib/FirePHPCore/fb.php');
 
 
 $data = $_SERVER;
-
+$data[] = new FirePHP();
 
 //$data = array('VarName'=>'VarValue22','var2'=>'val2');
 
 if($_GET['var']==1) {
 
-  fb('Hello World');
+
+header('X-FirePHP-Data-100000000001:	{');
+header('X-FirePHP-Data-300000000001:	"FirePHP.Firebug.Console":[');
+header('X-FirePHP-Data-399999999999:	["__SKIP__"]],');
+header('X-FirePHP-Data-999999999999:	"__SKIP__":"__SKIP__"}');
+header('X-FirePHP-Data-368615080800:	["LOG",["PHP:$list From combien_services.php[32] getListTirage()",[{"libelle":"lundi 3 novembre 2008","date":"20081103","numtir":"2008094","DFOR":"20090103"},{"libelle":"samedi 1 novembre 2008","date":"20081101","numtir":"2008093","DFOR":"20090101"},{"libelle":"mercredi 29 octobre 2008","date":"20081029","numtir":"2008090","DFOR":"20081229"},{"libelle":"mercredi 29 octobre 2008","date":"20081029","numtir":"2008091","DFOR":"20081229"},{"libelle":"lundi 27 octobre 2008","date":"20081027","numtir":"2008089","DFOR":"20081227"},{"libelle":"lundi 20 octobre 2008","date":"20081020","numtir":"2008086","DFOR":"20081220"},{"libelle":"mercredi 15 octobre 2008","date":"20081015","numtir":"2008084","DFOR":"20081215"},{"libelle":"lundi 13 octobre 2008","date":"20081013","numtir":"2008083","DFOR":"20081213"},{"libelle":"mercredi 8 octobre 2008","date":"20081008","numtir":"2008081","DFOR":"20081208"},{"libelle":"mercredi 30 juillet 2008","date":"20080730","numtir":"2008061","DFOR":"20080929"}]]],');
+
+
+//  fb('Hello World');
 
 //  fb('Log message',FirePHP::LOG);
 //  fb('Info message',FirePHP::INFO);
@@ -66,7 +74,12 @@ if($_GET['var']==1) {
 
 //header('X-FirePHP-ProcessorURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Processor.js');
 
-header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
+//header('X-FirePHP-RendererURL: http://'.$_SERVER['HTTP_HOST'].substr($_SERVER['SCRIPT_NAME'],0,-4).'-Renderer.js');
+
+
+require_once('TVarDumper.php');
+
+print TVarDumper::dump($data, 10, true);
 
 var_dump($data);
 
