@@ -432,7 +432,7 @@ Firebug.FirePHP = extend(Firebug.Module,
   
   watchWindow: function(context, win)
   {
-    if(DEBUG) dump("--> Firebug.FirePHP.watchWindow"+"\n");
+    if(DEBUG) dump("--> Firebug.FirePHP.watchWindow (processQueOnWatchWindow: "+this.processQueOnWatchWindow+")"+"\n");
 
     if (this.processQueOnWatchWindow) {
       this.processRequestQue();
@@ -446,7 +446,7 @@ Firebug.FirePHP = extend(Firebug.Module,
   {
     if(DEBUG) dump("--> Firebug.FirePHP.showPanel (contextShowing: "+this.contextShowing+")"+"\n");
     
-    if(!FB_NEW || this.contextShowing>=2) {
+    if(!FB_NEW || this.contextShowing>=1) {
       this.addStylesheets();
   
       this.processQueOnWatchWindow = true;
@@ -640,6 +640,9 @@ Firebug.FirePHP = extend(Firebug.Module,
           dataType: 'text',
           cache: false,
           url: mask,
+          beforeSend: function(XMLHttpRequest){
+            XMLHttpRequest.overrideMimeType('text/plain; charset=us-ascii');
+          },
           success: function(ReturnData){
             with (proecessor_context) {
               FirePHPProcessor.sourceURL = mask;
