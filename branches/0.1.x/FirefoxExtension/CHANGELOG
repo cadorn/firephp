@@ -1,4 +1,11 @@
 
+2008-08-24 - Release Version: 0.1.1.2
+
+  - (Issue 15) FirePHP does not display messages in the console with latest version of Firebug
+	- (Issue 10) Prevent "not well-formed error" in JS console when loading processor and renderer
+	- (Issue 14) Updated wildfire protocol to wrap header message values with "|"
+	- Updated Net panel override to make it consistent with latest changes in fb 1.2
+
 2008-07-31 - Release Version: 0.1.1.1
 2008-07-31 - Release Version: 0.1.1
 
