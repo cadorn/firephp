@@ -20,7 +20,7 @@ fb('Main Page');
 <p><a href="#" onClick="$.get('ConsoleTest.php', {var1:'val1'});">ConsoleTest.php (GET)</a></p>
 <p><a href="#" onClick="$.post('ConsoleTest.php', {var1:'val1'});">ConsoleTest.php (POST)</a></p>
 <p><a target="frame1" href="TableTest.php">TableTest.php (GET)</a></p>
-<p><a href="/ZendTest/">ZendTest (Code in incubator)</a></p>
+<p><a href="/ZendTest/">ZendTest (Code in trunk)</a></p>
 
 <p><a href="#" onClick="$.get('NoContentTest.php');">AJAX - NoContentTest.php</a></p>
 
