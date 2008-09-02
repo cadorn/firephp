@@ -51,7 +51,7 @@ $log[] = array('Type','Value');
 $log[] = array('String','This is a string');
 $log[] = array('Numeric','1');
 $log[] = array('Numeric','1.0');
-$log[] = array('Array',array('nam'=>'val',3=>'val2',4=>array('Yes')));
+$log[] = array('Array',array('nam'=>'val',3=>'val2',4=>array('Yes'),'val3'=>'444','val4'=>344,'val5'=>33.5,'val6'=>true,'val7'=>false,'val8'=>null,'val9'=>$obj));
 $log[] = array('Array',array('nam'=>'val',3=>'val2',31=>'val2',32=>'val2',33=>'val2',34=>'val2',4=>array('Yes')));
 $log[] = array('Array',array('nam'=>'val',array('Yes2')));
 $log[] = array('Object',$obj);
