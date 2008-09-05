@@ -1,0 +1,28 @@
+<?php print $this->doctype(); ?>
+<html>
+    <head>
+        <title>...</title>
+        
+				<script type="text/javascript">
+				//<!--
+				<?php print $this->partial('_partials/header.js'); ?>
+				//-->
+				</script>
+        
+        
+        <?php print $this->dojo()
+                         ->enable()
+						             ->setLocalPath('js/dojo/dojo.js')
+						             ->setDjConfigOption('usePlainJson', true)
+						             ->addStyleSheetModule('dijit.themes.tundra')
+						             ->requireModule('dojo.rpc.JsonService')
+						             ->requireModule('dijit.form.Button');
+				?>
+
+        <?php print $this->headScript(); ?>
+
+    </head>
+    <body class="tundra">
+        <?php print  $this->layout()->content; ?>
+    </body>
+</html>
