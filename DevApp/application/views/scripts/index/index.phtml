@@ -16,57 +16,20 @@ function demoRpc()
 
 <?php 
 
+$this->accordionContainer()->captureStart(
+    'accordion1',
+    array('title' => 'Pane Title'),
+    array('style' => 'background-color: lightgray; height: 300px;'));
 print $this->accordionPane(
     'p1', 
     'Pane 1 Content', 
-    array(
-        'title' => 'Pane Title',
-    ),
-    array(
-        'style' => 'background-color: lightgray;'
-    )
-);
-
-
-print $this->accordionContainer(
-    'accordion1', 
-    
-    $this->accordionPane(
-    'p1', 
-    'Pane 1 Content', 
-    array(
-        'title' => 'Pane Title',
-    ),
-    array(
-        'style' => 'background-color: lightgray;'
-    )
-).
-$this->accordionPane(
-    'p1', 
-    'Pane 1 Content', 
-    array(
-        'title' => 'Pane Title',
-    ),
-    array(
-        'style' => 'background-color: lightgray;'
-    )
-)
-, 
-    array(
-        'duration' => 200,
-    ),
-    array(
-        'style' => 'width: 200px; height: 300px;',
-    )
-);
-
+    array('title' => 'Pane 1 Title'),
+    array('style' => 'background-color: lightgray;'));
+print $this->accordionPane(
+    'p2', 
+    'Pane 2 Content', 
+    array('title' => 'Pane 2 Title'),
+    array('style' => 'background-color: lightgray;'));
+print $this->accordionContainer()->captureEnd('accordion1');
 
 ?>
-
-
-<div id="accordion1">
-    <div id="p1">
-    </div>
-    <div id="p2">
-    </div>
-</div>
