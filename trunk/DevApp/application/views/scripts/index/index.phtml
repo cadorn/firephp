@@ -14,36 +14,59 @@ function demoRpc()
 
 
 
-<?php print $this->accordionPane(
-    'foo', 
-    'Content', 
+<?php 
+
+print $this->accordionPane(
+    'p1', 
+    'Pane 1 Content', 
     array(
         'title' => 'Pane Title',
     ),
     array(
-        'style' => 'background-color: lightgray;',
+        'style' => 'background-color: lightgray;'
     )
-); ?>
+);
 
 
-<div id="foo" duration="200"
-                style="margin-right: 30px; width: 400px; height: 300px; overflow: hidden">
-                <!-- content inline -->
-                <div dojoType="dijit.layout.AccordionPane" selected="true" title="Pane 1">
-                        <p >Nunc consequat nisi vitae quam. Suspendisse sed nunc. Proin ...</p >
-                </div>
-       
-                <!-- loading by indirect reference -->
-                <div dojoType="dijit.layout.AccordionPane" title="Pane 2 (lazy load)"
-                     href="/dojoroot/dijit/tests/layout/tab1.html" >
-                </div>
-       
-                <div dojoType="dijit.layout.AccordionPane" title="Pane 3">
-                    More content
-                    <ul>
-                        <li>One</li>
-                        <li>Two</li>
-                        <li>Three</li>
-                    </ul>
-                </div>
-        </div>
+print $this->accordionContainer(
+    'accordion1', 
+    
+    $this->accordionPane(
+    'p1', 
+    'Pane 1 Content', 
+    array(
+        'title' => 'Pane Title',
+    ),
+    array(
+        'style' => 'background-color: lightgray;'
+    )
+).
+$this->accordionPane(
+    'p1', 
+    'Pane 1 Content', 
+    array(
+        'title' => 'Pane Title',
+    ),
+    array(
+        'style' => 'background-color: lightgray;'
+    )
+)
+, 
+    array(
+        'duration' => 200,
+    ),
+    array(
+        'style' => 'width: 200px; height: 300px;',
+    )
+);
+
+
+?>
+
+
+<div id="accordion1">
+    <div id="p1">
+    </div>
+    <div id="p2">
+    </div>
+</div>
