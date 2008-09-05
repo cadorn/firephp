@@ -1,5 +1,0 @@
-
-RewriteEngine on
-
-RewriteRule   json-rpc/(.*)                 index.php?bootstrap=json-rpc&endpoint=$1  [QSA,L]
-RewriteRule   !\.(js|ico|gif|jpg|png|css)$  index.php?bootstrap=mvc       										 	[QSA,L]
