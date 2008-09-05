@@ -12,11 +12,12 @@
         
         <?php print $this->dojo()
                          ->enable()
-						             ->setLocalPath('js/dojo/dojo.js')
+//						             ->setCdnBase(Zend_Dojo::CDN_BASE_AOL)
+                         ->setLocalPath('js2/dojo/dojo.js')
 						             ->setDjConfigOption('usePlainJson', true)
 						             ->addStyleSheetModule('dijit.themes.tundra')
-						             ->requireModule('dojo.rpc.JsonService')
-						             ->requireModule('dijit.form.Button');
+					             	 ->requireModule('dojo.rpc.JsonService')
+												 ->requireModule('dijit.form.Button');
 				?>
 
         <?php print $this->headScript(); ?>
