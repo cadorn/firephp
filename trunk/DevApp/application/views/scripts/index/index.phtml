@@ -1,0 +1,49 @@
+<h2>Dojo JSON-RPC Demo</h2>
+
+<input name="foo" type="button" value="Demo" onClick="demoRpc()"/>
+
+<?php $this->headScript()->captureStart(); ?>
+    
+function demoRpc()
+{
+    var myObject = new dojo.rpc.JsonService('json-rpc/Server');
+    console.log(myObject.bar());
+}
+
+<?php $this->headScript()->captureEnd(); ?>
+
+
+
+<?php print $this->accordionPane(
+    'foo', 
+    'Content', 
+    array(
+        'title' => 'Pane Title',
+    ),
+    array(
+        'style' => 'background-color: lightgray;',
+    )
+); ?>
+
+
+<div id="foo" duration="200"
+                style="margin-right: 30px; width: 400px; height: 300px; overflow: hidden">
+                <!-- content inline -->
+                <div dojoType="dijit.layout.AccordionPane" selected="true" title="Pane 1">
+                        <p >Nunc consequat nisi vitae quam. Suspendisse sed nunc. Proin ...</p >
+                </div>
+       
+                <!-- loading by indirect reference -->
+                <div dojoType="dijit.layout.AccordionPane" title="Pane 2 (lazy load)"
+                     href="/dojoroot/dijit/tests/layout/tab1.html" >
+                </div>
+       
+                <div dojoType="dijit.layout.AccordionPane" title="Pane 3">
+                    More content
+                    <ul>
+                        <li>One</li>
+                        <li>Two</li>
+                        <li>Three</li>
+                    </ul>
+                </div>
+        </div>
