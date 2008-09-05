@@ -5,7 +5,7 @@ require_once(dirname(dirname(__FILE__))
 
 $bootstrap = 'mvc';
 
-if(substr($_SERVER['REQUEST_URI'],0,9)=='/json-rpc') {
+if (substr($_SERVER['REQUEST_URI'],0,9)=='/json-rpc') {
     $bootstrap = 'json-rpc';
 }
 
