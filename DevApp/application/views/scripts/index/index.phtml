@@ -16,6 +16,9 @@ function demoRpc()
 
 <?php 
 
+Zend_Registry::get('logger')->debug('This is a view debug message');
+
+
 $this->accordionContainer()->captureStart(
     'accordion1',
     array('title' => 'Pane Title'),

@@ -17,6 +17,9 @@
 						            ->setDjConfigOption('usePlainJson', true)
 						            ->addStyleSheetModule('dijit.themes.tundra')
 					           	  ->requireModule('dojo.rpc.JsonService');
+
+Zend_Registry::get('logger')->debug('This is a layout debug message');
+
 				?>
 
         <?php echo $this->headScript(); ?>
