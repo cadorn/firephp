@@ -19,3 +19,10 @@ Zend_Registry::set('logger', $logger);
 
 
 require_once('fb.php');
+
+
+
+function run_bootstrap($name)
+{
+    require_once(dirname(__FILE__) . '/' . $name . '.php');
+}
