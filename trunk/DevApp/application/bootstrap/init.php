@@ -4,6 +4,7 @@ define('ZF_APPLICATION_DIRECTORY', dirname(dirname(__FILE__)));
 define('ZF_LIBRARY_DIRECTORY',     dirname(ZF_APPLICATION_DIRECTORY) . '/library');
 
 set_include_path(ZF_LIBRARY_DIRECTORY
+                 . PATH_SEPARATOR . ZF_APPLICATION_DIRECTORY . '/models'
                  . PATH_SEPARATOR . ZF_APPLICATION_DIRECTORY . '/functions');
 
 
