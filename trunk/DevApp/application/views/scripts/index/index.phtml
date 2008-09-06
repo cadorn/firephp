@@ -20,16 +20,16 @@ $this->accordionContainer()->captureStart(
     'accordion1',
     array('title' => 'Pane Title'),
     array('style' => 'background-color: lightgray; height: 300px;'));
-print $this->accordionPane(
+echo $this->accordionPane(
     'p1', 
     'Pane 1 Content', 
     array('title' => 'Pane 1 Title'),
     array('style' => 'background-color: lightgray;'));
-print $this->accordionPane(
+echo $this->accordionPane(
     'p2', 
     'Pane 2 Content', 
     array('title' => 'Pane 2 Title'),
     array('style' => 'background-color: lightgray;'));
-print $this->accordionContainer()->captureEnd('accordion1');
+echo $this->accordionContainer()->captureEnd('accordion1');
 
 ?>

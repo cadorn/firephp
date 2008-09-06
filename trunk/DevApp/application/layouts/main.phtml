@@ -5,25 +5,24 @@
         
 				<script type="text/javascript">
 				//<!--
-				<?php print $this->partial('_partials/header.js'); ?>
+				<?php echo $this->partial('_partials/header.js'); ?>
 				//-->
 				</script>
         
         
-        <?php print $this->dojo()
-                         ->enable()
-//						             ->setCdnBase(Zend_Dojo::CDN_BASE_AOL)
-                         ->setLocalPath('js2/dojo/dojo.js')
-						             ->setDjConfigOption('usePlainJson', true)
-						             ->addStyleSheetModule('dijit.themes.tundra')
-					             	 ->requireModule('dojo.rpc.JsonService')
-												 ->requireModule('dijit.form.Button');
+        <?php echo $this->dojo()
+                        ->enable()
+//						            ->setCdnBase(Zend_Dojo::CDN_BASE_AOL)
+                        ->setLocalPath('js2/dojo/dojo.js')
+						            ->setDjConfigOption('usePlainJson', true)
+						            ->addStyleSheetModule('dijit.themes.tundra')
+					           	  ->requireModule('dojo.rpc.JsonService');
 				?>
 
-        <?php print $this->headScript(); ?>
+        <?php echo $this->headScript(); ?>
 
     </head>
     <body class="tundra">
-        <?php print  $this->layout()->content; ?>
+        <?php echo  $this->layout()->content; ?>
     </body>
 </html>
