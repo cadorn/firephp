@@ -1,5 +1,9 @@
 
 RewriteEngine on
 
+RewriteRule   plain/(.*)                 		plain.php  								[QSA,L]
+RewriteRule   plain.php                 		plain.php  								[QSA,L]
+
+
 RewriteRule   json-rpc/(.*)                 index.php?endpoint=$1  [QSA,L]
 RewriteRule   !\.(js|ico|gif|jpg|png|css)$  index.php							 	[QSA,L]
