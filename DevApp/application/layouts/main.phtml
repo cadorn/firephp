@@ -16,7 +16,8 @@
                         ->setLocalPath('js2/dojo/dojo.js')
 						            ->setDjConfigOption('usePlainJson', true)
 						            ->addStyleSheetModule('dijit.themes.tundra')
-					           	  ->requireModule('dojo.rpc.JsonService');
+					           	  ->requireModule('dojo.rpc.JsonService')
+						            ->requireModule('dojo.io.script');
 
 Zend_Registry::get('logger')->debug('This is a layout debug message');
 
