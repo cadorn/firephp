@@ -1,3 +1,14 @@
+
+<script type="text/javascript">
+dojo.io.script.get(
+ { 
+   url: "/plain/Test2.php", 
+   load: function (type, data, evt) {alert (data)},
+   mimetype: "text/html" 
+ } 
+); 
+</script>
+
 <h2>Dojo JSON-RPC Demo</h2>
 
 <input name="foo" type="button" value="Demo" onClick="demoRpc()"/>
