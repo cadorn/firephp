@@ -25,12 +25,23 @@ $db->getConnection()->exec('CREATE TABLE foo (
 $data = file_get_contents(ZF_APPLICATION_DIRECTORY . '/resources/Test.txt.zip');
 
 
-$db->insert('foo', array('id'=>1,'col1'=>'test text','col2'=>$data));        
-        
+$data = new TestObject();
+
+//$db->insert('foo', array('id'=>1,'col1'=>'test text','col2'=>$data));        
+  
+        fb($data);
         
         fb('Hello World');
 
         return 'Hello World';
     }
 
+}
+
+class TestObject {
+  
+  protected $pro = 'protected';
+  private $pri = 'private';
+  var $p = 'public';
+    
 }
