@@ -92,6 +92,10 @@ require_once('TVarDumper.php');
 
 print TVarDumper::dump($data, 10, true);
 
+
+var_dump(headers_list());
+
+
 var_dump($data);
 
 ?>
