@@ -25,7 +25,20 @@ echo $this->contentPane()->captureEnd('headerPane');
 
 $this->accordionContainer()->captureStart('menuAccordion', array('region'=>'left'));
 
-$this->accordionPane()->captureStart('version_0_1_menuPane', array('title' => 'Version 0.1', 'selected'=>true));
+
+$this->accordionPane()->captureStart('tests_menuPane', array('title' => 'Tests'));
+?>
+
+<div>
+  
+<p><a target="contentIframe" href="/plain/LogPrivateObjectMembers.php">Log Private Object Members</a><p>
+
+</div>
+
+<?php
+echo $this->accordionPane()->captureEnd('tests_menuPane');
+        
+$this->accordionPane()->captureStart('version_0_1_menuPane', array('title' => 'Version 0.1'));
 ?>
 
 <div>
@@ -37,7 +50,7 @@ $this->accordionPane()->captureStart('version_0_1_menuPane', array('title' => 'V
 <?php
 echo $this->accordionPane()->captureEnd('version_0_1_menuPane');
     
-$this->accordionPane()->captureStart('version_0_2_menuPane', array('title' => 'Version 0.2'));
+$this->accordionPane()->captureStart('version_0_2_menuPane', array('title' => 'Version 0.2', 'selected'=>true));
 ?>
 <div>
   
