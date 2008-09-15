@@ -8,7 +8,9 @@ RewriteRule   plain.php                 		plain.php  								[QSA,L]
 RewriteRule   json-rpc/(.*)                 index.php?endpoint=$1  [QSA,L]
 
 
-RewriteRule ^js/domplate/domplate-debug.js/  /js/domplate/domplate-debug.js  [L]
+# Cleanup links that have timestamps appended
+RewriteRule ^css/(.*\.css)/\d{5}  /css/$1  [L]
+RewriteRule ^js/(.*\.js)/\d{5}  /js/$1  [L]
 
 
 RewriteCond %{REQUEST_FILENAME} -s [OR]

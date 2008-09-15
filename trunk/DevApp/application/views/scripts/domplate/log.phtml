@@ -1,7 +1,7 @@
 
 
 <?php
-  	$this->headLink()->prependStylesheet('/css/FirefoxExtension-0.2/domplates.css', 'screen');
+  	$this->headLink()->prependStylesheet('/css/FirefoxExtension-0.2/domplates.css/' . microtime(true), 'screen');
 ?>
 
 
@@ -12,14 +12,6 @@
 		function FBL() {};
 		function FBTrace() {};
 		
-		if (!top.console || !top.console.firebug)
-		{
-		    top.console = {
-		        log: function() {},
-		        time: function() {},
-		        timeEnd: function() {}
-		    }
-		}
 		
 		function ddd()
 		{
@@ -41,24 +33,23 @@
 
 <?php $this->headScript()->appendFile('/js/jquery/jquery-1.2.6.js'); ?>
 <?php $this->headScript()->appendFile('/js/domplate/domplate-debug.js/' . microtime(true)); ?>
-<?php $this->headScript()->appendFile('/js/FirefoxExtension-0.2/domplates.js'); ?>
+<?php $this->headScript()->appendFile('/js/FirefoxExtension-0.2/domplates.js/' . microtime(true)); ?>
 
   
 <?php $this->headScript()->captureStart(); ?>
-	  
-          
+
 $(function() {
 
 			with (FBL){		
-      
-        DomplateDebug.enabled = false;
+
+        DomplateDebug.setConsole(top.console);
+        DomplateDebug.setEnabled(false);
       
 				var testVar = [{"__cftype__":"struct","keyOne":"valueOne","keyTwo":"valueTwo"},"item two","item three"];			
 
         var formatter = new Formatter();
 
 				formatter.dump.append({value:testVar}, $("#test").get(0));			
-
 			}
 
 });
