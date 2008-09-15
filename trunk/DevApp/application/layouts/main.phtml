@@ -2,11 +2,12 @@
 <html>
     <head>
         <title>FirePHP Development Application</title>
-        <style type="text/css">
-				<!--
-				    @import "/css/default.css";
-				-->
-				</style>
+        
+				<?php
+				$this->headLink()->prependStylesheet('/css/default.css', 'screen');
+				?>
+				
+				<?php echo $this->headLink(); ?>
 
 				<?php
 				$this->headMeta()->appendHttpEquiv('expires', 
