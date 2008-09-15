@@ -1,32 +1,28 @@
 <?php print $this->doctype(); ?>
 <html>
     <head>
-        <title>...</title>
-        
-				<script type="text/javascript">
-				//<!--
-				<?php echo $this->partial('_partials/header.js'); ?>
-				//-->
-				</script>
-        
-        
-        <?php echo $this->dojo()
-                        ->enable()
-//						            ->setCdnBase(Zend_Dojo::CDN_BASE_AOL)
-                        ->setLocalPath('js2/dojo/dojo.js')
-						            ->setDjConfigOption('usePlainJson', true)
-						            ->addStyleSheetModule('dijit.themes.tundra')
-					           	  ->requireModule('dojo.rpc.JsonService')
-						            ->requireModule('dojo.io.script');
+        <title>FirePHP Development Application</title>
+        <style type="text/css">
+				<!--
+				    @import "/css/default.css";
+				-->
+				</style>
 
-Zend_Registry::get('logger')->debug('This is a layout debug message');
+				<?php
+				$this->headMeta()->appendHttpEquiv('expires', 
+				                                   'Wed, 26 Feb 1997 08:21:57 GMT')
+				                 ->appendHttpEquiv('pragma', 'no-cache')
+				                 ->appendHttpEquiv('Cache-Control', 'no-cache');
+				?>                 
 
-				?>
-
+        <?php echo $this->headMeta(); ?>
+        
         <?php echo $this->headScript(); ?>
-
+        
     </head>
-    <body class="tundra">
+    <body>
+      
         <?php echo  $this->layout()->content; ?>
+
     </body>
 </html>

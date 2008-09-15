@@ -6,4 +6,13 @@ RewriteRule   plain.php                 		plain.php  								[QSA,L]
 
 
 RewriteRule   json-rpc/(.*)                 index.php?endpoint=$1  [QSA,L]
-RewriteRule   !\.(js|ico|gif|jpg|png|css)$  index.php							 	[QSA,L]
+
+
+RewriteRule ^js/domplate/domplate-debug.js/  /js/domplate/domplate-debug.js  [L]
+
+
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
