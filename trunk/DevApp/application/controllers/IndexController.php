@@ -8,9 +8,10 @@ class IndexController extends Zend_Controller_Action
     {
       
 
-        $test = new Test();
-        $test->testModelLogging();      
-      
+//        $test = new Test();
+//        $test->testModelLogging();      
+
+        $this->_helper->layout->setLayout('dojo');
     }
 }
 

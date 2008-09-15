@@ -1,49 +1,77 @@
+<?php
 
-<script type="text/javascript">
-dojo.io.script.get(
- { 
-   url: "/plain/Test2.php", 
-   load: function (type, data, evt) {alert (data)},
-   mimetype: "text/html" 
- } 
-); 
-</script>
+$this->borderContainer()->captureStart('masterLayout', array('design' => 'headline'));
+                        
+// ************* Header *************
 
-<h2>Dojo JSON-RPC Demo</h2>
+echo $this->contentPane(
+    'headerPane',
+    'FirePHP Development Application',
+    array('region' => 'top'));
 
-<input name="foo" type="button" value="Demo" onClick="demoRpc()"/>
+// ************* Header *************
 
-<?php $this->headScript()->captureStart(); ?>
+
+
+// ************* Left *************
+
+$this->accordionContainer()->captureStart('menuAccordion', array('region'=>'left'));
     
-function demoRpc()
-{
-    var myObject = new dojo.rpc.JsonService('json-rpc/Server');
-    console.log(myObject.bar());
-}
-
-<?php $this->headScript()->captureEnd(); ?>
-
-
-
-<?php 
-
-Zend_Registry::get('logger')->debug('This is a view debug message');
-
-
-$this->accordionContainer()->captureStart(
-    'accordion1',
-    array('title' => 'Pane Title'),
-    array('style' => 'background-color: lightgray; height: 300px;'));
 echo $this->accordionPane(
-    'p1', 
+    'version_0_1_menuPane', 
     'Pane 1 Content', 
-    array('title' => 'Pane 1 Title'),
-    array('style' => 'background-color: lightgray;'));
-echo $this->accordionPane(
-    'p2', 
-    'Pane 2 Content', 
-    array('title' => 'Pane 2 Title'),
-    array('style' => 'background-color: lightgray;'));
-echo $this->accordionContainer()->captureEnd('accordion1');
+    array('title' => 'Version 0.1'));
+    
+$this->accordionPane()->captureStart('version_0_2_menuPane', array('title' => 'Version 0.2', 'selected'=>true));
+?>
+<div>
+  
+<p><a target="contentIframe" href="http://code.google.com/p/firephp/source/browse/branches/FirefoxExtension-0.2">Use branches/FirefoxExtension-0.2 code</a><p>
+
+<h3>Domplate Templates</h3>
+
+<div style="padding-left: 10px; padding-top: 0px;">
+
+  <p><a target="contentIframe" href="Domplate/Log">Log</a><p>
+
+</div>
+
+</div>
+<?php
+echo $this->accordionPane()->captureEnd('version_0_2_menuPane');
+
+    
+echo $this->accordionContainer()->captureEnd('menuAccordion');
+
+// ************* Left *************
+
+
+
+// ************* Main Content *************
+
+$this->contentPane()->captureStart('contentPane',array('region' => 'center'));
 
 ?>
+
+<iframe id="contentIframe" name="contentIframe" src=""></iframe>
+
+<?php
+
+echo $this->contentPane()->captureEnd('contentPane');
+
+
+// ************* Main Content *************
+
+
+
+// ************* Footer *************
+
+echo $this->contentPane(
+    'footerPane',
+    'Copyright &copy; <a target="_blank" href="http://www.christophdorn.com/">Christoph Dorn</a>',
+    array('region' => 'bottom'));
+
+// ************* Footer *************
+
+echo $this->borderContainer()->captureEnd('masterLayout');
+
