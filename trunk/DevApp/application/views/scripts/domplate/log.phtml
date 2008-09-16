@@ -1,38 +1,10 @@
 
-
 <?php
   	$this->headLink()->prependStylesheet('/css/FirefoxExtension-0.2/domplates.css/' . microtime(true), 'screen');
 ?>
 
-
-<?php $this->headScript()->captureStart(); ?>
-    
-		// This is just so domplate works
-		
-		function FBL() {};
-		function FBTrace() {};
-		
-		
-		function ddd()
-		{
-			console.log.apply(console, arguments);
-		}
-		
-		function dir()
-		{
-			console.dir.apply(console, arguments);
-		}
-		
-		function $(id)
-		{
-		    return document.getElementById(id);
-		}	
-
-<?php $this->headScript()->captureEnd(); ?>
-    
-
 <?php $this->headScript()->appendFile('/js/jquery/jquery-1.2.6.js'); ?>
-<?php $this->headScript()->appendFile('/js/domplate/domplate-debug.js/' . microtime(true)); ?>
+<?php $this->headScript()->appendFile('/js/domplate/domplate-1.1a.js/' . microtime(true)); ?>
 <?php $this->headScript()->appendFile('/js/FirefoxExtension-0.2/domplates.js/' . microtime(true)); ?>
 
   
@@ -40,17 +12,15 @@
 
 $(function() {
 
-			with (FBL){		
+    DomplateDebug.setConsole(top.console);
+    DomplateDebug.setEnabled(true);
 
-        DomplateDebug.setConsole(top.console);
-        DomplateDebug.setEnabled(false);
-      
-				var testVar = [{"__cftype__":"struct","keyOne":"valueOne","keyTwo":"valueTwo"},"item two","item three"];			
 
-        var formatter = new Formatter();
+    var logger = new FirePHPLogger();
+    logger.setTarget($("#test").get(0));
 
-				formatter.dump.append({value:testVar}, $("#test").get(0));			
-			}
+
+    logger.log({label:'Label',data:'Data',meta:{maxSummaryChars:50}});
 
 });
 
