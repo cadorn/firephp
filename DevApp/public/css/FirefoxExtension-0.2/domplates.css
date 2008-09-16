@@ -1,6 +1,12 @@
 
 .firephp-domplate-row {
   
-  background-color: red;
+  border: 1px solid black;
     
+}
+
+.firephp-domplate-row-log {
+
+  background-color: cyan;
+
 }

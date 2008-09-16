@@ -1,15 +1,45 @@
 
-var domplate = top.domplate;
-var DomplateDebug = top.DomplateDebug;
+with (domplate) {
 
 
-with (FBL) {
-
-function Formatter() {};
+function FirePHPLogger() {};
 
 
-Formatter.prototype = domplate({
-	
+FirePHPLogger.prototype = domplate(
+{
+  target: null,
+  
+  setTarget: function(target)
+  {
+    this.target = target;
+  },
+  
+  log: function(vars)
+  {
+    vars.meta.type = 'log';
+    this.row.append(vars, this.target);			
+  },
+
+	row:
+    DIV({'class':'$meta|getRowClass'},
+      IF('if1','$label|hasLabel',
+        'Hello World'
+      )
+    ),
+  
+  getRowClass: function(meta)
+  {
+    return 'firephp-domplate-row firephp-domplate-row-' + meta.type ;
+  },
+  
+  hasLabel: function(label)
+  {
+    var items = [];
+    items.push({dssd:'sdsdf'});
+    return items;  
+  },
+  
+  
 	dump:
 		TAG('$value|format',{value:'$value|parseParts'}),
 			
