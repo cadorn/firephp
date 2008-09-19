@@ -20,7 +20,9 @@ $(function() {
     logger.setTarget($("#test").get(0));
 
 
-    logger.log({label:'Label',data:'Data',meta:{maxSummaryChars:50}});
+    logger.log({data:'Data without label',meta:{maxSummaryChars:50}});
+
+    logger.log({label:'Label',data:'Data with label',meta:{maxSummaryChars:50}});
 
 });
 

@@ -1,7 +1,8 @@
 
 html,
 body,
-#masterLayout {
+#masterLayout,
+#testsLayout {
   padding: 0px;
   margin: 0px;
   width: 100%;
@@ -28,8 +29,7 @@ html > body.main > div {
   color: red;
 }
 
-
-#headerPane {
+#masterLayout #headerPane {
   background-color: #80A7E8;
   padding: 0px;
   font-weight: bold;
@@ -60,7 +60,8 @@ html > body.main > div {
   padding: 0px;
 }
 
-#contentIframe {
+#contentIframe,
+#testContentIframe {
   width: 100%;
   height: 100%;
   border: 0px;
@@ -80,3 +81,25 @@ TABLE.footerTable TD A {
   text-decoration: none;
 }
 
+
+
+
+/* ***** Tests ***** */
+
+#testsLayout #headerPane {
+  background-color: #bbbbbb;
+  padding: 0px;
+  font-weight: bold;
+  font-size: 120%;
+  text-align: center;
+  border-bottom: 1px solid #B7B7B7;
+}
+
+#testsLayout #menuPane {
+  width: 250px;
+  border-right: 1px solid #bbbbbb;
+}
+
+#testsLayout #menuPane DIV {
+  padding: 15px;
+}
