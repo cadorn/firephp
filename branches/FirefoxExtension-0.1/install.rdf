@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>FirePHPExtension-Build@firephp.org</em:id>
-    <em:version>0.1.2</em:version>
+    <em:version>0.1.3</em:version>
     <em:type>2</em:type>
 
     <em:targetApplication>
@@ -21,7 +21,7 @@
     <em:creator>Christoph Dorn</em:creator>
     <em:homepageURL>http://www.firephp.org/</em:homepageURL>
     <em:iconURL>chrome://firephp/skin/FirePHP_32.png</em:iconURL>
-    <em:updateURL>http://www.firephp.org/FirefoxExtensionUpdateCheck?id=%ITEM_ID%</em:updateURL>
+    <em:updateURL>http://www.firephp.org/Update/FirefoxExtension/@@ReleaseType@@/%ITEM_ID%</em:updateURL>
     <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDP3d1lWrv680cl1DKDgse1IHeMgF0iLq5fiNKCdCkSWXbzQplSCNdWHUi2mZc2QnYyb4eOUlV7rTOUj1qNJJ9YOb5kINNmzrmUTF3Apf5339zn4lda+wo71DWqbPBKZxb/Khp1gk/97yi8i6VfWmZElRo5Ahlme2XhUwE8lUmQVwIDAQAB</em:updateKey>
 
   </Description>

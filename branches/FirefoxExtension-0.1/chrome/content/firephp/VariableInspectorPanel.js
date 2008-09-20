@@ -33,14 +33,51 @@ function str_repeat(str, repeat) {
   return output;
 }
 
+function escapeHTML(value)
+{
+  function replaceChars(ch)
+  {
+      switch (ch)
+      {
+          case "<":
+              return "&lt;";
+          case ">":
+              return "&gt;";
+          case "&":
+              return "&amp;";
+          case "'":
+              return "&#39;";
+          case '"':
+              return "&quot;";
+      }
+      return "?";
+  };
+  return String(value).replace(/[<>&"']/g, replaceChars);
+}
+
+function nl2br(value)
+{
+  function replaceChars(ch)
+  {
+      switch (ch)
+      {
+          case "\n":
+              return "<br/>";
+      }
+      return "?";
+  };
+  return String(value).replace(/[\n]/g, replaceChars);
+}
+
+
 
 var MAX_DEPTH = 10;
 
 var UniqueIndex = 0;
 
 function print_r(obj, indent, depth) {
-  var nl = '<br/>\n';
-  var ws = '&nbsp;';
+  var nl = '\n';
+  var ws = '';
   var output = '';
   indent = (!indent) ? 0 : indent;
   depth = (!depth) ? 0 : depth;
@@ -54,12 +91,15 @@ function print_r(obj, indent, depth) {
     var isClass = false;
     
     if(indent == 0) {
+        output += '<div>';
+
       if(obj['__className']) {
         output +=  '<font color="brown"><b>' + obj['__className'] + '(</b></font>' + nl;
         isClass = true;
       } else {
-        output += 'array(' + nl;
+        output += 'array(';
       }
+        output += '</div>';
     }
     
     indent++;
@@ -84,28 +124,28 @@ function print_r(obj, indent, depth) {
       }
       else {
       
+        output += '<div class="pair">';
       
         output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
         
         if (IsNumeric(key)) {
-          output += str_repeat(ws, indent) + '[' + '<font color="green">' + key + '</font>' + '] => ';
+          output += str_repeat(ws, indent) + '[' + '<font color="green">' + key + '</font>' + '] =>';
         }
         else 
         if (typeof(key) == "string") {
-          output += str_repeat(ws, indent) + '[' + '<font color="red">\'' + key + '\'</font>' + '] => ';
+          output += str_repeat(ws, indent) + '[' + '<font color="red">\'' + key + '\'</font>' + '] =>';
         }
         else {
-          output += str_repeat(ws, indent) + '[' + key + '] => ';
+          output += str_repeat(ws, indent) + '[' + key + '] =>';
         }
         
         output += '</div>';
-        
-        
+                
         if(child==null || child==false || child==true) {
           
-          output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
+          output += '<div class="value" id="' + hex_md5(UniqueIndex + key) + 'v">';
           output += '<font color="navy">';
-          output += child;
+          output += new String(child).toUpperCase();
           output += '</font>';
           output += '</div>';
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
@@ -119,45 +159,49 @@ function print_r(obj, indent, depth) {
         if (typeof(child) == "object") {
           indent++;
 
-          output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
-              
-          if(child['__className']) {
-            output +=  '<font color="brown"><b>' + child['__className'] + '(</b></font>';
-          } else {
-            output += 'array(';
-          }
+          output += '<div class="name-block" key="' + hex_md5(UniqueIndex + key) + '">';
+            if(child['__className']) {
+              output +=  '<font color="brown"><b>' + child['__className'] + '(</b></font>';
+            } else {
+              output += 'array(';
+            }
+          output += '</div>';
+
+
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
-          var count = countAttributes(child);
-          if(child['__className']) {
-            output += ' <font color="blue">... ' + (count-1) + ' propert' + (((count-1) > 1 || count == 1) ? 'ies' : 'y') + ' ...</font> <font color="brown"><b>)</b></font>';
-          } else {
-            output += ' <font color="blue">... ' + count + ' element' + ((count > 1 || count == 0) ? 's' : '') + ' ...</font> )';
-          }
+            var count = countAttributes(child);
+            if(child['__className']) {
+              output += ' <font color="blue">... ' + (count-1) + ' propert' + (((count-1) > 1 || count == 1) ? 'ies' : 'y') + ' ...</font> <font color="brown"><b>)</b></font>';
+            } else {
+              output += ' <font color="blue">... ' + count + ' element' + ((count > 1 || count == 0) ? 's' : '') + ' ...</font> )';
+            }
           output += '</div>';
-          output += nl;
           
-          output += '</div>';
           
           //        output += typeof(child) + nl;
           //        output += str_repeat(ws, indent) + '(' + nl;
           
-          output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
+          output += '<div class="value-block" id="' + hex_md5(UniqueIndex + key) + 'v"><br/>';
           
-          output += print_r(child, indent, depth + 1);
-          
-          if(child['__className']) {
-            output += str_repeat(ws, indent) + '<font color="brown"><b>)</b></font>' + nl;
-          } else {         
-            output += str_repeat(ws, indent) + ')' + nl;
-          }
-          
+            output += print_r(child, indent, depth + 1);
+
+
+            output += '<div>';
+              if(child['__className']) {
+                output += str_repeat(ws, indent) + '<font color="brown"><b>)</b></font>' + nl;
+              } else {         
+                output += str_repeat(ws, indent) + ')' + nl;
+              }
+            output += '</div>';
+
           output += '</div>';
+          
           indent--;
         }
         else 
         if (IsNumeric(child)) {
         
-          output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
+          output += '<div class="value" id="' + hex_md5(UniqueIndex + key) + 'v">';
           output += '<font color="green">' + child + '</font>';
           output += '</div>';
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
@@ -171,8 +215,8 @@ function print_r(obj, indent, depth) {
         else 
         if (typeof(child) == "string") {
         
-          output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
-          output += '<font color="red">\'' + child + '\'</font>';
+          output += '<div class="value" id="' + hex_md5(UniqueIndex + key) + 'v">';
+          output += '<font color="red">\'' + nl2br(escapeHTML(child)) + '\'</font>';
           output += '</div>';
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
@@ -184,8 +228,8 @@ function print_r(obj, indent, depth) {
         }
         else {
         
-          output += '<div id="' + hex_md5(UniqueIndex + key) + 'v">';
-          output += child;
+          output += '<div class="value" id="' + hex_md5(UniqueIndex + key) + 'v">';
+          output += nl2br(escapeHTML(child));
           output += '</div>';
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
@@ -194,15 +238,23 @@ function print_r(obj, indent, depth) {
           output += '</div>';
           output += nl;
         }
+                
+        output += '</div>';
+        
       }
       child_index++;
     }
     indent--;
     
-    if(isClass) {
-      output += (indent == 0) ? '<font color="brown"><b>)</b></font>' + nl : '';
-    } else {
-      output += (indent == 0) ? ')' + nl : '';
+    
+    if(indent==0) {
+        output += '<div>';
+      if(isClass) {
+        output += '<font color="brown"><b>)</b></font>';
+      } else {
+        output += ')';
+      }
+        output += '</div>';
     }
     return output;
   }
@@ -236,7 +288,7 @@ function renderVariable(body_value,pinned) {
         {
           obj.html(print_r(body_value));
           
-          $('DIV.name').bind("click", function(e) {
+          $('DIV.name, DIV.name-block').bind("click", function(e) {
             var obj = $('#'+$(this).attr('key')+'k');
             obj.css('display',
                     (obj.css('display')=='none')?
@@ -244,7 +296,10 @@ function renderVariable(body_value,pinned) {
             var obj = $('#'+$(this).attr('key')+'v');
             obj.css('display',
                     (obj.css('display')=='none')?
-                    'inline':'none');
+                    ((obj.attr('class')=='value-block')?
+                     'block':
+                     'inline-block'):
+                    'none');
           });
           
           obj.removeClass('loading');

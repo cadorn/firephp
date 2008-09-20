@@ -91,8 +91,37 @@ TABLE.layout TR TD.content {
 #variable-div  DIV      {
   display: inline;
 }
-#variable-div  DIV.name { cursor:pointer;  }
-#variable-div  DIV.hide { display: none;   }
+#variable-div DIV.pair {
+  display:block;
+  padding: 0px;
+  margin: 0px;
+}
+#variable-div DIV.value  {
+  display: inline-block;
+  float: top;
+  padding-left: 5px;
+}
+#variable-div DIV.value-block  {
+  display: block;
+  float: none;
+  margin-top: 0px;
+  padding-left: 10px;
+}
+#variable-div DIV.name,
+#variable-div DIV.name-block {
+  cursor:pointer;
+  display: inline-block;
+  float: left;
+  padding-left: 10px;
+}
+#variable-div DIV.name-block {
+  display: block;
+  padding-left: 10px;
+}
+#variable-div DIV.hide {
+  display: none;
+  padding-left: 5px;
+}
 #variable-div.loading { margin-left: 10px; background: url(chrome://firebug/skin/loading_16.gif) no-repeat; }
 #variable-div.nodata { margin-left: 10px; color: gray; }
 

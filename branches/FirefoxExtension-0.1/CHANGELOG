@@ -1,4 +1,9 @@
 
+  - (Issue 16) Escape HTML in variable values
+  - Capitalized FALSE, TRUE, NULL in variable renderer overlay
+  - Changed variable renderer in overlay to use nested DIV's instead of whitespace for indentation
+  - Updated link to discussion group/forum
+
 2008-08-25 - Release Version: 0.1.2
 2008-08-24 - Release Version: 0.1.1.2
 

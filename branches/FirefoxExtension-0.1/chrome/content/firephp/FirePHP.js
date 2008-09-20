@@ -53,7 +53,7 @@ const firephpURLs =
     hq: "http://www.firephp.org/HQ",
     main: "http://www.firephp.org/",
     docs: "http://www.firephp.org/Wiki/Reference/Fb",
-    discuss: "http://groups.google.com/group/FirePHP",
+    discuss: "http://forum.firephp.org/",
     issues: "http://code.google.com/p/firephp/issues/list"
 };
 
@@ -68,7 +68,7 @@ const DEBUG = false;
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.1.2',
+  version: '0.1.3',
 
   prefDomain: "extensions.firephp",
   
@@ -175,6 +175,8 @@ var FirePHP = top.FirePHP = {
       switch(httpChannel.URI.host.toLowerCase()) {
         case "meta.firephp.org":
         case "www.firephp.org":
+        case "pear.firephp.org":
+        case "forum.firephp.org":
         case 'com.cadorn.websites.firephp.macbook.home.cadorn.net':
           httpChannel.setRequestHeader("X-FirePHP-Agent",
             '{"firephp.version":"'+FirePHP.version+'","firephp.version.previous":"'+FirePHP.getPreviousVersion()+'","firebug.version":"'+Firebug.version+'"}'
@@ -710,25 +712,6 @@ Firebug.FirePHP = extend(Firebug.Module,
 
       } else {
   
-/*  
-function handler() {
- if(this.readyState == 4 && this.status == 200) {
-  
-  Firebug.Console.log(this.responseText);
-  
- } else if (this.readyState == 4 && this.status != 200) {
-  Firebug.Console.log('oops error: '+this.status);
-  Firebug.Console.log(this.responseText);
- }
-}
-
-var client = new XMLHttpRequest();
-client.onreadystatechange = handler;
-client.open("GET", "chrome://firephp/content/FirePHP.js");
-//client.open("GET", "http://www.firephp.org/js/jquery.js");
-client.send(null);
-*/
-        
         openNewTab(firephpURLs[which]);
       }
   },
