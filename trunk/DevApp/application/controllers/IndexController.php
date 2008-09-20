@@ -8,7 +8,7 @@ class IndexController extends Zend_Controller_Action
     {
 
       if($header = $this->getRequest()->getHeader('User-Agent')) {
-        preg_match_all('/\s?FirePHP\/([\.|\d]*)\s?/si',$header,$m);
+        preg_match_all('/\s?FirePHP\/([\.|\d|\w]*)\s?/si',$header,$m);
         if(isset($m[1][0])) {
             $this->view->FirePHPUserAgentVersion = $m[1][0];
         }

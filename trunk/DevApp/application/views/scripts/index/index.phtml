@@ -10,7 +10,15 @@ $this->contentPane()->captureStart('headerPane', array('region' => 'top'));
 <table border="0" cellpadding="0" cellspacing="0">
  <tr>
    <td nowrap style="padding-left: 10px;"><a href="http://www.firephp.org/" target="_blank"><img width="51" height="51" border="0" src="/images/BugLogo.png"/></a></td>
-   <td nowrap width="100%">FirePHP Development Application</td>
+   <td nowrap width="50%">FirePHP Development Application</td>
+   <td nowrap width="50%">
+    <table border="0" cellpadding="0" cellspacing="0">
+     <tr>
+       <td>Your Extension Version:</td>
+       <td style="padding-left: 15px;"><span style="font-size: 180%; color: red;"><?php echo $this->FirePHPUserAgentVersion; ?></span></td>
+     </tr>
+   </table>
+  </td>
  </tr>
 </table>
 
@@ -39,12 +47,10 @@ $this->accordionPane()->captureStart('playground_menuPane', array('title' => 'Pl
 echo $this->accordionPane()->captureEnd('playground_menuPane');
         
         
-$this->accordionPane()->captureStart('tests_menuPane', array('title' => 'Tests'));
+$this->accordionPane()->captureStart('tests_menuPane', array('title' => 'Tests', 'selected'=>true));
 ?>
 
 <div>
-
-<p>Your FirePHP extension version: <?php echo $this->FirePHPUserAgentVersion; ?></p>
 
 <h3>Server Libraries</h3>
 
@@ -72,7 +78,7 @@ $this->accordionPane()->captureStart('version_0_1_menuPane', array('title' => 'V
 <?php
 echo $this->accordionPane()->captureEnd('version_0_1_menuPane');
     
-$this->accordionPane()->captureStart('version_0_2_menuPane', array('title' => 'Version 0.2', 'selected'=>true));
+$this->accordionPane()->captureStart('version_0_2_menuPane', array('title' => 'Version 0.2'));
 ?>
 <div>
   

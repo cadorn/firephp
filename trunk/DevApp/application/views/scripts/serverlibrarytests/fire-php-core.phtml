@@ -19,19 +19,31 @@ echo $this->contentPane()->captureEnd('headerPane');
 // ************* Left *************
 
 $this->contentPane()->captureStart('menuPane', array('region'=>'left'));
+
+$tests = array();
+$tests['BasicLoggingObjectOriented'] = 'Basic Logging - Object Oriented';
+$tests['BasicLoggingProcedural'] = 'Basic Logging - Object Oriented';
+$tests['AllVariableTypes'] = 'All Variable Types';
+$tests['ComplexVariableValues'] = 'Complex Variable Types';
+$tests['ComplexTable'] = 'Complex Table';
+
+$branches = array();
+$branches[] = '0.1';
+$branches[] = '0.2';
+
 ?>
 
 <div>
+
+<?php foreach( $branches as $branch ) { ?>
   
-<p><b>Branch 0.1</b></p>  
+  <p><b>Branch <?php echo $branch; ?></b></p>  
+  
+  <?php foreach( $tests as $test_id => $test_label ) { ?>
+    <p><a href="/plain/RunServerLibraryTest.php?Library=FirePHPCore&Branch=<?php echo $branch; ?>&Test=<?php echo $test_id; ?>" target="testContentIframe"><?php echo $test_label; ?></a></p>  
+  <?php } ?>
 
-<p><a href="/plain/RunServerLibraryTest.php?Library=FirePHPCore&Branch=0.1&Test=BasicLoggingObjectOriented" target="testContentIframe">Basic Logging - Object Oriented</a></p>  
-<p><a href="/plain/RunServerLibraryTest.php?Library=FirePHPCore&Branch=0.1&Test=BasicLoggingProcedural" target="testContentIframe">Basic Logging - Procedural</a></p>  
-
-<p><b>Branch 0.2</b></p>  
-
-<p><a href="/plain/RunServerLibraryTest.php?Library=FirePHPCore&Branch=0.2&Test=BasicLoggingObjectOriented" target="testContentIframe">Basic Logging - Object Oriented</a></p>  
-<p><a href="/plain/RunServerLibraryTest.php?Library=FirePHPCore&Branch=0.2&Test=BasicLoggingProcedural" target="testContentIframe">Basic Logging - Procedural</a></p>  
+<?php } ?>
 
 </div>
 
