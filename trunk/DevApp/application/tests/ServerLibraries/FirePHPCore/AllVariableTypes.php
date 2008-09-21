@@ -12,17 +12,22 @@ $array['key5'] = 1;
 $array['key6'] = 1.1;
 $array['key7'] = array();
 $array['key8'] = array('string');
-$array['key9'] = new TestObject();
+$array['key9'] = array('key'=>'value');
+$array['key10'] = new TestObject();
 $array[1] = 'string';
 
 $obj = new TestObject();
 $obj->child = new TestObject();
 
 $array[99] = $obj;
+$array[] = 'Append';
 
 $firephp->fb($array);
 
 $firephp->fb(new TestObject());
+
+$firephp->fb(array('key'=>'value'));
+$firephp->fb(array('string',true,false,10,1.1));
 
 
 class TestObject {
