@@ -1,4 +1,8 @@
 
+  - Added resizing links to variable viewer overlay
+  - (Issue 11) Variable inspection for arrays logged to console
+  - (Issue 30) Allow explicit wrapping of logging data
+  - Major work on new variable renderers for console
   - (Issue 16) Escape HTML in variable values
   - Capitalized FALSE, TRUE, NULL in variable renderer overlay
   - Changed variable renderer in overlay to use nested DIV's instead of whitespace for indentation

@@ -52,6 +52,16 @@ TABLE.toolbar TR TD.title {
   padding-left: 64px;
 }
 
+TABLE.toolbar TR TD.sizing {
+  font-weight: normal;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  text-align: right;
+  vertical-align: middle;
+  color: gray;
+  padding-right: 20px;
+}
+
 TABLE.toolbar TR TD.close {
   text-align: right;
   width: 80px;
