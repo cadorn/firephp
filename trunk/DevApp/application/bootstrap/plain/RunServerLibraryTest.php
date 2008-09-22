@@ -4,17 +4,29 @@ $Library = $_REQUEST['Library'];
 $Branch = $_REQUEST['Branch'];
 $Test = $_REQUEST['Test'];
 
-
 switch($Library) {
     
     case 'FirePHPCore':
       
-      // First include server library
+      // Include a pre-test file if we have one
       
-      $file = dirname(dirname(dirname(dirname(__FILE__))))
-              . '/library/ServerLibraries/FirePHPCore/'
-              . $Branch
-              . '/lib/FirePHPCore/fb.php';
+      $file = dirname(dirname(dirname(__FILE__)))
+              . '/tests/ServerLibraries/FirePHPCore/'
+              . $Test
+              . '.pre.php';
+     
+      if(file_exists($file)) {
+          require_once($file);
+      }
+          
+      // Include server library
+      
+      set_include_path(dirname(dirname(dirname(dirname(__FILE__))))
+                       . '/library/ServerLibraries/FirePHPCore/'
+                       . $Branch
+                       . '/lib');
+      
+      $file = 'FirePHPCore/fb.php';
 
       require_once($file);
       
@@ -43,5 +55,15 @@ switch($Library) {
       // Lastly print out test file
       
       highlight_file($file);
+      
+      // Show all included files
+      
+      $html = array();
+      $html[] = '<table><tr><td nowrap style="color: white; margin: 10px; padding: 10px; border: 1px solid #B7B7B7; background-color: #bbbbbb; font-family: verdana,arial,helvetica,sans-serif; font-size: 80%;">';
+      foreach( get_included_files() as $file ) {
+        $html[] = $file . '<br/>';
+      }      
+      $html[] = '</td></tr></table>';
+      echo implode("\n",$html);
       break;  
 }
