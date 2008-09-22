@@ -21,6 +21,7 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
     
     pinInspector: false,
 
+
     tag:
       A({
           class: "objectLink-PHPVariable",
@@ -33,6 +34,7 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
           TAG("$object|getTag", {object: "$object"})
         )
       ),
+    
     
     onMouseOver: function(event) {
       
@@ -54,9 +56,9 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
       
       FirePHP.showVariableInspectorOverlay(event.currentTarget.repObject,true);
     },
+
     
     getTag: function(object) {
-      
       var rep = FirePHP.getRep(object);
       var tag = rep.shortTag ? rep.shortTag : rep.tag;
       

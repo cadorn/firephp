@@ -37,6 +37,11 @@
     color: green;
 }
 
+.objectBox-firephp-text {
+    font-family: Monaco, monospace;
+    color: black;
+}
+
 .objectBox-firephp-boolean {
     color: navy;
 }

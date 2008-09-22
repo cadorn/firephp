@@ -673,12 +673,18 @@ Firebug.FirePHP = extend(Firebug.Module,
                   }, Data, this.activeContext, this.consoleTemplates[TemplateName].className, this.consoleTemplates[TemplateName], null, true);
               } else {
                 
-                // If no custom template is requested we use our default FirePHP template
+                // If no custom template is requested we use FirePHP templates
+                // If data is a string just use a simple text renderer
+
+                var rep = FirebugReps.PHPVariable;
+                if(FirePHP.getRep(Data)==FirebugReps.FirePHPString) {
+                  rep = FirebugReps.FirePHPText;
+                }
   
                 oo = Firebug.Console.logRow(function(object, row, rep)
                   {
-                    return rep.tag.append({object: object}, row);
-                  }, Data, this.activeContext, FirebugReps.PHPVariable.className, FirebugReps.PHPVariable, null, true);
+                    return rep.tag.append({object: object, meta:{priority:TemplateName}}, row);
+                  }, Data, this.activeContext, TemplateName, rep, null, true);
                 
 //            	  oo = Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
               }
