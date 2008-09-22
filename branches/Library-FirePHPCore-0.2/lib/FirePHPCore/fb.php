@@ -52,14 +52,11 @@ require_once dirname(__FILE__).'/FirePHP.class.php';
  * 
  * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
  */
-function fb() {
-
+function fb()
+{
   $instance = FirePHP::getInstance(true);
   
   $args = func_get_args();
   return call_user_func_array(array($instance,'fb'),$args);
-      
-  return true;
 }
 
-?>

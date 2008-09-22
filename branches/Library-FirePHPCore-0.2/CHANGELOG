@@ -1,4 +1,7 @@
 
+  - Removed closing ?> php tags
+  - (Issue 13) the code in the fb() function has a second return statement that will never be reached
+
 2008-07-30 - Release Version: 0.1.1.3
 
 	- Include __className property in JSON string if variable was an object

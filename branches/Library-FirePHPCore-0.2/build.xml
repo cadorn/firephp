@@ -2,6 +2,8 @@
 
 <project name="FirePHPCore" default="package" basedir=".">
 
+    <property name="branch" value="0.2" />
+
     <target name="prepare">
       
         <echo msg="Making directory ./build" />
@@ -119,7 +121,7 @@
       </phing>
         
       <phing phingfile="./../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="svncopy">
-        <property name="SVNCopyFrom" value="/trunk/Libraries/FirePHPCore"/>
+        <property name="SVNCopyFrom" value="/branches/Library-FirePHPCore-${branch}"/>
         <property name="SVNCopyTo" value="/tags/Library-FirePHPCore-${version}"/>
       </phing>
             
