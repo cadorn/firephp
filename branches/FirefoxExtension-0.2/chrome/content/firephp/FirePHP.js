@@ -663,7 +663,7 @@ Firebug.FirePHP = extend(Firebug.Module,
             RegisterConsoleTemplate: function(Name,Template) {
               this.consoleTemplates[Name] = Template;
             },
-						logToFirebug: function(TemplateName, Data) {
+						logToFirebug: function(TemplateName, Data, UseFirebugTemplates) {
               var oo = false;
               FirePHP.isLoggingData = true;
               if (this.consoleTemplates[TemplateName]) {
@@ -671,6 +671,11 @@ Firebug.FirePHP = extend(Firebug.Module,
                   {
                     return rep.tag.append({object: object}, row);
                   }, Data, this.activeContext, this.consoleTemplates[TemplateName].className, this.consoleTemplates[TemplateName], null, true);
+              } else
+              if(UseFirebugTemplates) {
+
+            	  oo = Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
+              
               } else {
                 
                 // If no custom template is requested we use FirePHP templates

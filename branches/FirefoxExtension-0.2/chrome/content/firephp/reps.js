@@ -266,7 +266,6 @@ FirebugReps.FirePHPClass = domplate(Firebug.Rep,
     },
 
 
-
     onMouseOver: function(event) {
       
       this.pinInspector = false;

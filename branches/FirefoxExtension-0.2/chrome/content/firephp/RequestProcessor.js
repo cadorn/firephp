@@ -346,7 +346,7 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
         }
       }      
 		} catch(e) {
-      this.logToFirebug('error', ['There was a problem writing your data from X-FirePHP-Data[\'FirePHP.Firebug.Console\'] to the console.',e]);
+      this.logToFirebug('error', ['There was a problem writing your data from X-FirePHP-Data[\'FirePHP.Firebug.Console\'] to the console.',e], true);
 		}
 
 
@@ -365,7 +365,7 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
       }
  
  		} catch(e) {
-      this.logToFirebug('error', ['There was a problem writing your data from the Wildfire Plugin http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1',e]);
+      this.logToFirebug('error', ['There was a problem writing your data from the Wildfire Plugin http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1',e], true);
 		}
 
     Firebug.Console.closeGroup();
@@ -378,9 +378,6 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
 FirePHPProcessor.processMessage = function(mode, data) {
 
   mode = mode.toLowerCase();
-
-dump('DATA: '+mode+' - '+data+"\n");        
-
 
   /* Change mode from TRACE to EXCEPTION for backwards compatibility */
   if (mode == 'trace') {
