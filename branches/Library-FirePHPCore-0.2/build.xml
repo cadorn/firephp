@@ -12,34 +12,21 @@
         
         <propertyprompt propertyName="version" promptText="Version:" />
 
-        <php function="substr_count" returnProperty="version_part_count">
-          <param value="${version}"/>
-          <param value="."/>
-        </php> 
-
-        <if>
-         <equals arg1="${version_part_count}" arg2="3" />
-         <then>
-            <property name="stability" value="beta" />
-         </then>
-         <else>
-            <property name="stability" value="stable" />
-         </else>
-        </if>
+        <propertyprompt propertyName="stability" promptText="Stability (stable, beta, alpha, devel, or snapshot):" />
         
     </target>
 
     <target name="build" depends="prepare">
         <echo msg="Copying files to build directory..." />
 
-        <copy file="./README" tofile="./build/FirePHPCore/README"/>
-        <copy file="./CHANGELOG" tofile="./build/FirePHPCore/CHANGELOG"/>
+        <copy file="./README" tofile="./build/FirePHPCore-${version}/README"/>
+        <copy file="./CHANGELOG" tofile="./build/FirePHPCore-${version}/CHANGELOG"/>
 
-        <copy todir="./build/FirePHPCore/demo" >
+        <copy todir="./build/FirePHPCore-${version}/demo" >
           <fileset dir="./demo"/>
         </copy>
 
-        <copy todir="./build/FirePHPCore/lib" >
+        <copy todir="./build/FirePHPCore-${version}/lib" >
           <fileset dir="./lib"/>
           <filterchain>
             <replacetokens begintoken="##" endtoken="##">
@@ -79,17 +66,13 @@
         
         <echo msg="Creating archive..." />
 
-        <tar destfile="./build/FirePHPCore.tar.gz" compression="gzip">
-            <fileset dir="./build/FirePHPCore">
-                <include name="*" />
-            </fileset>
-        </tar>
+        <exec command="zip -vr FirePHPCore.zip FirePHPCore-${version}/*" dir="${project.basedir}/build/" passthru="true" />
 
         <echo msg="Files copied and compressed in build directory OK!" />
             
-        <echo msg="Renaming package archive to FirePHPCore-${version}.tar.gz."/>        
+        <echo msg="Renaming package archive to FirePHPCore-${version}.zip."/>        
       
-        <move file="./build/FirePHPCore.tar.gz" tofile="./build/FirePHPCore-${version}.tar.gz" overwrite="true"/>
+        <move file="./build/FirePHPCore.zip" tofile="./build/FirePHPCore-${version}.zip" overwrite="true"/>
 
     </target>
     
@@ -117,18 +100,18 @@
     
     <target name="dist" depends="package">
             
-      <phing phingfile="./../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="init">
+      <phing phingfile="./../../../../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="init">
       </phing>
         
-      <phing phingfile="./../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="svncopy">
+      <phing phingfile="./../../../../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="svncopy">
         <property name="SVNCopyFrom" value="/branches/Library-FirePHPCore-${branch}"/>
         <property name="SVNCopyTo" value="/tags/Library-FirePHPCore-${version}"/>
       </phing>
             
-      <phing phingfile="./../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="upload">
+      <phing phingfile="./../../../../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="upload">
         <property name="LibraryName" value="FirePHPCore"/>
         <property name="LibraryVersion" value="${version}"/>
-        <property name="LibraryFilepath" value="${project.basedir}/build/FirePHPCore-${version}.tar.gz"/>
+        <property name="LibraryFilepath" value="${project.basedir}/build/FirePHPCore-${version}.zip"/>
         <property name="LibraryStability" value="${stability}"/>
       </phing>
       
