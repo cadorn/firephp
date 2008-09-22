@@ -2,6 +2,18 @@
 FBL.ns(function() { with (FBL) {
 
 // ************************************************************************************************
+var OBJECTBOX = this.OBJECTBOX =
+    SPAN({class: "objectBox objectBox-$className"});
+
+var OBJECTLINK = this.OBJECTLINK =
+    A({
+        class: "objectLink objectLink-$className",
+        _repObject: "$object",
+        onmouseover:"$onMouseOver",
+        onmouseout:"$onMouseOut",
+        onclick:"$onClick"
+    });
+
 
 FirebugReps.PHPVariable = domplate(Firebug.Rep,
 {
@@ -15,9 +27,11 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
           _repObject: "$object",
           onmouseover:"$onMouseOver",
           onmouseout:"$onMouseOut",
-          onclick:"$onClick",
+          onclick:"$onClick"
         },
-        SPAN({class: "objectTitle"}, "$object|getTitle")
+        SPAN({class: "objectTitle"},
+          TAG("$object|getTag", {object: "$object"})
+        )
       ),
     
     onMouseOver: function(event) {
@@ -41,6 +55,14 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
       FirePHP.showVariableInspectorOverlay(event.currentTarget.repObject,true);
     },
     
+    getTag: function(object) {
+      
+      var rep = FirePHP.getRep(object);
+      var tag = rep.shortTag ? rep.shortTag : rep.tag;
+      
+      return tag;
+    },
+    
     getTitle: function(object) {
       
       if (object.constructor.toString().indexOf("Array") != -1 ||
@@ -60,13 +82,309 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
     
     supportsObject: function(object, type)
     {
-        return FirePHP.isLoggingData;
+        return false;
     }    
 });
 
+
+
+FirebugReps.FirePHPMore = domplate(Firebug.Rep,
+{
+    className: "firephp-more",
+  
+    tag: OBJECTBOX(" ... ")
+});
+
+
+FirebugReps.FirePHPArr = domplate(Firebug.Rep,
+{
+    pinInspector: false,
+  
+    tag:
+        OBJECTBOX(
+            SPAN("array("),        
+            FOR("item", "$object|propIterator",
+                TAG("$item.nameTag", {object: "$item.nameObject"}),
+                SPAN("=>"),
+                TAG("$item.valueTag", {object: "$item.valueObject"}),
+                
+                SPAN({class: "arrayComma"}, "$item.delim")
+            ),
+            SPAN(")")
+        ),
+
+    propIterator: function (object)
+    {
+        if (!object)
+            return [];
+
+        var props = [];
+        var len = 0;
+
+        try
+        {
+            var i = 0;
+            for (var name in object)
+            {
+                var val;
+                try
+                {
+                    val = object[name];
+                }
+                catch (exc)
+                {
+                    continue;
+                }
+
+                var nameRep = FirePHP.getRep(name);
+                var nameTag = nameRep.shortTag ? nameRep.shortTag : nameRep.tag;
+    
+                
+                var valueRep = FirePHP.getRep(val);
+                if(i>=2) {
+                  valueRep = FirebugReps.FirePHPMore;
+                }
+                
+                var valueTag = valueRep.shortTag ? valueRep.shortTag : valueRep.tag;
+    
+                props.push({nameObject: name, nameTag: nameTag,
+                            valueObject: val, valueTag: valueTag, delim: ', '});
+       
+                if(i>=2) {
+                  break;                  
+                }
+               
+               i++;
+            }
+            
+            props[props.length-1].delim = '';
+        }
+        catch (exc)
+        {
+            // Sometimes we get exceptions when trying to read from certain objects, like
+            // StorageList, but don't let that gum up the works
+            // XXXjjb also History.previous fails because object is a web-page object which does not have
+            // permission to read the history
+        }
+
+        return props;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    className: "firephp-array",
+
+    supportsObject: function(object, type)
+    {
+        return true;
+    }
+});
+
+
+FirebugReps.FirePHPClass = domplate(Firebug.Rep,
+{
+    pinInspector: false,
+  
+    tag:
+        OBJECTBOX(
+            SPAN("$object|getClassName("),
+            SPAN({class: "props"},      
+            FOR("item", "$object|propIterator",
+                TAG("$item.nameTag", {object: "$item.nameObject"}),
+                SPAN("=>"),
+                TAG("$item.valueTag", {object: "$item.valueObject"}),
+                
+                SPAN({class: "arrayComma"}, "$item.delim")
+            )
+            ),
+            SPAN(")")
+        ),
+
+
+    getClassName: function(object) {
+      return object['__className'];
+    },
+
+    propIterator: function (object)
+    {
+        if (!object)
+            return [];
+
+        var props = [];
+        var len = 0;
+
+        try
+        {
+            var i = 0;
+            for (var name in object)
+            {
+                if(name!='__className') {
+                
+                  var val;
+                  try
+                  {
+                      val = object[name];
+                  }
+                  catch (exc)
+                  {
+                      continue;
+                  }
+  
+                  var nameRep = FirePHP.getRep(name);
+                  var nameTag = nameRep.shortTag ? nameRep.shortTag : nameRep.tag;
+      
+                  var valueRep = FirePHP.getRep(val);
+                  if(i>=2) {
+                    valueRep = FirebugReps.FirePHPMore;
+                  }
+                  
+                  var valueTag = valueRep.shortTag ? valueRep.shortTag : valueRep.tag;
+      
+                  props.push({nameObject: name, nameTag: nameTag,
+                              valueObject: val, valueTag: valueTag, delim: ', '});
+                      
+                  if(i>=2) {
+                    break;
+                  }        
+                  i++;
+              }
+            }
+            
+            props[props.length-1].delim = '';
+        }
+        catch (exc)
+        {
+            // Sometimes we get exceptions when trying to read from certain objects, like
+            // StorageList, but don't let that gum up the works
+            // XXXjjb also History.previous fails because object is a web-page object which does not have
+            // permission to read the history
+        }
+
+        return props;
+    },
+
+
+
+    onMouseOver: function(event) {
+      
+      this.pinInspector = false;
+
+      FirePHP.showVariableInspectorOverlay(event.currentTarget.repObject);
+    },
+    
+    onMouseOut: function() {
+
+      if(this.pinInspector) return;
+      
+      FirePHP.hideVariableInspectorOverlay();
+    },
+
+    onClick: function(event) {
+
+      this.pinInspector = true;
+      
+      FirePHP.showVariableInspectorOverlay(event.currentTarget.repObject,true);
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    className: "firephp-class",
+
+    supportsObject: function(object, type)
+    {
+        if(type=="object" && object['__className']) return true;
+    }
+});
+
+
+
+FirebugReps.FirePHPString = domplate(Firebug.Rep,
+{
+    tag: OBJECTBOX("'$object'"),
+
+    shortTag: OBJECTBOX("'$object|cropString'"),
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    className: "string",
+
+    supportsObject: function(object, type)
+    {
+        return type == "string";
+    },
+    
+    cropString: function(text)
+    {
+        var limit = 50;
+    
+        if (text.length > limit)
+            return this.escapeNewLines(text.substr(0, limit/2) + "..." + text.substr(text.length-limit/2));
+        else
+            return this.escapeNewLines(text);
+    },
+
+    escapeNewLines: function(value)
+    {
+        return value.replace(/\r/g, "\\r").replace(/\n/g, "\\n");
+    }
+    
+});
+
+FirebugReps.FirePHPText = domplate(Firebug.Rep,
+{
+    tag: OBJECTBOX("$object"),
+    
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    className: "firephp-text"
+    
+});
+
+FirebugReps.FirePHPBoolean = domplate(Firebug.Rep,
+{
+    tag: OBJECTBOX("$object|toUpperCase"),
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    className: "firephp-boolean",
+    
+    toUpperCase: function(value) {
+      var val = new String(value);
+      return val.toUpperCase();
+    },
+
+    supportsObject: function(object, type)
+    {
+        return type == "boolean" || (type=="object" && object==null);
+    }
+});
+
+FirebugReps.FirePHPNumber = domplate(Firebug.Rep,
+{
+    tag: OBJECTBOX("$object"),
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    className: "firephp-number",
+
+    supportsObject: function(object, type)
+    {
+        return type == "number";
+    }
+});
+
+
 // ************************************************************************************************
-Firebug.registerRep(
-    FirebugReps.PHPVariable
+
+FirePHP.setDefaultRep(FirebugReps.FirePHPArr);
+
+FirePHP.registerRep(
+//    FirebugReps.PHPVariable,
+//    FirebugReps.FirePHPArray,
+    FirebugReps.FirePHPClass,
+    FirebugReps.FirePHPBoolean,
+    FirebugReps.FirePHPNumber,
+    FirebugReps.FirePHPString
 );
 
 }});

@@ -53,7 +53,7 @@ const firephpURLs =
     hq: "http://www.firephp.org/HQ",
     main: "http://www.firephp.org/",
     docs: "http://www.firephp.org/Wiki/Reference/Fb",
-    discuss: "http://groups.google.com/group/FirePHP",
+    discuss: "http://forum.firephp.org/",
     issues: "http://code.google.com/p/firephp/issues/list"
 };
 
@@ -68,9 +68,12 @@ const DEBUG = false;
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.1.2',
+  version: '0.2.a',
 
   prefDomain: "extensions.firephp",
+  
+  defaultRep: null,
+  reps: [],
   
   
   /* This variable is only used for ff2 */
@@ -175,6 +178,8 @@ var FirePHP = top.FirePHP = {
       switch(httpChannel.URI.host.toLowerCase()) {
         case "meta.firephp.org":
         case "www.firephp.org":
+        case "pear.firephp.org":
+        case "forum.firephp.org":
         case 'com.cadorn.websites.firephp.macbook.home.cadorn.net':
           httpChannel.setRequestHeader("X-FirePHP-Agent",
             '{"firephp.version":"'+FirePHP.version+'","firephp.version.previous":"'+FirePHP.getPreviousVersion()+'","firebug.version":"'+Firebug.version+'"}'
@@ -283,6 +288,20 @@ var FirePHP = top.FirePHP = {
   
   lastInspectorVariable: null,
   inspectorPinned: false,
+  inspectorWidth: '50%',
+  
+  sizeVariableInspectorOverlayWidthTo: function(size) {
+    this.inspectorWidth = size;
+    
+    this.hideVariableInspectorOverlay(true);
+    
+    var obj = this;
+    
+    setTimeout(function() {
+      obj.showVariableInspectorOverlay(obj.lastInspectorVariable, true);
+    }, 200);
+
+  },
   
   showVariableInspectorOverlay: function(object,pinned) {
     
@@ -306,8 +325,24 @@ var FirePHP = top.FirePHP = {
         var bw = browser.boxObject.width;
         var bh = browser.boxObject.height;
         
-        var w = bw-100;
-        if(w>600) w = 600;
+//        var w = bw-100;
+//        if(w>600) {
+          
+          switch(this.inspectorWidth) {
+            case '50%':
+              w = bw/100*50;
+              break;
+            case '70%':
+              w = bw/100*70;
+              break;
+            case '90%':
+              w = bw/100*90;
+              break;
+          }
+//        }
+        if(w<600) {
+          w = 600;
+        }
         var h = bh-40;
         
         var obj = FirebugChrome.window.document.getElementById('firephp-variable-inspector-overlay');
@@ -318,6 +353,7 @@ var FirePHP = top.FirePHP = {
         
         var frame = FirebugChrome.window.document.getElementById('firephp-variable-inspector-iframe');
         
+//        frame.setAttribute("style","width: "+w+"px; height: "+h+"px;");
         
         if(frame.contentWindow.renderVariable) {
           frame.contentWindow.renderVariable(object,pinned);
@@ -333,6 +369,7 @@ var FirePHP = top.FirePHP = {
         
       }
   },
+  
   
   hideVariableInspectorOverlay: function(force) {
     
@@ -375,6 +412,45 @@ var FirePHP = top.FirePHP = {
           prefs.setBoolPref(prefName, value);
       else if (type == nsIPrefBranch.PREF_INVALID)
           throw "Invalid preference "+prefName+" check that it is listed in defaults/prefs.js";
+  },
+  
+    setDefaultRep: function(rep)
+    {
+        this.defaultRep = rep;
+    },
+
+  registerRep: function()
+  {
+      this.reps.push.apply(this.reps, arguments);
+  },
+  
+  
+  
+    getRep: function(object)
+    {
+
+        var type = typeof(object);
+if(DEBUG) dump('FirePHP.getRep() - type: '+type+' - object: '+object+"\n");
+        for (var i = 0; i < this.reps.length; ++i)
+        {
+            var rep = this.reps[i];
+
+            try
+            {
+                if (rep.supportsObject(object, type)) {
+
+if(DEBUG) dump('FirePHP.getRep() -     use: '+rep.className+"\n");
+                
+                    return rep;
+                }
+            }
+            catch (exc)
+            {
+            }
+        }
+
+if(DEBUG) dump('FirePHP.getRep() - use: '+this.defaultRep.className+' (default)'+"\n");
+        return this.defaultRep;
   }
 }
 
@@ -596,7 +672,15 @@ Firebug.FirePHP = extend(Firebug.Module,
                     return rep.tag.append({object: object}, row);
                   }, Data, this.activeContext, this.consoleTemplates[TemplateName].className, this.consoleTemplates[TemplateName], null, true);
               } else {
-            	  oo = Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
+                
+                // If no custom template is requested we use our default FirePHP template
+  
+                oo = Firebug.Console.logRow(function(object, row, rep)
+                  {
+                    return rep.tag.append({object: object}, row);
+                  }, Data, this.activeContext, FirebugReps.PHPVariable.className, FirebugReps.PHPVariable, null, true);
+                
+//            	  oo = Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);
               }
               FirePHP.isLoggingData = false;
               return oo;
@@ -710,25 +794,6 @@ Firebug.FirePHP = extend(Firebug.Module,
 
       } else {
   
-/*  
-function handler() {
- if(this.readyState == 4 && this.status == 200) {
-  
-  Firebug.Console.log(this.responseText);
-  
- } else if (this.readyState == 4 && this.status != 200) {
-  Firebug.Console.log('oops error: '+this.status);
-  Firebug.Console.log(this.responseText);
- }
-}
-
-var client = new XMLHttpRequest();
-client.onreadystatechange = handler;
-client.open("GET", "chrome://firephp/content/FirePHP.js");
-//client.open("GET", "http://www.firephp.org/js/jquery.js");
-client.send(null);
-*/
-        
         openNewTab(firephpURLs[which]);
       }
   },

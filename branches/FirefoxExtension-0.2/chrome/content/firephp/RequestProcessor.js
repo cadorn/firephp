@@ -133,6 +133,12 @@ FirePHPProcessor.Init = function() {
         for (var i = 0; i < call.args.length; ++i) {
           var arg = call.args[i];
           
+//          var rep = FirePHP.getRep(arg);
+//          var tag = rep.shortTag ? rep.shortTag : rep.tag;
+                var rep = FirebugReps.PHPVariable;
+                var tag = rep.tag;
+          
+/*          
           if(!arg) {
             var rep = Firebug.getRep(arg);
             var tag = rep.shortTag ? rep.shortTag : rep.tag;
@@ -146,6 +152,7 @@ FirePHPProcessor.Init = function() {
             var rep = Firebug.getRep(arg);
             var tag = rep.shortTag ? rep.shortTag : rep.tag;
           }
+*/          
           var delim = (i == call.args.length - 1 ? "" : ", ");
           items.push({
             name: 'arg' + i,
@@ -262,7 +269,19 @@ FirePHPProcessor.Init = function() {
           for (var i = 0; i < row.length; ++i)
           {
               var arg = row[i];
-  
+//          var rep = FirePHP.getRep(arg);
+//          var tag = rep.shortTag ? rep.shortTag : rep.tag;
+              
+                var rep = FirebugReps.PHPVariable;
+              
+              if(typeof(arg)=='string') {
+                rep = FirebugReps.FirePHPText;
+              }
+              
+                var tag = rep.tag;
+                
+                
+/*  
               if(!arg) {
                 var rep = Firebug.getRep(arg);
                 var tag = rep.shortTag ? rep.shortTag : rep.tag;
@@ -279,7 +298,7 @@ FirePHPProcessor.Init = function() {
                 var rep = FirebugReps.Text;
                 var tag = rep.shortTag ? rep.shortTag : rep.tag;
               }
-              
+*/              
               items.push({name: 'arg'+i, value: arg, tag: tag});
           }
         } catch(e) {}
@@ -359,6 +378,9 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
 FirePHPProcessor.processMessage = function(mode, data) {
 
   mode = mode.toLowerCase();
+
+dump('DATA: '+mode+' - '+data+"\n");        
+
 
   /* Change mode from TRACE to EXCEPTION for backwards compatibility */
   if (mode == 'trace') {
