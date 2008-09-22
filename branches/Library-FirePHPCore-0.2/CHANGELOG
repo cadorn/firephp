@@ -1,4 +1,6 @@
 
+  - (Issue 33) PHP error notices running demos
+  - (Issue 12) undefined index php notice
   - Removed closing ?> php tags
   - (Issue 13) the code in the fb() function has a second return statement that will never be reached
 

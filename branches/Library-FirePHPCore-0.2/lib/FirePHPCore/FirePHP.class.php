@@ -163,14 +163,16 @@ class FirePHP {
       if(!$trace) return false;
       for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
         
-        if($trace[$i]['class']=='FirePHP' &&
-           substr($this->_standardizePath($trace[$i+1]['file']),-18,18)=='FirePHPCore/fb.php') {
+        if(isset($trace[$i]['class'])
+           && isset($trace[$i+1]['file'])
+           && $trace[$i]['class']=='FirePHP'
+           && substr($this->_standardizePath($trace[$i+1]['file']),-18,18)=='FirePHPCore/fb.php') {
           /* Skip */
         } else
         if($trace[$i]['function']=='fb') {
-          $Object = array('Class'=>$trace[$i]['class'],
-                          'Type'=>$trace[$i]['type'],
-                          'Function'=>$trace[$i]['function'],
+          $Object = array('Class'=>isset($trace[$i]['class'])?$trace[$i]['class']:'',
+                          'Type'=>isset($trace[$i]['type'])?$trace[$i]['type']:'',
+                          'Function'=>isset($trace[$i]['function'])?$trace[$i]['function']:'',
                           'Message'=>$trace[$i]['args'][0],
                           'File'=>$this->_escapeTraceFile($trace[$i]['file']),
                           'Line'=>$trace[$i]['line'],
@@ -225,7 +227,9 @@ class FirePHP {
   protected function _escapeTrace($Trace) {
     if(!$Trace) return $Trace;
     for( $i=0 ; $i<sizeof($Trace) ; $i++ ) {
-      $Trace[$i]['file'] = $this->_escapeTraceFile($Trace[$i]['file']);
+      if(isset($Trace[$i]['file'])) {
+        $Trace[$i]['file'] = $this->_escapeTraceFile($Trace[$i]['file']);
+      }
     }
     return $Trace;    
   }
