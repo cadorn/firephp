@@ -10,3 +10,11 @@ $array['html3'] = '<p>jhgjhgf ghj hg hgfhgfh hgjvhgjfhgj h hgfhjgfhjg ghhgjfghf 
 
 $firephp->fb($array);
 
+$testArray = array('key'=>'value');
+
+$firephp->fb($testArray  ,FirePHP::LOG);
+$firephp->fb($testArray ,FirePHP::INFO);
+$firephp->fb($testArray ,FirePHP::WARN);
+$firephp->fb($testArray,FirePHP::ERROR);
+
+$firephp->fb('Test line 1'."\n".'Test Line 2' ,FirePHP::INFO);
