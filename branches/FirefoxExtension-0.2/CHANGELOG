@@ -1,5 +1,5 @@
 
-  - Added resizing links to variable viewer overlay
+  - Added resizing links to variable viewer overlay and persist last size in preferences
   - (Issue 11) Variable inspection for arrays logged to console
   - (Issue 30) Allow explicit wrapping of logging data
   - Major work on new variable renderers for console

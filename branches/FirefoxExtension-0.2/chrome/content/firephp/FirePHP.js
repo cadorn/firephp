@@ -288,10 +288,24 @@ var FirePHP = top.FirePHP = {
   
   lastInspectorVariable: null,
   inspectorPinned: false,
-  inspectorWidth: '50%',
+  
+  
+  setVariableViewerWidth: function(width) {
+      FirePHP.setPref(FirePHP.prefDomain,'variableViewerWidth', width);
+  },
+
+  getVariableViewerWidth: function() {
+      var w = FirePHP.getPref(FirePHP.prefDomain,'variableViewerWidth');
+      if(!w) {
+        w = '50%';
+        this.setVariableViewerWidth(w);
+      }
+      return w;
+  },
   
   sizeVariableInspectorOverlayWidthTo: function(size) {
-    this.inspectorWidth = size;
+    
+    this.setVariableViewerWidth(size);
     
     this.hideVariableInspectorOverlay(true);
     
@@ -325,23 +339,23 @@ var FirePHP = top.FirePHP = {
         var bw = browser.boxObject.width;
         var bh = browser.boxObject.height;
         
-//        var w = bw-100;
-//        if(w>600) {
-          
-          switch(this.inspectorWidth) {
-            case '50%':
-              w = bw/100*50;
-              break;
-            case '70%':
-              w = bw/100*70;
-              break;
-            case '90%':
-              w = bw/100*90;
-              break;
-          }
-//        }
-        if(w<600) {
-          w = 600;
+        var w = bw-100;
+
+        switch(this.getVariableViewerWidth()) {
+          case '50%':
+            w = bw/100*50;
+            break;
+          case '70%':
+            w = bw/100*70;
+            break;
+          case '90%':
+            w = bw/100*90;
+            break;
+        }
+
+        // Set a minimum width of 500
+        if(w<500) {
+          w = 500;
         }
         var h = bh-40;
         
