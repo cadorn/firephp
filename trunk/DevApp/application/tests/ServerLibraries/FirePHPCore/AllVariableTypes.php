@@ -3,6 +3,20 @@
 $firephp = FirePHP::getInstance(true);
 
 
+$firephp->fb('string');
+$firephp->fb('string','Label');
+$firephp->fb(true);
+$firephp->fb(true,'Label');
+$firephp->fb(false);
+$firephp->fb(false,'Label');
+$firephp->fb(null);
+$firephp->fb(null,'Label');
+$firephp->fb(1);
+$firephp->fb(1,'Label');
+$firephp->fb(1.1);
+$firephp->fb(1.1,'Label');
+
+
 $array = array();
 $array['key1'] = 'string';
 $array['key2'] = true;
@@ -23,6 +37,7 @@ $array[99] = $obj;
 $array[] = 'Append';
 
 $firephp->fb($array);
+$firephp->fb($array, 'Label');
 
 $firephp->fb(new TestObject());
 
