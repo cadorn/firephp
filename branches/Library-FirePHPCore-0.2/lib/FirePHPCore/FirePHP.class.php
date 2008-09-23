@@ -60,9 +60,10 @@ class FirePHP {
   const TRACE = 'TRACE';
   const EXCEPTION = 'EXCEPTION';
   const TABLE = 'TABLE';
+  const GROUP_START = 'GROUP_START';
+  const GROUP_END = 'GROUP_END';
   
   protected static $instance = null;
-  
   
   public static function getInstance($AutoCreate=false) {
     if($AutoCreate===true && !self::$instance) {
@@ -87,6 +88,14 @@ class FirePHP {
     $this->setHeader('X-FirePHP-RendererURL', $URL);
   }
   
+  
+  public function group($Name) {
+    return $this->fb(null, $Name, FirePHP::GROUP_START);
+  }
+  
+  public function groupEnd() {
+    return $this->fb(null, null, FirePHP::GROUP_END);
+  }
 
   public function log($Object, $Label=null) {
     return $this->fb($Object, $Label, FirePHP::LOG);
