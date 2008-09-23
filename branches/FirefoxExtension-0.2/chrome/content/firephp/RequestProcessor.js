@@ -360,7 +360,7 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
           
           var item = json_parse(messages[index]);
           
-          this.processMessage(item[0].Type, item[1]);
+          this.processMessage(item[0].Type, item[1], item[0]);
         }
       }
  
@@ -375,7 +375,7 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
 
 
 
-FirePHPProcessor.processMessage = function(mode, data) {
+FirePHPProcessor.processMessage = function(mode, data, meta) {
 
   mode = mode.toLowerCase();
 
@@ -395,13 +395,13 @@ FirePHPProcessor.processMessage = function(mode, data) {
             
   if (mode == 'log' || mode == 'info' || mode == 'warn' || mode == 'table' || mode == 'trace') {
   
-    this.logToFirebug(mode, data);
+    this.logToFirebug(mode, data, false, meta);
     
   } else 
   if (mode == 'error' || mode == 'exception') {
   
     Firebug.Errors.increaseCount(this.context);
     
-    this.logToFirebug(mode, data);
+    this.logToFirebug(mode, data, false, meta);
   }
 }

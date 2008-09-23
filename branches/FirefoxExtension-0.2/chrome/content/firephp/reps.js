@@ -23,18 +23,26 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
 
 
     tag:
-      A({
-          class: "objectLink-PHPVariable",
-          _repObject: "$object",
-          onmouseover:"$onMouseOver",
-          onmouseout:"$onMouseOut",
-          onclick:"$onClick"
-        },
-        SPAN({class: "objectTitle"},
-          TAG("$object|getTag", {object: "$object"})
+      SPAN({class: "firephp-row-label"}, '$__in__|getLabel',
+        A({
+            class: "objectLink-PHPVariable",
+            _repObject: "$object",
+            onmouseover:"$onMouseOver",
+            onmouseout:"$onMouseOut",
+            onclick:"$onClick"
+          },
+          SPAN({class: "objectTitle"},
+            TAG("$object|getTag", {object: "$object"})
+          )
         )
       ),
     
+    getLabel: function(row) {
+      if(row && row.meta && row.meta.Label) {
+        return row.meta.Label + ': ';
+      }
+      return ' ';
+    },
     
     onMouseOver: function(event) {
       
@@ -333,17 +341,23 @@ FirebugReps.FirePHPString = domplate(Firebug.Rep,
 
 FirebugReps.FirePHPText = domplate(Firebug.Rep,
 {
-    tag: OBJECTBOX("$object"),
+    tag: SPAN({class: "firephp-row-label"}, '$__in__|getLabel',OBJECTBOX("$object")),
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    className: "firephp-text"
+    className: "firephp-text",
     
+    getLabel: function(row) {
+      if(row && row.meta && row.meta.Label) {
+        return row.meta.Label + ': ';
+      }
+      return ' ';
+    }    
 });
 
 FirebugReps.FirePHPBoolean = domplate(Firebug.Rep,
 {
-    tag: OBJECTBOX("$object|toUpperCase"),
+    tag: SPAN({class: "firephp-row-label"}, '$__in__|getLabel',OBJECTBOX("$object|toUpperCase")),
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -357,12 +371,19 @@ FirebugReps.FirePHPBoolean = domplate(Firebug.Rep,
     supportsObject: function(object, type)
     {
         return type == "boolean" || (type=="object" && object==null);
+    },
+    
+    getLabel: function(row) {
+      if(row && row.meta && row.meta.Label) {
+        return row.meta.Label + ': ';
+      }
+      return ' ';
     }
 });
 
 FirebugReps.FirePHPNumber = domplate(Firebug.Rep,
 {
-    tag: OBJECTBOX("$object"),
+    tag: SPAN({class: "firephp-row-label"}, '$__in__|getLabel',OBJECTBOX("$object")),
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -371,6 +392,13 @@ FirebugReps.FirePHPNumber = domplate(Firebug.Rep,
     supportsObject: function(object, type)
     {
         return type == "number";
+    },
+    
+    getLabel: function(row) {
+      if(row && row.meta && row.meta.Label) {
+        return row.meta.Label + ': ';
+      }
+      return ' ';
     }
 });
 

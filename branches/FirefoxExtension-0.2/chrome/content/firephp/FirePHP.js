@@ -677,13 +677,13 @@ Firebug.FirePHP = extend(Firebug.Module,
             RegisterConsoleTemplate: function(Name,Template) {
               this.consoleTemplates[Name] = Template;
             },
-						logToFirebug: function(TemplateName, Data, UseFirebugTemplates) {
+						logToFirebug: function(TemplateName, Data, UseFirebugTemplates, Meta) {
               var oo = false;
               FirePHP.isLoggingData = true;
               if (this.consoleTemplates[TemplateName]) {
                 oo = Firebug.Console.logRow(function(object, row, rep)
                   {
-                    return rep.tag.append({object: object}, row);
+                    return rep.tag.append({object: object, meta:Meta}, row);
                   }, Data, this.activeContext, this.consoleTemplates[TemplateName].className, this.consoleTemplates[TemplateName], null, true);
               } else
               if(UseFirebugTemplates) {
@@ -696,13 +696,20 @@ Firebug.FirePHP = extend(Firebug.Module,
                 // If data is a string just use a simple text renderer
 
                 var rep = FirebugReps.PHPVariable;
-                if(FirePHP.getRep(Data)==FirebugReps.FirePHPString) {
+                var firePHPRep = FirePHP.getRep(Data);
+                if(firePHPRep==FirebugReps.FirePHPString) {
                   rep = FirebugReps.FirePHPText;
+                } else
+                if(firePHPRep==FirebugReps.FirePHPBoolean) {
+                  rep = firePHPRep;
+                } else
+                if(firePHPRep==FirebugReps.FirePHPNumber) {
+                  rep = firePHPRep;
                 }
   
                 oo = Firebug.Console.logRow(function(object, row, rep)
                   {
-                    return rep.tag.append({object: object, meta:{priority:TemplateName}}, row);
+                    return rep.tag.append({object: object, meta:Meta}, row);
                   }, Data, this.activeContext, TemplateName, rep, null, true);
                 
 //            	  oo = Firebug.Console.logFormatted([Data], this.activeContext, TemplateName, false, null);

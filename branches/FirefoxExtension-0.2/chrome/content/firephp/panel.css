@@ -11,6 +11,12 @@
 
 
 
+.firephp-row-label {
+  font-family: Monaco, monospace;
+  color: black;
+}
+
+
 .objectLink-firephp-array {
     font-family: Lucida Grande, sans-serif;
     color: black;
