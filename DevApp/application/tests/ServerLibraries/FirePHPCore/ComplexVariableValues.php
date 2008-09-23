@@ -18,3 +18,8 @@ $firephp->fb($testArray ,FirePHP::WARN);
 $firephp->fb($testArray,FirePHP::ERROR);
 
 $firephp->fb('Test line 1'."\n".'Test Line 2' ,FirePHP::INFO);
+
+$firephp->fb('Log message', 'Label' ,FirePHP::LOG);
+$firephp->fb('Info message', 'Label' ,FirePHP::INFO);
+$firephp->fb('Warn message', 'Label' ,FirePHP::WARN);
+$firephp->fb('Error message', 'Label',FirePHP::ERROR);
