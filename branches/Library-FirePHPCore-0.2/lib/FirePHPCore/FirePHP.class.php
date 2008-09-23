@@ -88,14 +88,24 @@ class FirePHP {
   }
   
 
-  public function log() {
-    $args = func_get_args();
-    call_user_func_array(array($this,'fb'),array($args,FirePHP::LOG));
+  public function log($Object, $Label=null) {
+    return $this->fb($Object, $Label, FirePHP::LOG);
+  } 
+
+  public function info($Object, $Label=null) {
+    return $this->fb($Object, $Label, FirePHP::INFO);
+  } 
+
+  public function warn($Object, $Label=null) {
+    return $this->fb($Object, $Label, FirePHP::WARN);
+  } 
+
+  public function error($Object, $Label=null) {
+    return $this->fb($Object, $Label, FirePHP::ERROR);
   } 
 
   public function dump($Key, $Variable) {
-    $args = func_get_args();
-    call_user_func_array(array($this,'fb'),array($Variable,$Key,FirePHP::DUMP));
+    return $this->fb($Variable, $Key, FirePHP::DUMP);
   } 
   
   public function detectClientExtension() {
