@@ -597,6 +597,16 @@ class FirePHP {
   */
   private function json_name_value($name, $value)
   {
+      // Encoding the $GLOBALS PHP array causes an infinite loop
+      // if the recursion is not reset here as it contains
+      // a reference to itself. This is the only way I have come up
+      // with to stop infinite recursion in this case.
+      if($name=='GLOBALS'
+         && is_array($value)
+         && array_key_exists('GLOBALS',$value)) {
+        $value['GLOBALS'] = '** Recursion **';
+      }
+    
       $encoded_value = $this->json_encode($value);
 
       if($encoded_value instanceof Exception) {
@@ -605,6 +615,4 @@ class FirePHP {
 
       return $this->json_encode(strval($name)) . ':' . $encoded_value;
   }
-
 }
-

@@ -1,4 +1,5 @@
 
+  - (Issue 29) problem with TRACE when using with error_handler
   - (Issue 33) PHP error notices running demos
   - (Issue 12) undefined index php notice
   - Removed closing ?> php tags
