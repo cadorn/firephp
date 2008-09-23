@@ -398,7 +398,7 @@ FirePHPProcessor.processMessage = function(mode, data, meta) {
     if(meta && meta.Label) {
       Firebug.Console.openGroup([meta.Label], null, "group", null, false);
     } else {
-      Firebug.Console.openGroup([data], null, "group", null, false);
+      Firebug.Console.openGroup([data[0]], null, "group", null, false);
     }
     
   } else
