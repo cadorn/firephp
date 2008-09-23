@@ -1,4 +1,5 @@
 
+  - (Issue 31) Log messages with labels reproduced as Array(2) in firebug console
   - Added support for console groups
   - Added support for message labels when using the wildfire protocol
   - Added resizing links to variable viewer overlay and persist last size in preferences
