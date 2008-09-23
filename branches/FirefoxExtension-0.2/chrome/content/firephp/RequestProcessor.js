@@ -392,7 +392,21 @@ FirePHPProcessor.processMessage = function(mode, data, meta) {
       data.Type = 'throw';
     }
   }
-            
+          
+  if(mode=='group_start') {
+    
+    if(meta && meta.Label) {
+      Firebug.Console.openGroup([meta.Label], null, "group", null, false);
+    } else {
+      Firebug.Console.openGroup([data], null, "group", null, false);
+    }
+    
+  } else
+  if(mode=='group_end') {
+    
+    Firebug.Console.closeGroup();
+    
+  } else
   if (mode == 'log' || mode == 'info' || mode == 'warn' || mode == 'table' || mode == 'trace') {
   
     this.logToFirebug(mode, data, false, meta);
