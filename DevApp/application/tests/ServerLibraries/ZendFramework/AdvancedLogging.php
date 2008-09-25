@@ -41,6 +41,12 @@ Zend_Wildfire_Plugin_FirePhp::send(array('2 SQL queries took 0.06 seconds',array
    array('SELECT * FROM Bar','0.04',array('row1','row2'))
   )), '',Zend_Wildfire_Plugin_FirePhp::TABLE);
 
+Zend_Wildfire_Plugin_FirePhp::send(array(
+   array('SQL Statement','Time','Result'),
+   array('SELECT * FROM Foo','0.02',array('row1','row2')),
+   array('SELECT * FROM Bar','0.04',array('row1','row2'))
+  ), '2 SQL queries took 0.06 seconds (Second Table)',Zend_Wildfire_Plugin_FirePhp::TABLE);
+
 /* Will show only in "Server" tab for the request */
 Zend_Wildfire_Plugin_FirePhp::send(apache_request_headers(),'RequestHeaders',Zend_Wildfire_Plugin_FirePhp::DUMP);
 
