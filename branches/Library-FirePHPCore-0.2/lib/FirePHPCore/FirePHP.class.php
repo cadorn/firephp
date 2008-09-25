@@ -65,6 +65,8 @@ class FirePHP {
   
   protected static $instance = null;
   
+  protected $messageIndex = 1;
+  
   public static function getInstance($AutoCreate=false) {
     if($AutoCreate===true && !self::$instance) {
       self::init();
@@ -133,6 +135,7 @@ class FirePHP {
     }
   
     $Type = null;
+    $Label = null;
   
     if(func_num_args()==1) {
     } else
@@ -146,16 +149,18 @@ class FirePHP {
         case self::TRACE:
         case self::EXCEPTION:
         case self::TABLE:
+        case self::GROUP_START:
+        case self::GROUP_END:
           $Type = func_get_arg(1);
           break;
         default:
-          $Object = array(func_get_arg(1),$Object);
+          $Label = func_get_arg(1);
           break;
       }
     } else
     if(func_num_args()==3) {
       $Type = func_get_arg(2);
-      $Object = array(func_get_arg(1),$Object);
+      $Label = func_get_arg(1);
     } else {
       throw $this->newException('Wrong number of arguments to fb() function!');
     }
@@ -206,36 +211,45 @@ class FirePHP {
         $Type = self::LOG;
       }
     }
-  
-  	$this->setHeader('X-FirePHP-Data-100000000001','{');
-    if($Type==self::DUMP) {
-    	$this->setHeader('X-FirePHP-Data-200000000001','"FirePHP.Dump":{');
-    	$this->setHeader('X-FirePHP-Data-299999999999','"__SKIP__":"__SKIP__"},');
-    } else {
-    	$this->setHeader('X-FirePHP-Data-300000000001','"FirePHP.Firebug.Console":[');
-    	$this->setHeader('X-FirePHP-Data-399999999999','["__SKIP__"]],');
-    }
-  	$this->setHeader('X-FirePHP-Data-999999999999','"__SKIP__":"__SKIP__"}');
-  
-    if($Type==self::DUMP) {
-    	$msg = '"'.$Object[0].'":'.$this->json_encode($Object[1]).',';
-    } else {
-    	$msg = '["'.$Type.'",'.$this->json_encode($Object).'],';
-    }
-   
-  	foreach( explode("\n",chunk_split($msg, 5000, "\n")) as $part ) {
-  	  
-      if($part) {
 
-        usleep(1); /* Ensure microtime() increments with each loop. Not very elegant but it works */
-    
-    		$mt = explode(' ',microtime());
-    		$mt = substr($mt[1],7).substr($mt[0],2);
-    
-        $this->setHeader('X-FirePHP-Data-'.(($Type==self::DUMP)?'2':'3').$mt, $part);
-      }
-  	}
-    
+  	$this->setHeader('X-Wf-Protocol-1','http://meta.wildfirehq.org/Protocol/JsonStream/0.1');
+  	$this->setHeader('X-Wf-1-Plugin-1','http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/0.1');
+ 
+    $structure_index = 1;
+    if($Type==self::DUMP) {
+      $structure_index = 2;
+    	$this->setHeader('X-Wf-1-Structure-2','http://meta.firephp.org/Wildfire/Structure/FirePHP/Dump/0.1');
+    } else {
+    	$this->setHeader('X-Wf-1-Structure-1','http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1');
+    }
+  
+    if($Type==self::DUMP) {
+    	$msg = '{"'.$Label.'":'.$this->json_encode($Object).'}';
+    } else {
+      $meta = array('Type'=>$Type);
+      if($Label!==null) {
+        $meta['Label'] = $Label;
+      }    
+    	$msg = '['.$this->json_encode($meta).','.$this->json_encode($Object).']';
+    }
+
+    foreach (explode("\n",chunk_split($msg, 4998, "\n")) as $part) {
+
+        if ($part) {
+            
+            $this->setHeader('X-Wf-1-'.$structure_index.'-'.'1-'.$this->messageIndex,
+                             '|' . $part . '|');
+            
+            $this->messageIndex++;
+            
+            if ($this->messageIndex > 99999) {
+                throw new Exception('Maximum number (99,999) of messages reached!');             
+            }
+        }
+    }
+
+  	$this->setHeader('X-Wf-1-Index',$this->messageIndex-1);
+
     return true;
   }
   
