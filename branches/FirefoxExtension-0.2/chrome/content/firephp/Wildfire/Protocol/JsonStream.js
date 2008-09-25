@@ -7,7 +7,9 @@ Wildfire.Protocol.JsonStream = function() {
   this.plugin_ids = new Array();
   this.messages = new Array();
   this.structures = new Array();
+  this.expectedMessageCount = 0;
   this.buffer = new Array();
+  this.messageCount = 0;
   
   
   this.getURI = function()
@@ -41,46 +43,51 @@ Wildfire.Protocol.JsonStream = function() {
     } else
     if(key[0]=='index') {
 
-      /* TODO: Could ensure all messages were received here based on index */
-     
-      /* Flush the messages to the plugins */
-     
-      if(this.messages) {
-        
-        this.messages = this.sortMessages(this.messages);
-        
-        for( var index in this.messages ) {
-
-          var plugin = this.plugins[this.plugin_ids[this.messages[index][0]]];
-
-          if(this.messages[index][2].length==4998) {
-            
-            this.buffer.push(this.messages[index][2]);
-                        
-          } else
-          if(this.buffer.length>0) {
-
-            plugin.receivedMessage(index,
-                                   this.structures[this.messages[index][1]],
-                                   this.buffer.join('')+this.messages[index][2]);
-
-            this.buffer = new Array();
-          
-          } else {
-            plugin.receivedMessage(index,
-                                   this.structures[this.messages[index][1]],
-                                   this.messages[index][2]);
-          }
-        }
-      }
-      
-      this.messages = new Array();
+      this.expectedMessageCount = Data;
       
     } else {
 
       this.messages[key[2]] = [key[1],key[0],Data.substring(1,Data.length-1)];
+
+      this.messageCount++;
     }
- 
+    
+    // Once we have all messages received based on the message index
+    // we flush them to the plugins
+    
+    if(this.messages
+      && this.expectedMessageCount!=0
+      && this.messageCount==this.expectedMessageCount) {
+    
+      this.messages = this.sortMessages(this.messages);
+      
+      for( var index in this.messages ) {
+
+        var plugin = this.plugins[this.plugin_ids[this.messages[index][0]]];
+
+        if(this.messages[index][2].length==4998) {
+          
+          this.buffer.push(this.messages[index][2]);
+                      
+        } else
+        if(this.buffer.length>0) {
+
+          plugin.receivedMessage(index,
+                                 this.structures[this.messages[index][1]],
+                                 this.buffer.join('')+this.messages[index][2]);
+
+          this.buffer = new Array();
+        
+        } else {
+          plugin.receivedMessage(index,
+                                 this.structures[this.messages[index][1]],
+                                 this.messages[index][2]);
+        }
+      }
+      
+      this.messages = new Array();    
+    }
+     
     return true;
   };
   

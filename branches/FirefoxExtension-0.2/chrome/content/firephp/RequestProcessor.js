@@ -185,19 +185,19 @@ FirePHPProcessor.Init = function() {
     {
       className: 'firephp-table',
       tag:
-          DIV({class: "head", _repObject: "$object"},
-              A({class: "title", onclick: "$onToggleBody"}, "$object|getCaption")
+          DIV({class: "head", _repObject: "$object", _repMeta: "$meta"},
+              A({class: "title", onclick: "$onToggleBody"}, "$__in__|getCaption")
           ),
     
       infoTag: DIV({class: "info"},
              TABLE({cellpadding: 3, cellspacing: 0},
               TBODY(
                 TR(
-                  FOR("column", "$object|getHeaderColumns",
+                  FOR("column", "$__in__|getHeaderColumns",
                     TD({class:'header'},'$column')
                   )
                 ),
-                FOR("row", "$object|getRows",
+                FOR("row", "$__in__|getRows",
                     TR({},
                       FOR("column", "$row|getColumns",
                         TD({class:'cell'},
@@ -212,9 +212,15 @@ FirePHPProcessor.Init = function() {
                   
            
                   
-      getCaption: function(item)
+      getCaption: function(row)
       {
-        return item[0];
+        if(!row) return '';
+        
+        if(row.meta && row.meta.Label) {
+          return row.meta.Label;
+        }
+        
+        return row.object[0];
       },
     
       onToggleBody: function(event)
@@ -231,26 +237,38 @@ FirePHPProcessor.Init = function() {
             /* Lets only render the stack trace once we request it */        
             if (!getChildByClass(logRow, "head", "info"))
             {
-                this.infoTag.append({'object':getChildByClass(logRow, "head").repObject},
+                this.infoTag.append({'object':getChildByClass(logRow, "head").repObject,
+                                     'meta':getChildByClass(logRow, "head").repMeta},
                                     getChildByClass(logRow, "head"));
             }
           }
         }
       },
       
-      getHeaderColumns: function(object) {
+      getHeaderColumns: function(row) {
         
         try{
-          return object[1][0];
+          if(row.meta && row.meta.Label) {
+            return row.object[0];
+          } else {
+            // Do this for backwards compatibility
+            return row.object[1][0];
+          }
         } catch(e) {}
         
         return [];
       },
       
-      getRows: function(object) {
+      getRows: function(row) {
         
         try{
-          var rows = object[1];
+          var rows = null;
+          if(row.meta && row.meta.Label) {
+            rows = row.object;
+          } else {
+            // Do this for backwards compatibility
+            rows = row.object[1];
+          }
           rows.splice(0,1);
           return rows;
         } catch(e) {}

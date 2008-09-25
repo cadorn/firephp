@@ -1,4 +1,6 @@
 
+  - Fix for Wildfire JsonStream to allow Wf-*-Index header to be sent in any position
+  - Fix for TABLE logging style to allow table label in meta.label as well as data[0]
   - (Issue 31) Log messages with labels reproduced as Array(2) in firebug console
   - Added support for console groups
   - Added support for message labels when using the wildfire protocol
