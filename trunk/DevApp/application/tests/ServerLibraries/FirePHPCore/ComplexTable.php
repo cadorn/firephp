@@ -24,7 +24,9 @@ $row[] = array('key1'=>'val1','key2'=>'val2');
 $table[] = $row;
 
 
-$firephp->fb(array('This is the table label', $table),
+$firephp->fb(array('This is the table label',$table),
+             FirePHP::TABLE);
+$firephp->fb($table, 'This is the table label',
              FirePHP::TABLE);
 
 
