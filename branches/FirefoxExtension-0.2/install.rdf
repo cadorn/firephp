@@ -21,7 +21,7 @@
     <em:creator>Christoph Dorn</em:creator>
     <em:homepageURL>http://www.firephp.org/</em:homepageURL>
     <em:iconURL>chrome://firephp/skin/FirePHP_32.png</em:iconURL>
-    <em:updateURL>http://www.firephp.org/Update/FirefoxExtension/Beta/?ItemID=%ITEM_ID%&ItemVersion=%ITEM_VERSION%&ItemStatus=%ITEM_STATUS%&AppID=%APP_ID%&AppVersion=%APP_VERSION%&AppOS=%APP_OS%&&AppLocale=%APP_LOCALE%</em:updateURL>
+    <em:updateURL>http://www.firephp.org/Update/FirefoxExtension/Beta/</em:updateURL>
     <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDP3d1lWrv680cl1DKDgse1IHeMgF0iLq5fiNKCdCkSWXbzQplSCNdWHUi2mZc2QnYyb4eOUlV7rTOUj1qNJJ9YOb5kINNmzrmUTF3Apf5339zn4lda+wo71DWqbPBKZxb/Khp1gk/97yi8i6VfWmZElRo5Ahlme2XhUwE8lUmQVwIDAQAB</em:updateKey>
 
   </Description>
