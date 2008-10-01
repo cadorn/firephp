@@ -1,4 +1,5 @@
 
+  - (Issue 25) Wrong order in FireBug Console
   - Removed dependency on jQuery for Ajax requests
   - Added info message with link in console when server library is not latest available
   - Added detection and recording of server wildfire plugin version
