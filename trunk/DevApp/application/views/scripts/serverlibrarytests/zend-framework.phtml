@@ -21,6 +21,8 @@ echo $this->contentPane()->captureEnd('headerPane');
 $this->contentPane()->captureStart('menuPane', array('region'=>'left'));
 
 $tests = array();
+$tests['Zend_Log_Writer_Firebug'] = 'Zend_Log_Writer_Firebug';
+$tests['Zend_Db_Profiler_Firebug'] = 'Zend_Db_Profiler_Firebug';
 $tests['AdvancedLogging'] = 'Advanced Logging';
 $tests['Groups'] = 'Groups';
 
@@ -31,6 +33,8 @@ $branches[] = '1.6.1';
 ?>
 
 <div>
+
+<p><a href="http://<?php print str_replace('devapp','zfdemo',$_SERVER['SERVER_NAME']); ?>/" target="testContentIframe">ZF Demo App</a></p>
 
 <?php foreach( $branches as $branch ) { ?>
   
