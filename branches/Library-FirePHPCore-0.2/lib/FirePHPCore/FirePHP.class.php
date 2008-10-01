@@ -52,7 +52,7 @@
 
 class FirePHP {
   
-  const VERSION = '0.2.a.1';
+  const VERSION = '0.2.b.1';
   
   const LOG = 'LOG';
   const INFO = 'INFO';

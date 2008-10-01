@@ -1,4 +1,6 @@
 
+2008-10-01 - Release Version: 0.2.b.1
+
   - Added support for error and exception handling
   - Updated min PHP version for PEAR package to 5.2
   - Added version constant for library
