@@ -9,4 +9,5 @@ $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
 $channel->setRequest($request);
 $channel->setResponse($response);
 
+Zend_Registry::set('logger',$logger);
         
