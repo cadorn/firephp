@@ -105,6 +105,10 @@ var FirePHPLib = top.FirePHPLib = {
   
   isVersionNewer: function(version1, version2) {
 
+    if(version1==version2) {
+      return false;
+    }
+
     var version1_split = version1.split('.');
     var version2_split = version2.split('.');
     
@@ -117,11 +121,11 @@ var FirePHPLib = top.FirePHPLib = {
       return false;
     }
     if(version1_split.length==2 && version2_split.length==3 ||
-      version1_split[2]>version2_split[2]) {
+      version1_split[2]<version2_split[2]) {
       return false;
     }
     if(version1_split.length==3 && version2_split.length==4 ||
-      version1_split[3]>version2_split[3]) {
+      version1_split[3]<version2_split[3]) {
       return false;
     }
 
