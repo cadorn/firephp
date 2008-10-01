@@ -213,7 +213,7 @@ class FirePHP {
     }
 
   	$this->setHeader('X-Wf-Protocol-1','http://meta.wildfirehq.org/Protocol/JsonStream/0.1');
-  	$this->setHeader('X-Wf-1-Plugin-1','http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/0.1');
+  	$this->setHeader('X-Wf-1-Plugin-1','http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library-FirePHPCore/0.2.0');
  
     $structure_index = 1;
     if($Type==self::DUMP) {

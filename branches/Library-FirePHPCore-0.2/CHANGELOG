@@ -1,4 +1,5 @@
 
+  - Gave server library it's own wildfire plugin namespace
   - Migrated communication protocol to Wildfire JsonStream
   - Added support for console groups using "group" and "groupEnd"
   - Added support for log, info, warn and error logging aliases
