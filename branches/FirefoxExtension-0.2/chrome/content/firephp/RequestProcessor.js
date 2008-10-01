@@ -47,6 +47,9 @@ FirePHPProcessor.Init = function() {
       getCaption: function(item){
         if (item.Class && item.Type == 'throw') {
           return item.Class + ': ' + item.Message;
+        } else
+        if (item.Class && item.Type == 'trigger') {
+          return item.Message;
         }
         else {
           return item.Message;
@@ -118,6 +121,9 @@ FirePHPProcessor.Init = function() {
         if (call['class']) {
           if (call['type'] == 'throw') {
             return 'throw ' + call['class'];
+          } else
+          if (call['type'] == 'trigger') {
+            return 'trigger_error';
           }
           else {
             return call['class'] + call['type'] + call['function'];
