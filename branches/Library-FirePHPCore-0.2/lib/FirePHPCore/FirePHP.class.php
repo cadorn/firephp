@@ -81,6 +81,38 @@ class FirePHP {
   } 
   
   
+  public function registerErrorHandler()
+  {
+    //NOTE: The following errors will not be caught by this error handler:
+    //      E_ERROR, E_PARSE, E_CORE_ERROR,
+    //      E_CORE_WARNING, E_COMPILE_ERROR,
+    //      E_COMPILE_WARNING, E_STRICT
+    
+    set_error_handler(array($this,'errorHandler'));     
+  }
+
+  public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
+  {
+    // Don't throw exception if error reporting is switched off
+    if (error_reporting() == 0) {
+      return;
+    }
+    // Only throw exceptions for errors we are asking for
+    if (error_reporting() & $errno) {
+      throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+  }
+  
+  public function registerExceptionHandler()
+  {
+    set_exception_handler(array($this,'exceptionHandler'));     
+  }
+  
+  function exceptionHandler($Exception) {
+    $this->fb($Exception);
+  }
+  
+  
     
   public function setProcessorUrl($URL)
   {
@@ -174,12 +206,41 @@ class FirePHP {
   
     if($Object instanceof Exception) {
       
-      $Object = array('Class'=>get_class($Object),
-                      'Message'=>$Object->getMessage(),
-                      'File'=>$this->_escapeTraceFile($Object->getFile()),
-                      'Line'=>$Object->getLine(),
-                      'Type'=>'throw',
-                      'Trace'=>$this->_escapeTrace($Object->getTrace()));
+      $trace = $Object->getTrace();
+      if($Object instanceof ErrorException
+         && isset($trace[0]['function'])
+         && $trace[0]['function']=='errorHandler'
+         && isset($trace[0]['class'])
+         && $trace[0]['class']=='FirePHP') {
+           
+        $severity = false;
+        switch($Object->getSeverity()) {
+          case E_WARNING: $severity = 'E_WARNING'; break;
+          case E_NOTICE: $severity = 'E_NOTICE'; break;
+          case E_USER_ERROR: $severity = 'E_USER_ERROR'; break;
+          case E_USER_WARNING: $severity = 'E_USER_WARNING'; break;
+          case E_USER_NOTICE: $severity = 'E_USER_NOTICE'; break;
+          case E_STRICT: $severity = 'E_STRICT'; break;
+          case E_RECOVERABLE_ERROR: $severity = 'E_RECOVERABLE_ERROR'; break;
+          case E_DEPRECATED: $severity = 'E_DEPRECATED'; break;
+          case E_USER_DEPRECATED: $severity = 'E_USER_DEPRECATED'; break;
+        }
+           
+        $Object = array('Class'=>get_class($Object),
+                        'Message'=>$severity.': '.$Object->getMessage(),
+                        'File'=>$this->_escapeTraceFile($Object->getFile()),
+                        'Line'=>$Object->getLine(),
+                        'Type'=>'trigger',
+                        'Trace'=>$this->_escapeTrace(array_splice($trace,2)));
+      
+      } else {
+        $Object = array('Class'=>get_class($Object),
+                        'Message'=>$Object->getMessage(),
+                        'File'=>$this->_escapeTraceFile($Object->getFile()),
+                        'Line'=>$Object->getLine(),
+                        'Type'=>'throw',
+                        'Trace'=>$this->_escapeTrace($trace));
+      }
       $Type = self::EXCEPTION;
       
     } else
