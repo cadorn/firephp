@@ -42,17 +42,13 @@ switch($Library) {
       $html[] = 'Test: <span style="color: white; font-weight: bold;">'.$Test.'</span>';
       $html[] = '</div>';
       echo implode("\n",$html);
-      
-      // Now include test file
-      
+            
+      // Print out test file
+
       $file = dirname(dirname(dirname(__FILE__)))
               . '/tests/ServerLibraries/FirePHPCore/'
               . $Test
               . '.php';
-     
-      require_once($file);
-      
-      // Lastly print out test file
       
       highlight_file($file);
       
@@ -60,11 +56,16 @@ switch($Library) {
       
       $html = array();
       $html[] = '<table><tr><td nowrap style="color: white; margin: 10px; padding: 10px; border: 1px solid #B7B7B7; background-color: #bbbbbb; font-family: verdana,arial,helvetica,sans-serif; font-size: 80%;">';
-      foreach( get_included_files() as $file ) {
-        $html[] = $file . '<br/>';
+      foreach( get_included_files() as $f ) {
+        $html[] = $f . '<br/>';
       }      
       $html[] = '</td></tr></table>';
       echo implode("\n",$html);
+      
+      // Now include test file
+      
+      require_once($file);
+      
       break;  
 
     
@@ -103,29 +104,30 @@ switch($Library) {
       $html[] = 'Test: <span style="color: white; font-weight: bold;">'.$Test.'</span>';
       $html[] = '</div>';
       echo implode("\n",$html);
-      
-      // Now include test file
+            
+      // Print out test file
       
       $file = dirname(dirname(dirname(__FILE__)))
               . '/tests/ServerLibraries/ZendFramework/'
               . $Test
               . '.php';
-     
-      require_once($file);
-      
-      // Lastly print out test file
-      
+
       highlight_file($file);
       
       // Show all included files
       
       $html = array();
       $html[] = '<table><tr><td nowrap style="color: white; margin: 10px; padding: 10px; border: 1px solid #B7B7B7; background-color: #bbbbbb; font-family: verdana,arial,helvetica,sans-serif; font-size: 80%;">';
-      foreach( get_included_files() as $file ) {
-        $html[] = $file . '<br/>';
+      foreach( get_included_files() as $f ) {
+        $html[] = $f . '<br/>';
       }      
       $html[] = '</td></tr></table>';
-      echo implode("\n",$html);      
+      echo implode("\n",$html);    
+      
+      // Now include test file
+     
+      require_once($file);
+        
       break;      
       
 }
