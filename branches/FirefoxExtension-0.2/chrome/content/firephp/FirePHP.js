@@ -751,14 +751,9 @@ Firebug.FirePHP = extend(Firebug.Module,
         
       } else {
 
-        FirePHPLib.jQuery.ajax({
+        FirePHPLib.ajax({
           type: 'GET',
-          dataType: 'text',
-          cache: false,
           url: mask,
-          beforeSend: function(XMLHttpRequest){
-            XMLHttpRequest.overrideMimeType('text/plain; charset=us-ascii');
-          },
           success: function(ReturnData){
             with (proecessor_context) {
               FirePHPProcessor.sourceURL = mask;
@@ -778,9 +773,9 @@ Firebug.FirePHP = extend(Firebug.Module,
             }
             
           },
-          error: function(XMLHttpRequest, textStatus, errorThrown){
+          error: function(XMLHttpRequest){
             if (mask.substr(0, 9) == 'chrome://') {
-            
+
               with (proecessor_context) {
                 FirePHPProcessor.sourceURL = mask;
                 FirePHPProcessor.data = data;
@@ -788,6 +783,7 @@ Firebug.FirePHP = extend(Firebug.Module,
                 FirePHPProcessor.code = XMLHttpRequest.responseText;
                 
                 try {
+
                   eval(XMLHttpRequest.responseText);
                   
                   FirePHPProcessor._Init();

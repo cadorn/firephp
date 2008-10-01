@@ -9,6 +9,32 @@
 var FirePHPLib = top.FirePHPLib = {
 
 
+ 
+ 
+  ajax: function(args) {
+    
+    var ajaxArgs = args;
+
+    var client = new XMLHttpRequest();
+    client.open(ajaxArgs.type, ajaxArgs.url, true);
+    client.onreadystatechange = function(event) {
+       if(client.readyState == 4 && client.status == 200) {
+         
+         ajaxArgs.success(client.responseText);
+       
+       } else if (client.readyState == 4 && client.status != 200) {
+
+         ajaxArgs.error(client);
+
+       }
+    };
+		try {
+      client.overrideMimeType('text/plain; charset=us-ascii');
+      client.setRequestHeader("Accept", "text/plain" + ", */*");
+		} catch(e){}
+    client.send(null);
+  },
+
  isArray: function(obj) {
      if (obj.constructor.toString().indexOf("Array") == -1)
         return false;

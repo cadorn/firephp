@@ -870,14 +870,9 @@ function parseAndPrintData(wildfire, Data, Mask, responseTextBox,doc,hash) {
 	}
 	
 	
-	FirePHPLib.jQuery.ajax({
+	FirePHPLib.ajax({
 		type: "GET",
 		url: Mask,
-    dataType: 'text',
-    cache: false,
-    beforeSend: function(XMLHttpRequest){
-      XMLHttpRequest.overrideMimeType('text/plain; charset=us-ascii');
-    },
 		success: function(ReturnData){
 			context.html = '';
 			context.data = Data;
@@ -901,7 +896,7 @@ function parseAndPrintData(wildfire, Data, Mask, responseTextBox,doc,hash) {
         responseTextBox.innerHTML = '<font color="red"><b>Error executing custom FirePHP renderer!</b></font>';
       }
 		},
-		error: function(XMLHttpRequest, textStatus, errorThrown){
+		error: function(XMLHttpRequest){
 			if(Mask.substr(0,9)=='chrome://') {
 				context.html = '';
 				context.data = Data;
