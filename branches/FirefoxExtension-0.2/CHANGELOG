@@ -1,4 +1,6 @@
 
+  - Added info message with link in console when server library is not latest available
+  - Added detection and recording of server wildfire plugin version
   - Fix for Wildfire JsonStream to allow Wf-*-Index header to be sent in any position
   - Fix for TABLE logging style to allow table label in meta.label as well as data[0]
   - (Issue 31) Log messages with labels reproduced as Array(2) in firebug console

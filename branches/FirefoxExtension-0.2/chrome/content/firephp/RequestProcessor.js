@@ -329,6 +329,23 @@ FirePHPProcessor.Init = function() {
 
 
 
+
+  this.RegisterConsoleTemplate('upgrade',
+    domplate(Firebug.Rep,
+    {
+      className: 'firephp-upgrade',
+      tag:
+          DIV("You need to upgrade your FirePHP server library.",
+            A({_object:"$object", onclick:'$upgradeLink'},'Upgrade Now!')),
+          
+
+      upgradeLink: function(event) {
+        openNewTab(event.target.object.peerInfo.uri+event.target.object.peerInfo.version);
+      }
+    })
+  );
+
+
   
 }
 
@@ -352,6 +369,12 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
         var data = json_parse(Data);
       
         if (data['FirePHP.Firebug.Console']) {
+          
+          var peerInfo = {uri:'http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library-FirePHPCore/',
+                          version:'0.2.0'}
+
+          this.logToFirebug('upgrade', {peerInfo: peerInfo}, false);
+          
         
     	    for (var index in data['FirePHP.Firebug.Console']) {
     	
@@ -373,12 +396,23 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
       if(Wildfire.hasMessages()) {
            
         var messages = Wildfire.getMessages('http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1');
+        
+        if(messages && messages.length>0) {
+          
+          var peers = Wildfire.getPeerPlugins();
+          for( var peer_uri in peers ) {
+            if(FirePHPLib.isVersionNewer(peers[peer_uri].minVersion, peers[peer_uri].version)) {
+
+              this.logToFirebug('upgrade', {peerInfo: peers[peer_uri]}, false);
+            }
+          }
            
-        for( var index in messages ) {
-          
-          var item = json_parse(messages[index]);
-          
-          this.processMessage(item[0].Type, item[1], item[0]);
+          for( var index in messages ) {
+            
+            var item = json_parse(messages[index]);
+            
+            this.processMessage(item[0].Type, item[1], item[0]);
+          }
         }
       }
  

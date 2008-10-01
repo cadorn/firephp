@@ -76,6 +76,32 @@ var FirePHPLib = top.FirePHPLib = {
   	return attributes;
   },
   
+  
+  isVersionNewer: function(version1, version2) {
+
+    var version1_split = version1.split('.');
+    var version2_split = version2.split('.');
+    
+    if(version1_split[0]<version2_split[0]) {
+      return false;
+    }
+
+    if(version1_split.length==1 && version2_split.length==2 ||
+      version1_split[1]<version2_split[1]) {
+      return false;
+    }
+    if(version1_split.length==2 && version2_split.length==3 ||
+      version1_split[2]>version2_split[2]) {
+      return false;
+    }
+    if(version1_split.length==3 && version2_split.length==4 ||
+      version1_split[3]>version2_split[3]) {
+      return false;
+    }
+
+    return true;    
+  },
+  
 	
 	sortSecondByFirstNumeric: function(keys,values) {
 

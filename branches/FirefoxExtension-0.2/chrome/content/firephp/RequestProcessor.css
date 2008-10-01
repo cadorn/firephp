@@ -195,3 +195,24 @@ DIV.logRow-firephpRequestGroup > DIV > SPAN.objectBox {
 }
 
 
+DIV.logRow-firephp-upgrade {
+  background-image: url(chrome://firephp/skin/FirePHP_16.png);
+  background-repeat: no-repeat;
+  background-position: 3px 5px;
+  padding-left: 23px;
+  background-color: LightYellow;
+}
+
+DIV.logRow-firephp-upgrade DIV {
+  color: red;
+  font-weight: bold;
+  height: 19px;
+  padding-top: 4px;
+}  
+
+DIV.logRow-firephp-upgrade A {
+  padding-left: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+

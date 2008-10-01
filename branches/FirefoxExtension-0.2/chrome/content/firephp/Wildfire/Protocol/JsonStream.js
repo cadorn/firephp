@@ -37,8 +37,25 @@ Wildfire.Protocol.JsonStream = function() {
       }
     } else
     if(key[0]=='plugin') {
-      if(!this.plugins[key[1]]) {
-        this.plugin_ids[key[1]] = Data;
+
+      if(!this.plugin_ids[key[1]]) {
+        
+        // split plugin URI removing the version from the end
+        var index = Data.lastIndexOf('/');
+        var uri = Data.substring(0,index+1);
+        var version = Data.substring(index+1);
+
+        if(this.plugins) {
+          for( var plugin_uri in this.plugins ) {
+            if(this.plugins[plugin_uri].isPeerPluginSupported(uri,version)) {
+              
+              this.plugins[plugin_uri].addPeerPlugin(uri,version);
+              
+              this.plugin_ids[key[1]] = plugin_uri;
+              break;
+            }
+          }
+        }
       }
     } else
     if(key[0]=='index') {
