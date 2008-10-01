@@ -406,7 +406,7 @@ FirePHPProcessor.ProcessRequest = function(Wildfire,URL,Data) {
               this.logToFirebug('upgrade', {peerInfo: peers[peer_uri]}, false);
             }
           }
-           
+          
           for( var index in messages ) {
             
             var item = json_parse(messages[index]);

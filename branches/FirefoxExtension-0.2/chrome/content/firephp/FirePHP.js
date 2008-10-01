@@ -68,7 +68,7 @@ const DEBUG = false;
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.2.a',
+  version: '0.2.b',
 
   prefDomain: "extensions.firephp",
   

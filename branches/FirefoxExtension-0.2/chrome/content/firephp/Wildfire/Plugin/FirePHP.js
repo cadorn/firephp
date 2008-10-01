@@ -42,7 +42,20 @@ Wildfire.Plugin.FirePHP = function() {
   this.addPeerPlugin = function(uri, version)
   {
       var info = this.supportedPlugins[uri];
+      
+      if(this.peerPlugins) {
+          for( var i in this.peerPlugins ) {
+            if(this.peerPlugins[i].uri==uri
+               && this.peerPlugins[i].version==version) {
+              
+              return false;                 
+            }
+          }
+      }
+      
       this.peerPlugins.push({uri:uri,version:version,minVersion: info.version});
+      
+      return true;
   }
   this.getPeerPlugins = function()
   {
