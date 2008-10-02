@@ -149,6 +149,14 @@ class FirePHP {
     return $this->fb($Object, $Label, FirePHP::ERROR);
   } 
 
+  public function trace($Label) {
+    return $this->fb(null, $Label, FirePHP::TRACE);
+  } 
+
+  public function table($Label, $Table) {
+    return $this->fb($Table, $Label, FirePHP::TABLE);
+  } 
+
   public function dump($Key, $Variable) {
     return $this->fb($Variable, $Key, FirePHP::DUMP);
   } 
@@ -249,14 +257,24 @@ class FirePHP {
       $trace = debug_backtrace();
       if(!$trace) return false;
       for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
-        
+
+        if(isset($trace[$i]['class'])
+           && isset($trace[$i]['file'])
+           && ($trace[$i]['class']=='FirePHP'
+               || $trace[$i]['class']=='FB')
+           && (substr($this->_standardizePath($trace[$i]['file']),-18,18)=='FirePHPCore/fb.php'
+               || substr($this->_standardizePath($trace[$i]['file']),-29,29)=='FirePHPCore/FirePHP.class.php')) {
+          /* Skip - FB::trace(), FB::send(), $firephp->trace(), $firephp->fb() */
+        } else
         if(isset($trace[$i]['class'])
            && isset($trace[$i+1]['file'])
            && $trace[$i]['class']=='FirePHP'
            && substr($this->_standardizePath($trace[$i+1]['file']),-18,18)=='FirePHPCore/fb.php') {
-          /* Skip */
+          /* Skip fb() */
         } else
-        if($trace[$i]['function']=='fb') {
+        if($trace[$i]['function']=='fb'
+           || $trace[$i]['function']=='trace'
+           || $trace[$i]['function']=='send') {
           $Object = array('Class'=>isset($trace[$i]['class'])?$trace[$i]['class']:'',
                           'Type'=>isset($trace[$i]['type'])?$trace[$i]['type']:'',
                           'Function'=>isset($trace[$i]['function'])?$trace[$i]['function']:'',

@@ -60,3 +60,53 @@ function fb()
   return call_user_func_array(array($instance,'fb'),$args);
 }
 
+
+class FB
+{
+
+  public static function send()
+  {
+    $instance = FirePHP::getInstance(true);
+    $args = func_get_args();
+    return call_user_func_array(array($instance,'fb'),$args);
+  }
+
+  public static function group($Name) {
+    return self::send(null, $Name, FirePHP::GROUP_START);
+  }
+  
+  public static function groupEnd() {
+    return self::send(null, null, FirePHP::GROUP_END);
+  }
+
+  public static function log($Object, $Label=null) {
+    return self::send($Object, $Label, FirePHP::LOG);
+  } 
+
+  public static function info($Object, $Label=null) {
+    return self::send($Object, $Label, FirePHP::INFO);
+  } 
+
+  public static function warn($Object, $Label=null) {
+    return self::send($Object, $Label, FirePHP::WARN);
+  } 
+
+  public static function error($Object, $Label=null) {
+    return self::send($Object, $Label, FirePHP::ERROR);
+  } 
+
+  public static function dump($Key, $Variable) {
+    return self::send($Variable, $Key, FirePHP::DUMP);
+  } 
+
+  public static function trace($Label) {
+    return self::send($Label, FirePHP::TRACE);
+  } 
+
+  public static function table($Label, $Table) {
+    return self::send($Table, $Label, FirePHP::TABLE);
+  } 
+
+}
+
+
