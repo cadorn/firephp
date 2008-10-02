@@ -20,3 +20,7 @@ $firephp->warn('warn', 'Label');
 $firephp->error('err');
 $firephp->error('err', 'Label');
 
+$firephp->trace('Trace to here');
+$firephp->fb('Trace to here','',FirePHP::TRACE);
+
+$firephp->table('Test Table',array(array('header'),array('row')));

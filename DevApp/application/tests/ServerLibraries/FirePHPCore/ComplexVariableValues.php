@@ -23,3 +23,9 @@ $firephp->fb('Log message', 'Label' ,FirePHP::LOG);
 $firephp->fb('Info message', 'Label' ,FirePHP::INFO);
 $firephp->fb('Warn message', 'Label' ,FirePHP::WARN);
 $firephp->fb('Error message', 'Label',FirePHP::ERROR);
+
+
+
+$firephp->fb(array('one','two','three'));
+$firephp->fb(array(0=>'one', 1=>'two', 2=>'three'));
+
