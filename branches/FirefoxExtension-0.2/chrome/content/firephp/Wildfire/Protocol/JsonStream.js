@@ -7,7 +7,11 @@ Wildfire.Protocol.JsonStream = function() {
   this.plugin_ids = new Array();
   this.messages = new Array();
   this.structures = new Array();
+  
   this.expectedMessageCount = 0;
+  this.expectedStructureIDs = new Array();
+  this.expectedPluginIDs = new Array();
+  
   this.buffer = new Array();
   this.messageCount = 0;
   
@@ -66,6 +70,9 @@ Wildfire.Protocol.JsonStream = function() {
 
       this.messages[key[2]] = [key[1],key[0],Data.substring(1,Data.length-1)];
 
+      this.expectedStructureIDs[''+key[0]] = true;
+      this.expectedPluginIDs[''+key[1]] = true;
+
       this.messageCount++;
     }
     
@@ -74,7 +81,9 @@ Wildfire.Protocol.JsonStream = function() {
     
     if(this.messages
       && this.expectedMessageCount!=0
-      && this.messageCount==this.expectedMessageCount) {
+      && this.messageCount==this.expectedMessageCount
+      && this.expectedStructureIDs.length == this.structures.length
+      && this.expectedPluginIDs.length == this.plugin_ids.length) {
     
       this.messages = this.sortMessages(this.messages);
       
