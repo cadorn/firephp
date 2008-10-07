@@ -28,6 +28,7 @@ $firephp->fb(array('This is the table label',$table),
              FirePHP::TABLE);
 $firephp->fb($table, 'This is the table label',
              FirePHP::TABLE);
+$firephp->table('This is the table label', $table);
 
 
 

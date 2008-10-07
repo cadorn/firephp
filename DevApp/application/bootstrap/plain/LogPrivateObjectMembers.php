@@ -2,6 +2,7 @@
 
 class FirePHP_VariableEncoder
 {
+  
   public static function encode($variable)
   {
     $code = var_export($variable, true);
