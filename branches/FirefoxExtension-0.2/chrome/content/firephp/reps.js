@@ -250,7 +250,13 @@ FirebugReps.FirePHPClass = domplate(Firebug.Rep,
                   
                   var valueTag = valueRep.shortTag ? valueRep.shortTag : valueRep.tag;
       
-                  props.push({nameObject: name, nameTag: nameTag,
+                  var elementName = name;
+                  var index  = elementName.lastIndexOf(':');
+                  if(index!=-1) {
+                    elementName = elementName.substr(index+1);
+                  }      
+
+                  props.push({nameObject: elementName, nameTag: nameTag,
                               valueObject: val, valueTag: valueTag, delim: ', '});
                       
                   if(i>=2) {

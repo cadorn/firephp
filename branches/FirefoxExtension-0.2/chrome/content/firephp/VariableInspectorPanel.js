@@ -75,7 +75,7 @@ var MAX_DEPTH = 10;
 
 var UniqueIndex = 0;
 
-function print_r(obj, indent, depth) {
+function print_r(obj, indent, depth, isObject) {
   var nl = '\n';
   var ws = '';
   var output = '';
@@ -100,6 +100,10 @@ function print_r(obj, indent, depth) {
         output += 'array(';
       }
         output += '</div>';
+    } else {
+      if(isObject==true) {
+        isClass = true;
+      }
     }
     
     indent++;
@@ -128,17 +132,52 @@ function print_r(obj, indent, depth) {
       
         output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
         
-        if (IsNumeric(key)) {
-          output += str_repeat(ws, indent) + '[' + '<font color="green">' + key + '</font>' + '] => ';
-        }
-        else 
-        if (typeof(key) == "string") {
-          output += str_repeat(ws, indent) + '[' + '<font color="red">\'' + key + '\'</font>' + '] => ';
-        }
-        else {
-          output += str_repeat(ws, indent) + '[' + key + '] => ';
-        }
         
+        if(isClass) {
+          
+          var keyVal = key;
+          var keyClass = '';
+          
+          var index  = keyVal.lastIndexOf(':');
+          if(index) {
+          
+            var keyVis = keyVal.substr(0,index);
+            keyVal = keyVal.substr(index+1);
+            
+            keyClass = 'obj-vis';
+            if(keyVis.indexOf('private')!=-1) {
+              keyClass += '-private';
+            } else
+            if(keyVis.indexOf('protected')!=-1) {
+              keyClass += '-protected';
+            } else
+            if(keyVis.indexOf('public')!=-1
+               || keyVis=='static') {
+              keyClass += '-public';
+            } else
+            if(keyVis.indexOf('undeclared')!=-1) {
+              keyClass += '-undeclared';
+            }
+            if(keyVis.indexOf('static')!=-1) {
+              keyClass += '-static';
+            }
+          }
+          output += '<span class="'+keyClass+'">' + keyVal + '</span> = ';
+          
+        } else {
+        
+          if (IsNumeric(key)) {
+            output += str_repeat(ws, indent) + '[' + '<font color="green">' + key + '</font>' + '] => ';
+          }
+          else 
+          if (typeof(key) == "string") {
+            output += str_repeat(ws, indent) + '[' + '<font color="red">\'' + key + '\'</font>' + '] => ';
+          }
+          else {
+            output += str_repeat(ws, indent) + '[' + key + '] => ';
+          }
+        }
+                
         output += '</div>';
         
         if(child==null || child==false || child==true) {
@@ -183,7 +222,7 @@ function print_r(obj, indent, depth) {
           
           output += '<div class="value-block" id="' + hex_md5(UniqueIndex + key) + 'v"><br/>';
           
-          output += print_r(child, indent, depth + 1);
+          output += print_r(child, indent, depth + 1, (child['__className'])?true:false );
           
 
             output += '<div>';
@@ -249,9 +288,9 @@ function print_r(obj, indent, depth) {
     
     if(indent==0) {
         output += '<div>';
-    if(isClass) {
-        output += '<font color="brown"><b>)</b></font>';
-    } else {
+      if(isClass) {
+          output += '<font color="brown"><b>)</b></font>';
+      } else {
         output += ')';
       }
         output += '</div>';

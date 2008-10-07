@@ -135,3 +135,37 @@ TABLE.layout TR TD.content {
 #variable-div.loading { margin-left: 10px; background: url(chrome://firebug/skin/loading_16.gif) no-repeat; }
 #variable-div.nodata { margin-left: 10px; color: gray; }
 
+
+.obj-vis-private-static {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -2px;
+  padding-left: 12px;
+}
+.obj-vis-protected-static {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -18px;
+  padding-left: 12px;
+}
+.obj-vis-public-static {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -34px;
+  padding-left: 12px;
+}
+.obj-vis-undeclared-static {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -50px;
+  padding-left: 12px;
+}
+
+.obj-vis-private {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -66px;
+  padding-left: 12px;
+}
+.obj-vis-protected {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -82px;
+  padding-left: 12px;
+}
+.obj-vis-public {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -98px;
+  padding-left: 12px;
+}
+.obj-vis-undeclared {
+  background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -114px;
+  padding-left: 12px;
+}
