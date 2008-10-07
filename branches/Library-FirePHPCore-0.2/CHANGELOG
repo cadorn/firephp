@@ -1,4 +1,5 @@
 
+  - (Issue 28) Need solution for logging private and protected object variables
   - Added trace() and table() aliases in FirePHP class
   - (Issue 41) Use PHP doc in FirePHP
   - (Issue 39) Static logging method for object oriented API

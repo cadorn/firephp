@@ -931,7 +931,7 @@ class FirePHP {
               return '[' . join(',', $elements) . ']';
 
           case 'object':
-              $vars = get_object_vars($var);
+              $vars = $this->json_get_object_vars($var);
 
               $this->json_objectStack[] = $var;
 
@@ -946,15 +946,103 @@ class FirePHP {
                       return $property;
                   }
               }
-
-              return '{'.$this->json_encode('__className') . ':' . $this->json_encode(get_class($var)) .
-                     (($properties)?',':'') .
-                     join(',', $properties) . '}';
+                     
+              return '{' . join(',', $properties) . '}';
 
           default:
               return null;
       }
   }
+  
+  /**
+   * Obtains all object member values including ones with
+   * protected and private visibility
+   * 
+   * @param Object $variable
+   * @return array All members of the object
+   */
+  private function json_get_object_vars($variable)
+  {
+    // This is required until everyone is running PHP 5.3 at which
+    // point the Reflection API can provide private and protected
+    // object member values.
+    $code = var_export($variable, true);
+    
+    if(preg_match_all('/[\s>=]?(\S*?)::__set_state\(/si',$code,$m)) {
+      for( $i=0; $i < count($m[0]); $i++ ) {
+        $code = preg_replace('/'.preg_quote($m[0][$i],'/').'/',
+                                'FirePHP::json_generate_object_member_array(\''.$m[1][$i].'\',',
+                                $code);
+    	}
+    }
+
+    eval('$dump = ' . $code . ';');
+    
+    return $dump;
+  }
+
+  /**
+   * Generates an array of object members and includes hints about visibility
+   * 
+   * @param string $class The class of the object
+   * @param array $members All object members
+   * @return array All object members with class and visibility hints added
+   */
+  private static function json_generate_object_member_array($class, $members)
+  {    
+    $reflection_class = new ReflectionClass($class);  
+    
+    $props = array();
+    foreach( $reflection_class->getProperties() as $property) {
+      $props[$property->getName()] = $property;
+    }
+  
+    $dump = array('__className'=>$class);
+
+    foreach( $props as $raw_name => $property ) {
+
+      $name = $raw_name;
+      if($property->isStatic()) {
+        $name = 'static:'.$name;
+      }
+
+      if($property->isPublic()) {
+        $name = 'public:'.$name;
+      } else
+      if($property->isPrivate()) {
+        $name = 'private:'.$name;
+      } else
+      if($property->isProtected()) {
+        $name = 'protected:'.$name;
+      }
+      
+      if($members[$raw_name]) {
+        $dump[$name] = $members[$raw_name];      
+      } else {
+
+        if(method_exists($property,'setAccessible')) {
+          $property->setAccessible(true);
+
+          $dump[$name] = $property->getValue();
+        } else
+        if($property->isPublic()) {
+          $dump[$name] = $property->getValue();
+        } else {
+          $dump[$name] = 'Need PHP 5.3 to get value!';
+        }
+      }
+    }    
+    
+    foreach( $members as $name => $value ) {
+      // Include all members that are not defined in the class
+      // but exist in the object
+      if(!$props[$name]) {
+        $name = 'undeclared:'.$name;
+        $dump[$name] = $value;
+      }
+    }
+    return $dump;
+  }  
 
  /**
   * array-walking function for use in generating JSON-formatted name-value pairs
