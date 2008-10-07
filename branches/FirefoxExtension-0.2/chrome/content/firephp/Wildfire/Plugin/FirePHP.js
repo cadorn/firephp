@@ -11,7 +11,7 @@ Wildfire.Plugin.FirePHP = function() {
           'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/':
               {version: '1.6.2'},
           'http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library-FirePHPCore/':
-              {version: '0.2.b.1'}
+              {version: '0.2.b.2'}
       }
       
   this.peerPlugins = new Array();
