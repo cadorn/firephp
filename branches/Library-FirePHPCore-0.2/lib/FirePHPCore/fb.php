@@ -34,8 +34,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * ***** END LICENSE BLOCK ***** */
-
+ * ***** END LICENSE BLOCK *****
+ * 
+ * @copyright   Copyright (C) 2007-2008 Christoph Dorn
+ * @author      Christoph Dorn <christoph@christophdorn.com>
+ * @license     http://www.opensource.org/licenses/bsd-license.php
+ * @package     FirePHP
+ */
 
 require_once dirname(__FILE__).'/FirePHP.class.php';
 
@@ -44,13 +49,10 @@ require_once dirname(__FILE__).'/FirePHP.class.php';
  * The data can be displayed in the Firebug Console or in the
  * "Server" request tab.
  * 
- * For more informtion see: http://www.firephp.org/
- * 
- * @copyright   Copyright (C) 2007-2008 Christoph Dorn
- * @author      Christoph Dorn <christoph@christophdorn.com>
- * @license     http://www.opensource.org/licenses/bsd-license.php
- * 
- * @return Boolean  True if FirePHP was detected and headers were written, false otherwise
+ * @see http://www.firephp.org/Wiki/Reference/Fb
+ * @param mixed $Object
+ * @return true
+ * @throws Exception
  */
 function fb()
 {
@@ -64,6 +66,14 @@ function fb()
 class FB
 {
 
+  /**
+   * Log object to firebug
+   * 
+   * @see http://www.firephp.org/Wiki/Reference/Fb
+   * @param mixed $Object
+   * @return true
+   * @throws Exception
+   */
   public static function send()
   {
     $instance = FirePHP::getInstance(true);
@@ -71,38 +81,113 @@ class FB
     return call_user_func_array(array($instance,'fb'),$args);
   }
 
+  /**
+   * Start a group for following messages
+   *
+   * @param string $Name
+   * @return true
+   * @throws Exception
+   */
   public static function group($Name) {
     return self::send(null, $Name, FirePHP::GROUP_START);
   }
   
+  /**
+   * Ends a group you have started before
+   *
+   * @return true
+   * @throws Exception
+   */
   public static function groupEnd() {
     return self::send(null, null, FirePHP::GROUP_END);
   }
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::LOG
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public static function log($Object, $Label=null) {
     return self::send($Object, $Label, FirePHP::LOG);
   } 
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::INFO
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public static function info($Object, $Label=null) {
     return self::send($Object, $Label, FirePHP::INFO);
   } 
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::WARN
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public static function warn($Object, $Label=null) {
     return self::send($Object, $Label, FirePHP::WARN);
   } 
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::ERROR
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public static function error($Object, $Label=null) {
     return self::send($Object, $Label, FirePHP::ERROR);
   } 
 
+  /**
+   * Dumps key and variable to firebug server panel
+   *
+   * @see FirePHP::DUMP
+   * @param string $Key
+   * @param mixed $Variable
+   * @return true
+   * @throws Exception
+   */
   public static function dump($Key, $Variable) {
     return self::send($Variable, $Key, FirePHP::DUMP);
   } 
 
+  /**
+   * Log a trace in the firebug console
+   *
+   * @see FirePHP::TRACE
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public static function trace($Label) {
     return self::send($Label, FirePHP::TRACE);
   } 
 
+  /**
+   * Log a table in the firebug console
+   *
+   * @see FirePHP::TABLE
+   * @param string $Label
+   * @param string $Table
+   * @return true
+   * @throws Exception
+   */
   public static function table($Label, $Table) {
     return self::send($Table, $Label, FirePHP::TABLE);
   } 
