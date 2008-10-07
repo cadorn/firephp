@@ -1,4 +1,6 @@
 
+2008-10-07 - Release Version: 0.2.b.2
+
   - (Issue 28) Need solution for logging private and protected object variables
   - Added trace() and table() aliases in FirePHP class
   - (Issue 41) Use PHP doc in FirePHP
