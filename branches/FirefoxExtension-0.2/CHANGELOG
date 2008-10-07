@@ -1,4 +1,6 @@
 
+2008-10-07 - Release Version: 0.2.b.2
+
   - Added private/protected/public/undeclared/static visibility indicators to objects in variable viewer
   - (Issue 28) Need solution for logging private and protected object variables
   - (Issue 42) TRACE and EXCEPTION not working on windows servers
