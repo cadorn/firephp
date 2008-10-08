@@ -135,6 +135,12 @@ TABLE.layout TR TD.content {
 #variable-div.loading { margin-left: 10px; background: url(chrome://firebug/skin/loading_16.gif) no-repeat; }
 #variable-div.nodata { margin-left: 10px; color: gray; }
 
+.internal-notice {
+  color: white;
+  background-color: blue;
+  padding-left: 5px;
+  padding-right: 5px;
+}
 
 .obj-vis-private-static {
   background: url(chrome://firephp/skin/ObjectMemberVisibilityIcons.png) no-repeat -4px -2px;

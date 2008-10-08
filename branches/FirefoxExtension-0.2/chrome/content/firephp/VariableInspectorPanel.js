@@ -71,7 +71,7 @@ function nl2br(value)
 
 
 
-var MAX_DEPTH = 10;
+var MAX_DEPTH = 20;
 
 var UniqueIndex = 0;
 
@@ -255,7 +255,13 @@ function print_r(obj, indent, depth, isObject) {
         if (typeof(child) == "string") {
         
           output += '<div class="value" id="' + hex_md5(UniqueIndex + key) + 'v">';
-          output += '<font color="red">\'' + nl2br(escapeHTML(child)) + '\'</font>';
+          
+          if(child.substr(0,3)=='** ' && child.substr(child.length-3,3)==' **') {
+            output += '<span class="internal-notice">' + nl2br(escapeHTML(child.substr(3,child.length-6))) + '</span>';
+          } else {
+            output += '<font color="red">\'' + nl2br(escapeHTML(child)) + '\'</font>';
+          }
+                    
           output += '</div>';
           output += '<div class="hide" id="' + hex_md5(UniqueIndex + key) + 'k">';
           output += '<div class="name" key="' + hex_md5(UniqueIndex + key) + '">';
