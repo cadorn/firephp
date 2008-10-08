@@ -1,6 +1,7 @@
 
 2008-10-08 - Release Version: 0.2.b.3
 
+  - (Issue 43) Notice message in 0.2b2
   - Added support for PHP's native json_encode() if available
   - Revised object encoder to detect object recursion
 
