@@ -159,6 +159,20 @@ class FirePHP {
   protected $messageIndex = 1;
   
   /**
+   * The maximum depth for logged objects
+   * 
+   * @var int
+   */
+  protected static $maxObjectDepth = 20;
+  
+  /**
+   * A stack of objects used to detect recursion during object encoding
+   * 
+   * @var object
+   */
+  protected static $objectStack = array();
+  
+  /**
    * Gets singleton instance of FirePHP
    *
    * @param boolean $AutoCreate
@@ -628,6 +642,99 @@ class FirePHP {
   protected function newException($Message) {
     return new Exception($Message);
   }
+  
+  /**
+   * Encodes an object including members with
+   * protected and private visibility
+   * 
+   * @param Object $Object The object to be encoded
+   * @param int $Depth The current traversal depth
+   * @return array All members of the object
+   */
+  private static function encodeObject($Object, $Depth = 1)
+  {
+    $return = array();
+    
+    if ($Depth > self::$maxObjectDepth) {
+      return '** Max Depth **';
+    }
+    if (is_object($Object)) {
+        
+        if(in_array($Object,self::$objectStack)) {
+          return '** Recursion ('.get_class($Object).') **';
+        }
+        array_push(self::$objectStack, $Object);
+                
+        $return['__className'] = $class = get_class($Object);
+
+        $reflectionClass = new ReflectionClass($class);  
+        $properties = array();
+        foreach( $reflectionClass->getProperties() as $property) {
+          $properties[$property->getName()] = $property;
+        }
+            
+        $members = (array)$Object;
+            
+        foreach( $properties as $raw_name => $property ) {
+
+          $name = $raw_name;
+          if($property->isStatic()) {
+            $name = 'static:'.$name;
+          }
+          if($property->isPublic()) {
+            $name = 'public:'.$name;
+          } else
+          if($property->isPrivate()) {
+            $name = 'private:'.$name;
+            $raw_name = "\0".$class."\0".$raw_name;
+          } else
+          if($property->isProtected()) {
+            $name = 'protected:'.$name;
+            $raw_name = "\0".'*'."\0".$raw_name;
+          }
+          
+          if(isset($members[$raw_name])
+             && !$property->isStatic()) {
+            
+            $return[$name] = self::encodeObject($members[$raw_name], $Depth + 1);      
+          
+          } else {
+            if(method_exists($property,'setAccessible')) {
+              $property->setAccessible(true);
+              $return[$name] = self::encodeObject($property->getValue(), $Depth + 1);
+            } else
+            if($property->isPublic()) {
+              $return[$name] = self::encodeObject($property->getValue(), $Depth + 1);
+            } else {
+              $return[$name] = '** Need PHP 5.3 to get value **';
+            }
+          }
+        }
+        
+        // Include all members that are not defined in the class
+        // but exist in the object
+        foreach( $members as $name => $value ) {
+          if ($name{0} == "\0") {
+            $parts = explode("\0", $name);
+            $name = $parts[2];
+          }
+          if(!isset($properties[$name])) {
+            $name = 'undeclared:'.$name;
+            $return[$name] = self::encodeObject($value, $Depth + 1);
+          }
+        }
+        
+        array_pop(self::$objectStack);
+        
+    } elseif (is_array($Object)) {
+        foreach ($Object as $key => $val) {
+          $return[$key] = self::encodeObject($val, $Depth + 1);
+        }
+    } else {
+      return $Object;
+    }
+    return $return;
+  }
 
     
   /**
@@ -931,7 +1038,7 @@ class FirePHP {
               return '[' . join(',', $elements) . ']';
 
           case 'object':
-              $vars = $this->json_get_object_vars($var);
+              $vars = self::encodeObject($var);
 
               $this->json_objectStack[] = $var;
 
@@ -953,96 +1060,6 @@ class FirePHP {
               return null;
       }
   }
-  
-  /**
-   * Obtains all object member values including ones with
-   * protected and private visibility
-   * 
-   * @param Object $variable
-   * @return array All members of the object
-   */
-  private function json_get_object_vars($variable)
-  {
-    // This is required until everyone is running PHP 5.3 at which
-    // point the Reflection API can provide private and protected
-    // object member values.
-    $code = var_export($variable, true);
-    
-    if(preg_match_all('/[\s>=]?(\S*?)::__set_state\(/si',$code,$m)) {
-      for( $i=0; $i < count($m[0]); $i++ ) {
-        $code = preg_replace('/'.preg_quote($m[0][$i],'/').'/',
-                                'FirePHP::json_generate_object_member_array(\''.$m[1][$i].'\',',
-                                $code);
-    	}
-    }
-
-    eval('$dump = ' . $code . ';');
-    
-    return $dump;
-  }
-
-  /**
-   * Generates an array of object members and includes hints about visibility
-   * 
-   * @param string $class The class of the object
-   * @param array $members All object members
-   * @return array All object members with class and visibility hints added
-   */
-  private static function json_generate_object_member_array($class, $members)
-  {    
-    $reflection_class = new ReflectionClass($class);  
-    
-    $props = array();
-    foreach( $reflection_class->getProperties() as $property) {
-      $props[$property->getName()] = $property;
-    }
-  
-    $dump = array('__className'=>$class);
-
-    foreach( $props as $raw_name => $property ) {
-
-      $name = $raw_name;
-      if($property->isStatic()) {
-        $name = 'static:'.$name;
-      }
-
-      if($property->isPublic()) {
-        $name = 'public:'.$name;
-      } else
-      if($property->isPrivate()) {
-        $name = 'private:'.$name;
-      } else
-      if($property->isProtected()) {
-        $name = 'protected:'.$name;
-      }
-      
-      if($members[$raw_name]) {
-        $dump[$name] = $members[$raw_name];      
-      } else {
-
-        if(method_exists($property,'setAccessible')) {
-          $property->setAccessible(true);
-
-          $dump[$name] = $property->getValue();
-        } else
-        if($property->isPublic()) {
-          $dump[$name] = $property->getValue();
-        } else {
-          $dump[$name] = 'Need PHP 5.3 to get value!';
-        }
-      }
-    }    
-    
-    foreach( $members as $name => $value ) {
-      // Include all members that are not defined in the class
-      // but exist in the object
-      if(!$props[$name]) {
-        $name = 'undeclared:'.$name;
-        $dump[$name] = $value;
-      }
-    }
-    return $dump;
-  }  
 
  /**
   * array-walking function for use in generating JSON-formatted name-value pairs
