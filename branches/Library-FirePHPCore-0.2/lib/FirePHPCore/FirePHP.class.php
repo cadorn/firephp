@@ -163,14 +163,14 @@ class FirePHP {
    * 
    * @var int
    */
-  protected static $maxObjectDepth = 20;
+  protected $maxObjectDepth = 20;
   
   /**
    * A stack of objects used to detect recursion during object encoding
    * 
    * @var object
    */
-  protected static $objectStack = array();
+  protected $objectStack = array();
   
   /**
    * Gets singleton instance of FirePHP
@@ -540,13 +540,13 @@ class FirePHP {
     }
   
     if($Type==self::DUMP) {
-    	$msg = '{"'.$Label.'":'.$this->json_encode($Object).'}';
+    	$msg = '{"'.$Label.'":'.$this->jsonEncode($Object).'}';
     } else {
       $meta = array('Type'=>$Type);
       if($Label!==null) {
         $meta['Label'] = $Label;
       }    
-    	$msg = '['.$this->json_encode($meta).','.$this->json_encode($Object).']';
+    	$msg = '['.$this->jsonEncode($meta).','.$this->jsonEncode($Object).']';
     }
 
     foreach (explode("\n",chunk_split($msg, 4998, "\n")) as $part) {
@@ -644,6 +644,23 @@ class FirePHP {
   }
   
   /**
+   * Encode an object into a JSON string
+   * 
+   * Uses PHP's jeson_encode() if available
+   * 
+   * @param object $Object The object to be encoded
+   * @return string The JSON string
+   */
+  protected function jsonEncode($Object)
+  {
+    if(function_exists('json_encode')) {
+      return json_encode($this->encodeObject($Object));
+    } else {
+      return $this->json_encode($this->encodeObject($Object));
+    }
+  }
+  
+  /**
    * Encodes an object including members with
    * protected and private visibility
    * 
@@ -651,19 +668,19 @@ class FirePHP {
    * @param int $Depth The current traversal depth
    * @return array All members of the object
    */
-  private static function encodeObject($Object, $Depth = 1)
+  protected function encodeObject($Object, $Depth = 1)
   {
     $return = array();
     
-    if ($Depth > self::$maxObjectDepth) {
+    if ($Depth > $this->maxObjectDepth) {
       return '** Max Depth **';
     }
     if (is_object($Object)) {
         
-        if(in_array($Object,self::$objectStack)) {
+        if(in_array($Object,$this->objectStack)) {
           return '** Recursion ('.get_class($Object).') **';
         }
-        array_push(self::$objectStack, $Object);
+        array_push($this->objectStack, $Object);
                 
         $return['__className'] = $class = get_class($Object);
 
@@ -696,15 +713,15 @@ class FirePHP {
           if(isset($members[$raw_name])
              && !$property->isStatic()) {
             
-            $return[$name] = self::encodeObject($members[$raw_name], $Depth + 1);      
+            $return[$name] = $this->encodeObject($members[$raw_name], $Depth + 1);      
           
           } else {
             if(method_exists($property,'setAccessible')) {
               $property->setAccessible(true);
-              $return[$name] = self::encodeObject($property->getValue(), $Depth + 1);
+              $return[$name] = $this->encodeObject($property->getValue(), $Depth + 1);
             } else
             if($property->isPublic()) {
-              $return[$name] = self::encodeObject($property->getValue(), $Depth + 1);
+              $return[$name] = $this->encodeObject($property->getValue(), $Depth + 1);
             } else {
               $return[$name] = '** Need PHP 5.3 to get value **';
             }
@@ -720,15 +737,27 @@ class FirePHP {
           }
           if(!isset($properties[$name])) {
             $name = 'undeclared:'.$name;
-            $return[$name] = self::encodeObject($value, $Depth + 1);
+            $return[$name] = $this->encodeObject($value, $Depth + 1);
           }
         }
         
-        array_pop(self::$objectStack);
+        array_pop($this->objectStack);
         
     } elseif (is_array($Object)) {
+      
         foreach ($Object as $key => $val) {
-          $return[$key] = self::encodeObject($val, $Depth + 1);
+          
+          // Encoding the $GLOBALS PHP array causes an infinite loop
+          // if the recursion is not reset here as it contains
+          // a reference to itself. This is the only way I have come up
+          // with to stop infinite recursion in this case.
+          if($key=='GLOBALS'
+             && is_array($val)
+             && array_key_exists('GLOBALS',$val)) {
+            $val['GLOBALS'] = '** Recursion (GLOBALS) **';
+          }
+          
+          $return[$key] = $this->encodeObject($val, $Depth + 1);
         }
     } else {
       return $Object;
