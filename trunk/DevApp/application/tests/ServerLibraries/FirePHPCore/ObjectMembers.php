@@ -4,7 +4,7 @@ class TestObject
 {
   var $publicVar = 'Public Var';
   static $publicStaticVar = 'Public static Var';
-  protected $protectedVar = 'Protected static Var';
+  protected $protectedVar = 'Protected Var';
   protected static $protectedStaticVar = 'Protected static Var';
   private $privateVar = 'PrivateVar';
   private static $privateStaticVar = 'Private static Var';
@@ -33,6 +33,7 @@ $obj3 = new TestObject3();
 
 $obj->child = $obj2;
 $obj->child2 = $obj3;
+$obj->child3 = $obj;
 
 $obj = array('hello'=>'world','obj'=>$obj,'last'=>30,array('foo'=>'bar'),array('first','second'));
 
