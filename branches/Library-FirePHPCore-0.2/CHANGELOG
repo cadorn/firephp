@@ -1,4 +1,6 @@
 
+  - Bugfix for getting value from reflection property
+
 2008-10-08 - Release Version: 0.2.b.4
 
 	- Bugfix for logging objects with recursion

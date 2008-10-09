@@ -163,7 +163,14 @@ class FirePHP {
    * 
    * @var int
    */
-  protected $maxObjectDepth = 20;
+  protected $maxObjectDepth = 10;
+  
+  /**
+   * The maximum depth for logged arrays
+   * 
+   * @var int
+   */
+  protected $maxArrayDepth = 20;
   
   /**
    * A stack of objects used to detect recursion during object encoding
@@ -672,10 +679,11 @@ class FirePHP {
   {
     $return = array();
     
-    if ($Depth > $this->maxObjectDepth) {
-      return '** Max Depth **';
-    }
     if (is_object($Object)) {
+
+        if ($Depth > $this->maxObjectDepth) {
+          return '** Max Depth **';
+        }
         
         foreach ($this->objectStack as $refVal) {
             if ($refVal === $Object) {
@@ -720,10 +728,10 @@ class FirePHP {
           } else {
             if(method_exists($property,'setAccessible')) {
               $property->setAccessible(true);
-              $return[$name] = $this->encodeObject($property->getValue(), $Depth + 1);
+              $return[$name] = $this->encodeObject($property->getValue($Object), $Depth + 1);
             } else
             if($property->isPublic()) {
-              $return[$name] = $this->encodeObject($property->getValue(), $Depth + 1);
+              $return[$name] = $this->encodeObject($property->getValue($Object), $Depth + 1);
             } else {
               $return[$name] = '** Need PHP 5.3 to get value **';
             }
@@ -746,6 +754,10 @@ class FirePHP {
         array_pop($this->objectStack);
         
     } elseif (is_array($Object)) {
+
+        if ($Depth > $this->maxArrayDepth) {
+          return '** Max Depth **';
+        }
       
         foreach ($Object as $key => $val) {
           
