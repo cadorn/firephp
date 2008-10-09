@@ -1,4 +1,5 @@
 
+  - Updated min requirement for FirePHPCore library to 0.2.0
   - Added style to notices in variable renderer
 
 2008-10-07 - Release Version: 0.2.b.2
