@@ -677,8 +677,10 @@ class FirePHP {
     }
     if (is_object($Object)) {
         
-        if(in_array($Object,$this->objectStack)) {
-          return '** Recursion ('.get_class($Object).') **';
+        foreach ($this->objectStack as $refVal) {
+            if ($refVal === $Object) {
+                return '** Recursion ('.get_class($Object).') **';
+            }
         }
         array_push($this->objectStack, $Object);
                 
