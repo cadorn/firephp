@@ -1,5 +1,5 @@
 
-  - Bugfix for getting value from reflection property
+  - (Issue 48) Warning: ReflectionProperty::getValue() expects exactly 1 parameter, 0 given
 
 2008-10-08 - Release Version: 0.2.b.4
 
