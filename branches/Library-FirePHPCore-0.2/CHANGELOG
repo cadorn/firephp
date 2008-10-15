@@ -1,4 +1,6 @@
 
+  - (Issue 51) Limit output of object graphs
+
 2008-10-14 - Release Version: 0.2.b.5
 
   - Updated JsonStream wildfire protocol to be more robust

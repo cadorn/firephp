@@ -199,7 +199,26 @@ class FirePHP {
    */
   public static function init() {
     return self::$instance = new self();
-  } 
+  }
+  
+  /**
+   * Set some options for the library
+   * 
+   * Options:
+   *  - maxObjectDepth: The maximum depth to traverse objects
+   *  - maxArrayDepth: The maximum depth to traverse arrays
+   * 
+   * @param array $Options The options to be set
+   * @return void
+   */
+  public function setOptions($Options) {
+    if(array_key_exists('maxObjectDepth',$Options)) {
+      $this->maxObjectDepth = $Options['maxObjectDepth'];
+    }
+    if(array_key_exists('maxArrayDepth',$Options)) {
+      $this->maxArrayDepth = $Options['maxArrayDepth'];
+    }
+  }
   
   /**
    * Register FirePHP as your error handler
@@ -693,7 +712,7 @@ class FirePHP {
     if (is_object($Object)) {
 
         if ($Depth > $this->maxObjectDepth) {
-          return '** Max Depth **';
+          return '** Max Object Depth ('.$this->maxObjectDepth.') **';
         }
         
         foreach ($this->objectStack as $refVal) {
@@ -767,7 +786,7 @@ class FirePHP {
     } elseif (is_array($Object)) {
 
         if ($Depth > $this->maxArrayDepth) {
-          return '** Max Depth **';
+          return '** Max Array Depth ('.$this->maxArrayDepth.') **';
         }
       
         foreach ($Object as $key => $val) {

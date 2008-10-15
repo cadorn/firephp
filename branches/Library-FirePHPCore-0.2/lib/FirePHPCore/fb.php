@@ -65,6 +65,17 @@ function fb()
 
 class FB
 {
+  /**
+   * Set some options for the library
+   * 
+   * @see FirePHP->setOptions()
+   * @param array $Options The options to be set
+   * @return void
+   */
+  public function setOptions($Options) {
+    $instance = FirePHP::getInstance(true);
+    $instance->setOptions($Options);
+  }
 
   /**
    * Log object to firebug
