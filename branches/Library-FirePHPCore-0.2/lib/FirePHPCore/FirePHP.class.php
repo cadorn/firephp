@@ -521,9 +521,9 @@ class FirePHP {
                           'Type'=>isset($trace[$i]['type'])?$trace[$i]['type']:'',
                           'Function'=>isset($trace[$i]['function'])?$trace[$i]['function']:'',
                           'Message'=>$trace[$i]['args'][0],
-                          'File'=>$this->_escapeTraceFile($trace[$i]['file']),
-                          'Line'=>$trace[$i]['line'],
-                          'Args'=>$trace[$i]['args'],
+                          'File'=>isset($trace[$i]['file'])?$this->_escapeTraceFile($trace[$i]['file']):'',
+                          'Line'=>isset($trace[$i]['line'])?$trace[$i]['line']:'',
+                          'Args'=>isset($trace[$i]['args'])?$trace[$i]['args']:'',
                           'Trace'=>$this->_escapeTrace(array_splice($trace,$i+1)));
           break;
         }
@@ -535,7 +535,7 @@ class FirePHP {
       }
     }
 
-  	$this->setHeader('X-Wf-Protocol-1','http://meta.wildfirehq.org/Protocol/JsonStream/0.1');
+  	$this->setHeader('X-Wf-Protocol-1','http://meta.wildfirehq.org/Protocol/JsonStream/0.2');
   	$this->setHeader('X-Wf-1-Plugin-1','http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library-FirePHPCore/'.self::VERSION);
  
     $structure_index = 1;
@@ -555,13 +555,24 @@ class FirePHP {
       }    
     	$msg = '['.$this->jsonEncode($meta).','.$this->jsonEncode($Object).']';
     }
+    
+    $parts = explode("\n",chunk_split($msg, 5000, "\n"));
 
-    foreach (explode("\n",chunk_split($msg, 4998, "\n")) as $part) {
-
+    for( $i=0 ; $i<count($parts) ; $i++) {
+        
+        $part = $parts[$i];
         if ($part) {
             
-            $this->setHeader('X-Wf-1-'.$structure_index.'-'.'1-'.$this->messageIndex,
-                             '|' . $part . '|');
+            if(count($parts)>2) {
+              // Message needs to be split into multiple parts
+              $this->setHeader('X-Wf-1-'.$structure_index.'-'.'1-'.$this->messageIndex,
+                               (($i==0)?strlen($msg):'')
+                               . '|' . $part . '|'
+                               . (($i<count($parts)-2)?'\\':''));
+            } else {
+              $this->setHeader('X-Wf-1-'.$structure_index.'-'.'1-'.$this->messageIndex,
+                               strlen($part) . '|' . $part . '|');
+            }
             
             $this->messageIndex++;
             

@@ -1,4 +1,6 @@
 
+  - Updated JsonStream wildfire protocol to be more robust
+  - (Issue 33) PHP error notices running demos
   - (Issue 48) Warning: ReflectionProperty::getValue() expects exactly 1 parameter, 0 given
 
 2008-10-08 - Release Version: 0.2.b.4
