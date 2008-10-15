@@ -1,4 +1,6 @@
 
+2008-10-14 - Release Version: 0.2.b.3
+
   - Updated JsonStream wildfire protocol to be more robust
   - (Issue 47) Error in plugin - problem with large object graphs
   - Updated min requirement for FirePHPCore library to 0.2.0
