@@ -125,7 +125,10 @@ Wildfire.Protocol.JsonStream = function() {
          keys.push(k);
     }
     
-    keys.sort( function (a, b){return (a > b) - (a < b);} );
+    keys.sort( function (a, b) { 
+        return a - b;
+      }
+    );
     
     
     for (var i = 0; i < keys.length; i++)
