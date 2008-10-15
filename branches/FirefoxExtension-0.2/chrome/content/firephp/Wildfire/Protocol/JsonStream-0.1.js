@@ -1,5 +1,5 @@
         
-Wildfire.Protocol.JsonStream = function() {
+Wildfire.Protocol.JsonStream_0_1 = function() {
 
   this.PROTOCOL_URI = 'http://meta.wildfirehq.org/Protocol/JsonStream/0.1';
   

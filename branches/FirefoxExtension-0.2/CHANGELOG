@@ -1,4 +1,5 @@
 
+  - Updated JsonStream wildfire protocol to be more robust
   - (Issue 47) Error in plugin - problem with large object graphs
   - Updated min requirement for FirePHPCore library to 0.2.0
   - Added style to notices in variable renderer

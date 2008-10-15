@@ -25,6 +25,8 @@ Wildfire.Plugin.FirePHP = function() {
   this.init = function() {
   
     this.channel.getProtocol('http://meta.wildfirehq.org/Protocol/JsonStream/0.1').registerPlugin(this);
+    this.channel.getProtocol('http://meta.wildfirehq.org/Protocol/JsonStream/0.2').registerPlugin(this);
+
   };
 
   this.getURI = function()

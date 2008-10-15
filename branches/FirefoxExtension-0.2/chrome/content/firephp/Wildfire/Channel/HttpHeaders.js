@@ -63,10 +63,12 @@ Wildfire.Channel.HttpHeaders = function() {
     return this.protocols[URI];
   };
 
-  this.initProtocol = function(URI) {
+  this.initProtocol = function(URI) {    
     switch(URI) {
       case 'http://meta.wildfirehq.org/Protocol/JsonStream/0.1':
-        return new Wildfire.Protocol.JsonStream;
+        return new Wildfire.Protocol.JsonStream_0_1;
+      case 'http://meta.wildfirehq.org/Protocol/JsonStream/0.2':
+        return new Wildfire.Protocol.JsonStream_0_2;
     }
     return false;
   };
