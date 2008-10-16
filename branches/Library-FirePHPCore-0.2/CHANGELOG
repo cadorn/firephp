@@ -1,4 +1,6 @@
 
+2008-10-16 - Release Version: 0.2.b.6
+
   - (Issue 37) Display file and line information for each log message
   - (Issue 51) Limit output of object graphs
 
