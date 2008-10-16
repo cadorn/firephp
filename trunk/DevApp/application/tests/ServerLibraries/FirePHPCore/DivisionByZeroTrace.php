@@ -34,6 +34,7 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars)
 
 $old_error_handler = set_error_handler("userErrorHandler");
 
+date_default_timezone_set('America/Los_Angeles');
 
 // Warning: Division by zero
 echo 45/0;

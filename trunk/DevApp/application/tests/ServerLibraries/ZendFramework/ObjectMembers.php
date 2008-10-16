@@ -1,5 +1,8 @@
 <?php
 
+require_once dirname(__FILE__).'/.Start.php';
+
+
 class TestObject
 {
   var $publicVar = 'Public Var';
@@ -37,8 +40,7 @@ $obj->child3 = $obj;
 
 $obj = array('hello'=>'world','obj'=>$obj,'last'=>30,array('foo'=>'bar'),array('first','second'));
 
-
-FB::log($obj, 'The object and all its members');
+Zend_Wildfire_Plugin_FirePhp::send($obj,'Test Object',Zend_Wildfire_Plugin_FirePhp::INFO);
 
 
 $obj1 = new stdClass;
@@ -46,5 +48,8 @@ $obj2 = new stdClass;
 $obj1->p = $obj2;
 $obj2->p = $obj1;
 
-FB::log($obj1,'$obj1');
+Zend_Wildfire_Plugin_FirePhp::send($obj1,'$obj1',Zend_Wildfire_Plugin_FirePhp::INFO);
+
+
+require_once dirname(__FILE__).'/.End.php';
 

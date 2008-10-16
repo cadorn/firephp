@@ -2,6 +2,8 @@
 
 $firephp = FirePHP::getInstance(true);
 
+$firephp->setOptions(array('includeLineNumbers'=>false));
+
 
 $firephp->fb('Hello World'); /* Defaults to FirePHP::LOG */
 
@@ -9,6 +11,8 @@ $firephp->fb('Log message'  ,FirePHP::LOG);
 $firephp->fb('Info message' ,FirePHP::INFO);
 $firephp->fb('Warn message' ,FirePHP::WARN);
 $firephp->fb('Error message',FirePHP::ERROR);
+
+$firephp->fb(true);
 
 $firephp->fb('Message with label','Label',FirePHP::LOG);
 

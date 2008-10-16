@@ -11,7 +11,7 @@ header('X-FirePHP-Data-999999999999: "__SKIP__":"__SKIP__"}');
 }
 
 //HTTP headers (FirePHPCore-0.2.b.1):
-if(true) {
+if(false) {
 header('X-Wf-1-1-1-1: |[{"Type":"EXCEPTION"},{"Class":"Exception","Message":"Missing file test.php","File":"C:\\\php/includes/autoprepend.inc.php","Line":32,"Type":"throw","Trace":[{"file":"C:/Apache/htdocs/test/index.php","line":3,"function":"require"}]}]|');
 header('X-Wf-1-1-1-2: |[{"Type":"ERROR","Label":"Posted: "},[]]|');
 header('X-Wf-1-Index: 2');
