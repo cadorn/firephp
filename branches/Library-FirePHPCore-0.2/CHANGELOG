@@ -3,6 +3,7 @@
 
   - (Issue 37) Display file and line information for each log message
   - (Issue 51) Limit output of object graphs
+  - Bugfix for encoding object members set to NULL|false|''
 
 2008-10-14 - Release Version: 0.2.b.5
 
