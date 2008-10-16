@@ -1,4 +1,6 @@
 
+2008-10-16 - Release Version: 0.2.b.7
+
   - (Issue 45) Truncate dump when string have non utf8 cars
   - (Issue 52) logging will not work when firephp object gets stored in the session.
 
