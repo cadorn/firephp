@@ -4,6 +4,9 @@ $Library = $_REQUEST['Library'];
 $Branch = $_REQUEST['Branch'];
 $Test = $_REQUEST['Test'];
 
+ini_set('display_errors', '1');
+ini_set('error_reporting', E_ALL | E_STRICT);
+
 switch($Library) {
     
     case 'FirePHPCore':

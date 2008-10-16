@@ -47,6 +47,10 @@ Zend_Wildfire_Plugin_FirePhp::send(array(
    array('SELECT * FROM Bar','0.04',array('row1','row2'))
   ), '2 SQL queries took 0.06 seconds (Second Table)',Zend_Wildfire_Plugin_FirePhp::TABLE);
 
+
+Zend_Wildfire_Plugin_FirePhp::send(array("Отладочный"),'UTF-8 characters',Zend_Wildfire_Plugin_FirePhp::LOG);
+
+
 /* Will show only in "Server" tab for the request */
 Zend_Wildfire_Plugin_FirePhp::send(apache_request_headers(),'RequestHeaders',Zend_Wildfire_Plugin_FirePhp::DUMP);
 
