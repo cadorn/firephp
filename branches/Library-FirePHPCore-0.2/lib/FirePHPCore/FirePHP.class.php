@@ -157,20 +157,13 @@ class FirePHP {
    * @var int
    */
   protected $messageIndex = 1;
-  
+    
   /**
-   * The maximum depth for logged objects
+   * Options for the library
    * 
-   * @var int
+   * @var array
    */
-  protected $maxObjectDepth = 10;
-  
-  /**
-   * The maximum depth for logged arrays
-   * 
-   * @var int
-   */
-  protected $maxArrayDepth = 20;
+  protected $options = array();
   
   /**
    * A stack of objects used to detect recursion during object encoding
@@ -178,6 +171,16 @@ class FirePHP {
    * @var object
    */
   protected $objectStack = array();
+  
+  /**
+   * The object constructor
+   */
+  function __construct() {
+    $this->options['maxObjectDepth'] = 10;
+    $this->options['maxArrayDepth'] = 20;
+    $this->options['useNativeJsonEncode'] = true;
+    $this->options['includeLineNumbers'] = true;
+  }
   
   /**
    * Gets singleton instance of FirePHP
@@ -205,19 +208,16 @@ class FirePHP {
    * Set some options for the library
    * 
    * Options:
-   *  - maxObjectDepth: The maximum depth to traverse objects
-   *  - maxArrayDepth: The maximum depth to traverse arrays
+   *  - maxObjectDepth: The maximum depth to traverse objects (default: 10)
+   *  - maxArrayDepth: The maximum depth to traverse arrays (default: 20)
+   *  - useNativeJsonEncode: If true will use json_encode() (default: true)
+   *  - includeLineNumbers: If true will include line numbers and filenames (default: true)
    * 
    * @param array $Options The options to be set
    * @return void
    */
   public function setOptions($Options) {
-    if(array_key_exists('maxObjectDepth',$Options)) {
-      $this->maxObjectDepth = $Options['maxObjectDepth'];
-    }
-    if(array_key_exists('maxArrayDepth',$Options)) {
-      $this->maxArrayDepth = $Options['maxArrayDepth'];
-    }
+    $this->options = array_merge($this->options,$Options);
   }
   
   /**
@@ -473,7 +473,12 @@ class FirePHP {
       return false;
     }
   
+    $meta = array();
+  
     if($Object instanceof Exception) {
+
+      $meta['file'] = $this->_escapeTraceFile($Object->getFile());
+      $meta['line'] = $Object->getLine();
       
       $trace = $Object->getTrace();
       if($Object instanceof ErrorException
@@ -501,7 +506,6 @@ class FirePHP {
                         'Line'=>$Object->getLine(),
                         'Type'=>'trigger',
                         'Trace'=>$this->_escapeTrace(array_splice($trace,2)));
-      
       } else {
         $Object = array('Class'=>get_class($Object),
                         'Message'=>$Object->getMessage(),
@@ -544,6 +548,9 @@ class FirePHP {
                           'Line'=>isset($trace[$i]['line'])?$trace[$i]['line']:'',
                           'Args'=>isset($trace[$i]['args'])?$trace[$i]['args']:'',
                           'Trace'=>$this->_escapeTrace(array_splice($trace,$i+1)));
+
+          $meta['file'] = isset($trace[$i]['file'])?$this->_escapeTraceFile($trace[$i]['file']):'';
+          $meta['line'] = isset($trace[$i]['line'])?$trace[$i]['line']:'';
           break;
         }
       }
@@ -552,6 +559,43 @@ class FirePHP {
       if($Type===null) {
         $Type = self::LOG;
       }
+    }
+    
+    if($this->options['includeLineNumbers']) {
+      if(!isset($meta['file']) || !isset($meta['line'])) {
+        $trace = debug_backtrace();
+          
+        $trace = debug_backtrace();
+        for( $i=0 ; $trace && $i<sizeof($trace) ; $i++ ) {
+  
+          if(isset($trace[$i]['class'])
+             && isset($trace[$i]['file'])
+             && ($trace[$i]['class']=='FirePHP'
+                 || $trace[$i]['class']=='FB')
+             && (substr($this->_standardizePath($trace[$i]['file']),-18,18)=='FirePHPCore/fb.php'
+                 || substr($this->_standardizePath($trace[$i]['file']),-29,29)=='FirePHPCore/FirePHP.class.php')) {
+            /* Skip - FB::trace(), FB::send(), $firephp->trace(), $firephp->fb() */
+          } else
+          if(isset($trace[$i]['class'])
+             && isset($trace[$i+1]['file'])
+             && $trace[$i]['class']=='FirePHP'
+             && substr($this->_standardizePath($trace[$i+1]['file']),-18,18)=='FirePHPCore/fb.php') {
+            /* Skip fb() */
+          } else
+          if(isset($trace[$i]['file'])
+             && substr($this->_standardizePath($trace[$i]['file']),-18,18)=='FirePHPCore/fb.php') {
+            /* Skip FB::fb() */
+          } else {
+            $meta['file'] = isset($trace[$i]['file'])?$this->_escapeTraceFile($trace[$i]['file']):'';
+            $meta['line'] = isset($trace[$i]['line'])?$trace[$i]['line']:'';
+            break;
+          }
+        }      
+      
+      }
+    } else {
+      unset($meta['file']);
+      unset($meta['line']);
     }
 
   	$this->setHeader('X-Wf-Protocol-1','http://meta.wildfirehq.org/Protocol/JsonStream/0.2');
@@ -568,11 +612,17 @@ class FirePHP {
     if($Type==self::DUMP) {
     	$msg = '{"'.$Label.'":'.$this->jsonEncode($Object).'}';
     } else {
-      $meta = array('Type'=>$Type);
+      $msg_meta = array('Type'=>$Type);
       if($Label!==null) {
-        $meta['Label'] = $Label;
-      }    
-    	$msg = '['.$this->jsonEncode($meta).','.$this->jsonEncode($Object).']';
+        $msg_meta['Label'] = $Label;
+      }
+      if(isset($meta['file'])) {
+        $msg_meta['File'] = $meta['file'];
+      }
+      if(isset($meta['line'])) {
+        $msg_meta['Line'] = $meta['line'];
+      }
+    	$msg = '['.$this->jsonEncode($msg_meta).','.$this->jsonEncode($Object).']';
     }
     
     $parts = explode("\n",chunk_split($msg, 5000, "\n"));
@@ -690,7 +740,9 @@ class FirePHP {
    */
   protected function jsonEncode($Object)
   {
-    if(function_exists('json_encode')) {
+    if(function_exists('json_encode')
+       && $this->options['useNativeJsonEncode']!=false) {
+
       return json_encode($this->encodeObject($Object));
     } else {
       return $this->json_encode($this->encodeObject($Object));
@@ -711,8 +763,8 @@ class FirePHP {
     
     if (is_object($Object)) {
 
-        if ($Depth > $this->maxObjectDepth) {
-          return '** Max Object Depth ('.$this->maxObjectDepth.') **';
+        if ($Depth > $this->options['maxObjectDepth']) {
+          return '** Max Object Depth ('.$this->options['maxObjectDepth'].') **';
         }
         
         foreach ($this->objectStack as $refVal) {
@@ -750,7 +802,7 @@ class FirePHP {
             $raw_name = "\0".'*'."\0".$raw_name;
           }
           
-          if(isset($members[$raw_name])
+          if(array_key_exists($raw_name,$members)
              && !$property->isStatic()) {
             
             $return[$name] = $this->encodeObject($members[$raw_name], $Depth + 1);      
@@ -785,8 +837,8 @@ class FirePHP {
         
     } elseif (is_array($Object)) {
 
-        if ($Depth > $this->maxArrayDepth) {
-          return '** Max Array Depth ('.$this->maxArrayDepth.') **';
+        if ($Depth > $this->options['maxArrayDepth']) {
+          return '** Max Array Depth ('.$this->options['maxArrayDepth'].') **';
         }
       
         foreach ($Object as $key => $val) {
