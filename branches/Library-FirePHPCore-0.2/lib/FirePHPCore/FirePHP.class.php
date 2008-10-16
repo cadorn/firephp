@@ -183,14 +183,14 @@ class FirePHP {
   }
 
   /**
-   * If object gets serialized make sure no object members get stored
+   * When the object gets unserialized reset the message index
    * 
    * @return array
    */  
-  public function __sleep() {
-    return array();
+  public function __wakeup() {
+    $this->messageIndex = 1;
   }
-  
+    
   /**
    * Gets singleton instance of FirePHP
    *
