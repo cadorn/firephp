@@ -21,12 +21,15 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
     
     pinInspector: false,
 
-
     tag:
-      SPAN({class: "firephp-row-label"}, '$__in__|getLabel',
+      SPAN({class: "firephp-row-label",
+            _repInObject: "$__in__",
+            onmouseover:"$onMouseOver2",
+            onmouseout:"$onMouseOut2"}, '$__in__|getLabel',
         A({
             class: "objectLink-PHPVariable",
             _repObject: "$object",
+            _repInObject: "$__in__",
             onmouseover:"$onMouseOver",
             onmouseout:"$onMouseOut",
             onclick:"$onClick"
@@ -56,6 +59,23 @@ FirebugReps.PHPVariable = domplate(Firebug.Rep,
       if(this.pinInspector) return;
       
       FirePHP.hideVariableInspectorOverlay();
+    },    
+    
+    onMouseOver2: function(event) {
+      
+      if(event.currentTarget.repInObject.meta
+         && event.currentTarget.repInObject.meta.File
+         && event.currentTarget.repInObject.meta.Line) {
+
+        FirePHP.setWindowStatusBarText(event.currentTarget.repInObject.meta.File
+          + ' : '
+          + event.currentTarget.repInObject.meta.Line);
+      }
+    },
+    
+    onMouseOut2: function() {
+
+      FirePHP.setWindowStatusBarText(null);
     },
     
     onClick: function(event) {
@@ -342,12 +362,14 @@ FirebugReps.FirePHPString = domplate(Firebug.Rep,
     {
         return value.replace(/\r/g, "\\r").replace(/\n/g, "\\n");
     }
-    
 });
 
 FirebugReps.FirePHPText = domplate(Firebug.Rep,
 {
-    tag: SPAN({class: "firephp-row-label"}, '$__in__|getLabel',OBJECTBOX("$object")),
+    tag: SPAN({class: "firephp-row-label",
+            _repInObject: "$__in__",
+            onmouseover:"$onMouseOver",
+            onmouseout:"$onMouseOut"}, '$__in__|getLabel',OBJECTBOX("$object")),
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -358,12 +380,31 @@ FirebugReps.FirePHPText = domplate(Firebug.Rep,
         return row.meta.Label + ': ';
       }
       return ' ';
-    }    
+    },
+
+    onMouseOver: function(event) {
+      
+      if(event.currentTarget.repInObject.meta
+         && event.currentTarget.repInObject.meta.File
+         && event.currentTarget.repInObject.meta.Line) {
+
+        FirePHP.setWindowStatusBarText(event.currentTarget.repInObject.meta.File
+          + ' : '
+          + event.currentTarget.repInObject.meta.Line);
+      }
+    },
+    
+    onMouseOut: function() {
+      FirePHP.setWindowStatusBarText(null);
+    }
 });
 
 FirebugReps.FirePHPBoolean = domplate(Firebug.Rep,
 {
-    tag: SPAN({class: "firephp-row-label"}, '$__in__|getLabel',OBJECTBOX("$object|toUpperCase")),
+    tag: SPAN({class: "firephp-row-label",
+            _repInObject: "$__in__",
+            onmouseover:"$onMouseOver",
+            onmouseout:"$onMouseOut"}, '$__in__|getLabel',OBJECTBOX("$object|toUpperCase")),
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -384,12 +425,31 @@ FirebugReps.FirePHPBoolean = domplate(Firebug.Rep,
         return row.meta.Label + ': ';
       }
       return ' ';
+    },
+
+    onMouseOver: function(event) {
+      
+      if(event.currentTarget.repInObject.meta
+         && event.currentTarget.repInObject.meta.File
+         && event.currentTarget.repInObject.meta.Line) {
+
+        FirePHP.setWindowStatusBarText(event.currentTarget.repInObject.meta.File
+          + ' : '
+          + event.currentTarget.repInObject.meta.Line);
+      }
+    },
+    
+    onMouseOut: function() {
+      FirePHP.setWindowStatusBarText(null);
     }
 });
 
 FirebugReps.FirePHPNumber = domplate(Firebug.Rep,
 {
-    tag: SPAN({class: "firephp-row-label"}, '$__in__|getLabel',OBJECTBOX("$object")),
+    tag: SPAN({class: "firephp-row-label",
+            _repInObject: "$__in__",
+            onmouseover:"$onMouseOver",
+            onmouseout:"$onMouseOut"}, '$__in__|getLabel',OBJECTBOX("$object")),
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -405,6 +465,22 @@ FirebugReps.FirePHPNumber = domplate(Firebug.Rep,
         return row.meta.Label + ': ';
       }
       return ' ';
+    },
+
+    onMouseOver: function(event) {
+      
+      if(event.currentTarget.repInObject.meta
+         && event.currentTarget.repInObject.meta.File
+         && event.currentTarget.repInObject.meta.Line) {
+
+        FirePHP.setWindowStatusBarText(event.currentTarget.repInObject.meta.File
+          + ' : '
+          + event.currentTarget.repInObject.meta.Line);
+      }
+    },
+    
+    onMouseOut: function() {
+      FirePHP.setWindowStatusBarText(null);
     }
 });
 

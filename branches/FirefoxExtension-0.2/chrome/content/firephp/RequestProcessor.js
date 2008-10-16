@@ -17,7 +17,10 @@ FirePHPProcessor.Init = function() {
         _repObject: "$object"
       }, A({
         class: "title",
-        onclick: "$onToggleBody"
+        onclick: "$onToggleBody",
+            _repInObject: "$__in__",
+            onmouseover:"$onMouseOver",
+            onmouseout:"$onMouseOut"
       }, "$object|getCaption")),
       
       infoTag: DIV({
@@ -42,8 +45,26 @@ FirePHPProcessor.Init = function() {
       }), SPAN({
         class: "arrayComma"
       }, "$arg.delim")), ")"))))))),
+  
+     
+    onMouseOver: function(event) {
       
-      
+      if(event.currentTarget.repInObject.meta
+         && event.currentTarget.repInObject.meta.File
+         && event.currentTarget.repInObject.meta.Line) {
+
+        FirePHP.setWindowStatusBarText(event.currentTarget.repInObject.meta.File
+          + ' : '
+          + event.currentTarget.repInObject.meta.Line);
+      }
+    },
+
+    onMouseOut: function() {
+
+        FirePHP.setWindowStatusBarText(null);
+    },    
+    
+          
       getCaption: function(item){
         if (item.Class && item.Type == 'throw') {
           return item.Class + ': ' + item.Message;
@@ -192,7 +213,10 @@ FirePHPProcessor.Init = function() {
       className: 'firephp-table',
       tag:
           DIV({class: "head", _repObject: "$object", _repMeta: "$meta"},
-              A({class: "title", onclick: "$onToggleBody"}, "$__in__|getCaption")
+              A({class: "title", onclick: "$onToggleBody",
+            _repInObject: "$__in__",
+            onmouseover:"$onMouseOver",
+            onmouseout:"$onMouseOut"}, "$__in__|getCaption")
           ),
     
       infoTag: DIV({class: "info"},
@@ -217,7 +241,23 @@ FirePHPProcessor.Init = function() {
              ),
                   
            
-                  
+    onMouseOver: function(event) {
+      
+      if(event.currentTarget.repInObject.meta
+         && event.currentTarget.repInObject.meta.File
+         && event.currentTarget.repInObject.meta.Line) {
+
+        FirePHP.setWindowStatusBarText(event.currentTarget.repInObject.meta.File
+          + ' : '
+          + event.currentTarget.repInObject.meta.Line);
+      }
+    },
+
+    onMouseOut: function() {
+
+        FirePHP.setWindowStatusBarText(null);
+    },
+                      
       getCaption: function(row)
       {
         if(!row) return '';

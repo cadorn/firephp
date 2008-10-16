@@ -286,6 +286,25 @@ var FirePHP = top.FirePHP = {
   
   isLoggingData: false,
   
+  commandLineSmallText: '',
+  commandLineLargeText: '',
+  
+  setWindowStatusBarText: function(text) {
+    
+    var commandLineSmall = FirebugChrome.$("fbCommandLine");
+    var commandLineLarge = FirebugChrome.$("fbLargeCommandLine");
+    
+    if(text==null) {
+      commandLineSmall.value = this.commandLineSmallText;
+      commandLineLarge.value = this.commandLineLargeText;
+    } else {
+      this.commandLineSmallText = commandLineSmall.value;
+      commandLineSmall.value = text;
+      this.commandLineLargeText = commandLineLarge.value;
+      commandLineLarge.value = text;
+    }
+  },
+  
   lastInspectorVariable: null,
   inspectorPinned: false,
   
