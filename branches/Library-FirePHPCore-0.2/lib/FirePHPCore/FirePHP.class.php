@@ -181,6 +181,15 @@ class FirePHP {
     $this->options['useNativeJsonEncode'] = true;
     $this->options['includeLineNumbers'] = true;
   }
+
+  /**
+   * If object gets serialized make sure no object members get stored
+   * 
+   * @return array
+   */  
+  public function __sleep() {
+    return array();
+  }
   
   /**
    * Gets singleton instance of FirePHP

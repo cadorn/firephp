@@ -1,4 +1,6 @@
 
+  - (Issue 52) logging will not work when firephp object gets stored in the session.
+
 2008-10-16 - Release Version: 0.2.b.6
 
   - (Issue 37) Display file and line information for each log message
