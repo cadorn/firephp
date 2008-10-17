@@ -1,3 +1,5 @@
+
+2008-10-17 - Release Version: 0.2.b.8
   
   - New implementation for is_utf8()
   - (Issue 55) maxObjectDepth Option not working correctly when using TABLE and EXCEPTION Type
