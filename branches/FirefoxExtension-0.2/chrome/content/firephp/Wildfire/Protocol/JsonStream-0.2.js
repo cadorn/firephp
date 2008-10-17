@@ -63,8 +63,9 @@ Wildfire.Protocol.JsonStream_0_2 = function() {
       }
     } else
     if(key[0]=='index') {
-
-      this.expectedMessageCount = Data;
+      
+      // Skip this for now
+//      this.expectedMessageCount = Data;
       
     } else {
 
@@ -75,13 +76,18 @@ Wildfire.Protocol.JsonStream_0_2 = function() {
 
       this.messageCount++;
     }
-    
+     
+    return true;
+  };
+  
+  this.allMessagesReceived = function() {
+
     // Once we have all messages received based on the message index
     // we flush them to the plugins
 
     if(this.messages
-      && this.expectedMessageCount!=0
-      && this.messageCount==this.expectedMessageCount
+//      && this.expectedMessageCount!=0
+//      && this.messageCount==this.expectedMessageCount
       && this.expectedStructureIDs.length == this.structures.length
       && this.expectedPluginIDs.length == this.plugin_ids.length) {
     
@@ -122,9 +128,7 @@ Wildfire.Protocol.JsonStream_0_2 = function() {
       }
       
       this.messages = new Array();    
-    }
-     
-    return true;
+    }    
   };
   
   this.sortMessages = function(Messages) {

@@ -117,6 +117,9 @@ Wildfire.Protocol.JsonStream_0_1 = function() {
     return true;
   };
   
+  this.allMessagesReceived = function() {
+  };
+  
   this.sortMessages = function(Messages) {
     array = new Array();
     var keys = new Array();

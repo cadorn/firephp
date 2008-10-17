@@ -56,6 +56,12 @@ Wildfire.Channel.HttpHeaders = function() {
     }
   };
   
+  this.allMessagesReceived = function() {
+    for( var uri in this.protocols ) {
+      this.protocols[uri].allMessagesReceived();
+    }
+  };
+  
   this.getProtocol = function(URI) {
     if(!this.protocols[URI]) {
       this.protocols[URI] = this.initProtocol(URI);

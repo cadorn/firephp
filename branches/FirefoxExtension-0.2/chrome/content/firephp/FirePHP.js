@@ -262,6 +262,8 @@ var FirePHP = top.FirePHP = {
         parseHeader(headers_in[index].name,headers_in[index].value);
       }
     }
+    
+    plugin.channel.allMessagesReceived();
             
     
 		/* Sort the header and create final data object */
