@@ -1,4 +1,5 @@
   
+  - New implementation for is_utf8()
   - (Issue 55) maxObjectDepth Option not working correctly when using TABLE and EXCEPTION Type
   - Bugfix for max[Object|Array]Depth when encoding nested array/object graphs
   - Bugfix for FB::setOptions()
