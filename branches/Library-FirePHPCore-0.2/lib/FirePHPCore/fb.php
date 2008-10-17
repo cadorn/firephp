@@ -72,7 +72,7 @@ class FB
    * @param array $Options The options to be set
    * @return void
    */
-  public function setOptions($Options) {
+  public static function setOptions($Options) {
     $instance = FirePHP::getInstance(true);
     $instance->setOptions($Options);
   }

@@ -483,6 +483,7 @@ class FirePHP {
     }
   
     $meta = array();
+    $skipFinalObjectEncode = false;
   
     if($Object instanceof Exception) {
 
@@ -515,6 +516,7 @@ class FirePHP {
                         'Line'=>$Object->getLine(),
                         'Type'=>'trigger',
                         'Trace'=>$this->_escapeTrace(array_splice($trace,2)));
+        $skipFinalObjectEncode = true;
       } else {
         $Object = array('Class'=>get_class($Object),
                         'Message'=>$Object->getMessage(),
@@ -522,6 +524,7 @@ class FirePHP {
                         'Line'=>$Object->getLine(),
                         'Type'=>'throw',
                         'Trace'=>$this->_escapeTrace($trace));
+        $skipFinalObjectEncode = true;
       }
       $Type = self::EXCEPTION;
       
@@ -555,15 +558,27 @@ class FirePHP {
                           'Message'=>$trace[$i]['args'][0],
                           'File'=>isset($trace[$i]['file'])?$this->_escapeTraceFile($trace[$i]['file']):'',
                           'Line'=>isset($trace[$i]['line'])?$trace[$i]['line']:'',
-                          'Args'=>isset($trace[$i]['args'])?$trace[$i]['args']:'',
+                          'Args'=>isset($trace[$i]['args'])?$this->encodeObject($trace[$i]['args']):'',
                           'Trace'=>$this->_escapeTrace(array_splice($trace,$i+1)));
 
+          $skipFinalObjectEncode = true;
           $meta['file'] = isset($trace[$i]['file'])?$this->_escapeTraceFile($trace[$i]['file']):'';
           $meta['line'] = isset($trace[$i]['line'])?$trace[$i]['line']:'';
           break;
         }
       }
 
+    } else
+    if($Type==self::TABLE) {
+      
+      if(isset($Object[0]) && is_string($Object[0])) {
+        $Object[1] = $this->encodeTable($Object[1]);
+      } else {
+        $Object = $this->encodeTable($Object);
+      }
+
+      $skipFinalObjectEncode = true;
+      
     } else {
       if($Type===null) {
         $Type = self::LOG;
@@ -572,8 +587,7 @@ class FirePHP {
     
     if($this->options['includeLineNumbers']) {
       if(!isset($meta['file']) || !isset($meta['line'])) {
-        $trace = debug_backtrace();
-          
+
         $trace = debug_backtrace();
         for( $i=0 ; $trace && $i<sizeof($trace) ; $i++ ) {
   
@@ -619,7 +633,7 @@ class FirePHP {
     }
   
     if($Type==self::DUMP) {
-    	$msg = '{"'.$Label.'":'.$this->jsonEncode($Object).'}';
+    	$msg = '{"'.$Label.'":'.$this->jsonEncode($Object, $skipFinalObjectEncode).'}';
     } else {
       $msg_meta = array('Type'=>$Type);
       if($Label!==null) {
@@ -631,7 +645,7 @@ class FirePHP {
       if(isset($meta['line'])) {
         $msg_meta['Line'] = $meta['line'];
       }
-    	$msg = '['.$this->jsonEncode($msg_meta).','.$this->jsonEncode($Object).']';
+    	$msg = '['.$this->jsonEncode($msg_meta).','.$this->jsonEncode($Object, $skipFinalObjectEncode).']';
     }
     
     $parts = explode("\n",chunk_split($msg, 5000, "\n"));
@@ -686,6 +700,9 @@ class FirePHP {
     for( $i=0 ; $i<sizeof($Trace) ; $i++ ) {
       if(isset($Trace[$i]['file'])) {
         $Trace[$i]['file'] = $this->_escapeTraceFile($Trace[$i]['file']);
+      }
+      if(isset($Trace[$i]['args'])) {
+        $Trace[$i]['args'] = $this->encodeObject($Trace[$i]['args']);
       }
     }
     return $Trace;    
@@ -747,15 +764,37 @@ class FirePHP {
    * @param object $Object The object to be encoded
    * @return string The JSON string
    */
-  protected function jsonEncode($Object)
+  protected function jsonEncode($Object, $skipObjectEncode=false)
   {
+    if(!$skipObjectEncode) {
+      $Object = $this->encodeObject($Object);
+    }
+    
     if(function_exists('json_encode')
        && $this->options['useNativeJsonEncode']!=false) {
 
-      return json_encode($this->encodeObject($Object));
+      return json_encode($Object);
     } else {
-      return $this->json_encode($this->encodeObject($Object));
+      return $this->json_encode($Object);
     }
+  }
+  
+  /**
+   * Encodes a table by encoding each row and column with encodeObject()
+   * 
+   * @param array $Table The table to be encoded
+   * @return array
+   */  
+  protected function encodeTable($Table) {
+    if(!$Table) return $Table;
+    for( $i=0 ; $i<count($Table) ; $i++ ) {
+      if(is_array($Table[$i])) {
+        for( $j=0 ; $j<count($Table[$i]) ; $j++ ) {
+          $Table[$i][$j] = $this->encodeObject($Table[$i][$j]);
+        }
+      }
+    }
+    return $Table;
   }
   
   /**
@@ -766,13 +805,13 @@ class FirePHP {
    * @param int $Depth The current traversal depth
    * @return array All members of the object
    */
-  protected function encodeObject($Object, $Depth = 1)
+  protected function encodeObject($Object, $ObjectDepth = 1, $ArrayDepth = 1)
   {
     $return = array();
     
     if (is_object($Object)) {
 
-        if ($Depth > $this->options['maxObjectDepth']) {
+        if ($ObjectDepth > $this->options['maxObjectDepth']) {
           return '** Max Object Depth ('.$this->options['maxObjectDepth'].') **';
         }
         
@@ -814,15 +853,15 @@ class FirePHP {
           if(array_key_exists($raw_name,$members)
              && !$property->isStatic()) {
             
-            $return[$name] = $this->encodeObject($members[$raw_name], $Depth + 1);      
+            $return[$name] = $this->encodeObject($members[$raw_name], $ObjectDepth + 1, 1);      
           
           } else {
             if(method_exists($property,'setAccessible')) {
               $property->setAccessible(true);
-              $return[$name] = $this->encodeObject($property->getValue($Object), $Depth + 1);
+              $return[$name] = $this->encodeObject($property->getValue($Object), $ObjectDepth + 1, 1);
             } else
             if($property->isPublic()) {
-              $return[$name] = $this->encodeObject($property->getValue($Object), $Depth + 1);
+              $return[$name] = $this->encodeObject($property->getValue($Object), $ObjectDepth + 1, 1);
             } else {
               $return[$name] = '** Need PHP 5.3 to get value **';
             }
@@ -838,7 +877,7 @@ class FirePHP {
           }
           if(!isset($properties[$name])) {
             $name = 'undeclared:'.$name;
-            $return[$name] = $this->encodeObject($value, $Depth + 1);
+            $return[$name] = $this->encodeObject($value, $ObjectDepth + 1, 1);
           }
         }
         
@@ -846,7 +885,7 @@ class FirePHP {
         
     } elseif (is_array($Object)) {
 
-        if ($Depth > $this->options['maxArrayDepth']) {
+        if ($ArrayDepth > $this->options['maxArrayDepth']) {
           return '** Max Array Depth ('.$this->options['maxArrayDepth'].') **';
         }
       
@@ -862,7 +901,7 @@ class FirePHP {
             $val['GLOBALS'] = '** Recursion (GLOBALS) **';
           }
           
-          $return[$key] = $this->encodeObject($val, $Depth + 1);
+          $return[$key] = $this->encodeObject($val, 1, $ArrayDepth + 1);
         }
     } else {
       if(self::is_utf8($Object)) {

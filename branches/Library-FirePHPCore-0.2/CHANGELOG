@@ -1,3 +1,7 @@
+  
+  - (Issue 55) maxObjectDepth Option not working correctly when using TABLE and EXCEPTION Type
+  - Bugfix for max[Object|Array]Depth when encoding nested array/object graphs
+  - Bugfix for FB::setOptions()
 
 2008-10-16 - Release Version: 0.2.b.7
 
