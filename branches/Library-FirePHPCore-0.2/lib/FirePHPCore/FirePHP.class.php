@@ -62,7 +62,7 @@ class FirePHP {
    *
    * @var string
    */
-  const VERSION = '0.2.b.7';
+  const VERSION = '0.2.0';
   
   /**
    * Firebug LOG level
