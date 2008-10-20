@@ -52,8 +52,8 @@ const firephpURLs =
 {
     hq: "http://www.firephp.org/HQ",
     main: "http://www.firephp.org/",
-    docs: "http://www.firephp.org/Wiki/Reference/Fb",
-    discuss: "http://forum.firephp.org/",
+    docs: "http://www.firephp.org/HQ/Use.htm",
+    discuss: "http://www.firephp.org/HQ/Help.htm",
     issues: "http://code.google.com/p/firephp/issues/list"
 };
 
@@ -68,7 +68,7 @@ const DEBUG = false;
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.2.b',
+  version: '0.2.0',
 
   prefDomain: "extensions.firephp",
   
