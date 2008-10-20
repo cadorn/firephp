@@ -22,10 +22,6 @@
         <copy file="./README" tofile="./build/FirePHPCore-${version}/README"/>
         <copy file="./CHANGELOG" tofile="./build/FirePHPCore-${version}/CHANGELOG"/>
 
-        <copy todir="./build/FirePHPCore-${version}/demo" >
-          <fileset dir="./demo"/>
-        </copy>
-
         <copy todir="./build/FirePHPCore-${version}/lib" >
           <fileset dir="./lib"/>
           <filterchain>
@@ -33,11 +29,6 @@
               <token key="VERSION" value="${version}" />
             </replacetokens>
           </filterchain>          
-        </copy>
-
-
-        <copy todir="./build/pear/demo" >
-          <fileset dir="./demo"/>
         </copy>
 
         <copy todir="./build/pear" >

@@ -33,9 +33,6 @@
    <file name="FirePHP.class.php" role="php"/>
    <file name="fb.php" role="php"/>
 
-   <file name="demo/oo.php" role="doc" baseinstalldir="FirePHPCore"/>
-   <file name="demo/procedural.php" role="doc" baseinstalldir="FirePHPCore"/>
-
   </dir>
  </contents>
  <dependencies>
