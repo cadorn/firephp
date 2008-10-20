@@ -66,6 +66,29 @@ function fb()
 class FB
 {
   /**
+   * Enable and disable logging to Firebug
+   * 
+   * @see FirePHP->setEnabled()
+   * @param boolean $Enabled TRUE to enable, FALSE to disable
+   * @return void
+   */
+  public static function setEnabled($Enabled) {
+    $instance = FirePHP::getInstance(true);
+    $instance->setEnabled($Enabled);
+  }
+  
+  /**
+   * Check if logging is enabled
+   * 
+   * @see FirePHP->getEnabled()
+   * @return boolean TRUE if enabled
+   */
+  public static function getEnabled() {
+    $instance = FirePHP::getInstance(true);
+    return $instance->getEnabled();
+  }  
+  
+  /**
    * Set some options for the library
    * 
    * @see FirePHP->setOptions()

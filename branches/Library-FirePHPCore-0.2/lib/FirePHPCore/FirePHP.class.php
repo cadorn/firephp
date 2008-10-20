@@ -173,6 +173,13 @@ class FirePHP {
   protected $objectStack = array();
   
   /**
+   * Flag to enable/disable logging
+   * 
+   * @var boolean
+   */
+  protected $enabled = true;
+  
+  /**
    * The object constructor
    */
   function __construct() {
@@ -211,6 +218,25 @@ class FirePHP {
    */
   public static function init() {
     return self::$instance = new self();
+  }
+  
+  /**
+   * Enable and disable logging to Firebug
+   * 
+   * @param boolean $Enabled TRUE to enable, FALSE to disable
+   * @return void
+   */
+  public function setEnabled($Enabled) {
+    $this->enabled = $Enabled;
+  }
+  
+  /**
+   * Check if logging is enabled
+   * 
+   * @return boolean TRUE if enabled
+   */
+  public function getEnabled() {
+    return $this->enabled;
   }
   
   /**
@@ -433,14 +459,18 @@ class FirePHP {
   }
  
   /**
-   * Log object to firebug
+   * Log varible to Firebug
    * 
    * @see http://www.firephp.org/Wiki/Reference/Fb
-   * @param mixed $Object
-   * @return true
+   * @param mixed $Object The variable to be logged
+   * @return true Return TRUE if message was added to headers, FALSE otherwise
    * @throws Exception
    */
   public function fb($Object) {
+  
+    if(!$this->enabled) {
+      return false;
+    }
   
     if (headers_sent($filename, $linenum)) {
         throw $this->newException('Headers already sent in '.$filename.' on line '.$linenum.'. Cannot send log data to FirePHP. You must have Output Buffering enabled via ob_start() or output_buffering ini directive.');
