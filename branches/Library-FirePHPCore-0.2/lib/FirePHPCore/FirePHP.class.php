@@ -166,6 +166,13 @@ class FirePHP {
   protected $options = array();
   
   /**
+   * Filters used to exclude object members when encoding
+   * 
+   * @var array
+   */
+  protected $objectFilters = array();
+  
+  /**
    * A stack of objects used to detect recursion during object encoding
    * 
    * @var object
@@ -237,6 +244,19 @@ class FirePHP {
    */
   public function getEnabled() {
     return $this->enabled;
+  }
+  
+  /**
+   * Specify a filter to be used when encoding an object
+   * 
+   * Filters are used to exclude object members.
+   * 
+   * @param string $Class The class name of the object
+   * @param array $Filter An array or members to exclude
+   * @return void
+   */
+  public function setObjectFilter($Class, $Filter) {
+    $this->objectFilters[$Class] = $Filter;
   }
   
   /**
@@ -863,7 +883,7 @@ class FirePHP {
         $members = (array)$Object;
             
         foreach( $properties as $raw_name => $property ) {
-
+          
           $name = $raw_name;
           if($property->isStatic()) {
             $name = 'static:'.$name;
@@ -880,34 +900,53 @@ class FirePHP {
             $raw_name = "\0".'*'."\0".$raw_name;
           }
           
-          if(array_key_exists($raw_name,$members)
-             && !$property->isStatic()) {
+          if(!(isset($this->objectFilters[$class])
+               && is_array($this->objectFilters[$class])
+               && in_array($raw_name,$this->objectFilters[$class]))) {
+
+            if(array_key_exists($raw_name,$members)
+               && !$property->isStatic()) {
+              
+              $return[$name] = $this->encodeObject($members[$raw_name], $ObjectDepth + 1, 1);      
             
-            $return[$name] = $this->encodeObject($members[$raw_name], $ObjectDepth + 1, 1);      
-          
-          } else {
-            if(method_exists($property,'setAccessible')) {
-              $property->setAccessible(true);
-              $return[$name] = $this->encodeObject($property->getValue($Object), $ObjectDepth + 1, 1);
-            } else
-            if($property->isPublic()) {
-              $return[$name] = $this->encodeObject($property->getValue($Object), $ObjectDepth + 1, 1);
             } else {
-              $return[$name] = '** Need PHP 5.3 to get value **';
+              if(method_exists($property,'setAccessible')) {
+                $property->setAccessible(true);
+                $return[$name] = $this->encodeObject($property->getValue($Object), $ObjectDepth + 1, 1);
+              } else
+              if($property->isPublic()) {
+                $return[$name] = $this->encodeObject($property->getValue($Object), $ObjectDepth + 1, 1);
+              } else {
+                $return[$name] = '** Need PHP 5.3 to get value **';
+              }
             }
+          } else {
+            $return[$name] = '** Excluded by Filter **';
           }
         }
         
         // Include all members that are not defined in the class
         // but exist in the object
-        foreach( $members as $name => $value ) {
+        foreach( $members as $raw_name => $value ) {
+          
+          $name = $raw_name;
+          
           if ($name{0} == "\0") {
             $parts = explode("\0", $name);
             $name = $parts[2];
           }
+          
           if(!isset($properties[$name])) {
             $name = 'undeclared:'.$name;
-            $return[$name] = $this->encodeObject($value, $ObjectDepth + 1, 1);
+              
+            if(!(isset($this->objectFilters[$class])
+                 && is_array($this->objectFilters[$class])
+                 && in_array($raw_name,$this->objectFilters[$class]))) {
+              
+              $return[$name] = $this->encodeObject($value, $ObjectDepth + 1, 1);
+            } else {
+              $return[$name] = '** Excluded by Filter **';
+            }
           }
         }
         
