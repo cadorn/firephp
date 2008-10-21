@@ -89,6 +89,21 @@ class FB
   }  
   
   /**
+   * Specify a filter to be used when encoding an object
+   * 
+   * Filters are used to exclude object members.
+   * 
+   * @see FirePHP->setObjectFilter()
+   * @param string $Class The class name of the object
+   * @param array $Filter An array or members to exclude
+   * @return void
+   */
+  public static function setObjectFilter($Class, $Filter) {
+    $instance = FirePHP::getInstance(true);
+    $instance->setObjectFilter($Class, $Filter);
+  }
+  
+  /**
    * Set some options for the library
    * 
    * @see FirePHP->setOptions()
