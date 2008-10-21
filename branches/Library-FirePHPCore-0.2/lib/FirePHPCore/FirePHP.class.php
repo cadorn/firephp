@@ -195,14 +195,14 @@ class FirePHP {
     $this->options['useNativeJsonEncode'] = true;
     $this->options['includeLineNumbers'] = true;
   }
-
+    
   /**
-   * When the object gets unserialized reset the message index
+   * When the object gets serialized only include specific object members.
    * 
    * @return array
    */  
-  public function __wakeup() {
-    $this->messageIndex = 1;
+  public function __sleep() {
+    return array('options','objectFilters','enabled');
   }
     
   /**
