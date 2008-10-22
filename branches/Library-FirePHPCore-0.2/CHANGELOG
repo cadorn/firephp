@@ -1,5 +1,5 @@
 
-2008-10-20 - Release Version: 0.2.0
+2008-10-21 - Release Version: 0.2.0
 
 	- Updated version to 0.2.0
 	- Switched to using __sleep instead of __wakeup
