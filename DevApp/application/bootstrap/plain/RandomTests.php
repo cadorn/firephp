@@ -1,5 +1,17 @@
 <?php
 
+set_include_path(dirname(dirname(dirname(dirname(__FILE__))))
+                 . '/library/ServerLibraries/FirePHPCore/'
+                 . '0.2'
+                 . '/lib');
+
+require_once('FirePHPCore/fb.php');
+
+ob_start();
+
+$firephp = FirePHP::getInstance(true);
+
+
 //HTTP headers (FirePHPCore-0.1.2.1):
 if(false) {
 header('X-FirePHP-Data-100000000001: {');
@@ -19,3 +31,12 @@ header('X-Wf-1-Plugin-1: http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library
 header('X-Wf-1-Structure-1: http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1');
 header('X-Wf-Protocol-1: http://meta.wildfirehq.org/Protocol/JsonStream/0.1');
 }
+
+
+if(true) {
+  
+  $var = array('i'=>10, 'j'=>20);
+  
+  $firephp->log($var, 'Iterators');
+}
+
