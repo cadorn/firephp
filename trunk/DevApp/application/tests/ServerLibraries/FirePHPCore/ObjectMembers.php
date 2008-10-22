@@ -10,6 +10,13 @@ class TestObject
   private static $privateStaticVar = 'Private static Var';
   public $publicVar2 = 'Public var 2';
   public static $publicStaticVar2 = 'Public static var 2';
+
+  public $publicVar3;
+  public $publicVar4 = false;
+  public $publicVar5 = '';
+  public $privateVar2;
+  public $privateVar3 = false;
+  public $privateVar4 = '';
   
   private $lotsOfData = "jhsdfjkhsdfjh sdkjhfasjkdhf sakjdhfg skaj dfhsa dfk jhsdfgkjsa dfksadf sadf sadfh\n jksdjhfg sadjkhfsahjdfghja sdfkj sajdfhkgsadfhj sfd jahksdfhjas dfjkahsdfhjasg dfkas df jhasdf ajkshdfgjhkadfs";
 }
