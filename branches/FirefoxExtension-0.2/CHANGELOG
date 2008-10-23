@@ -1,4 +1,9 @@
 
+2008-10-23 - Release Version: 0.2.1
+
+  - Bugfix to allow data headers in any order
+	- Added support for Firebug 1.3
+
 2008-10-20 - Release Version: 0.2.0
 
   - Updated version to 0.2.0  

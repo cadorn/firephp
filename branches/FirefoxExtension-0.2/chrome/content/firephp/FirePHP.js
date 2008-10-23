@@ -17,7 +17,7 @@ if(externalMode) {
 
 FBL.ns(function() { with (FBL) {
 
-const FB_NEW = (Firebug.version == '1.2')?true:false;
+const FB_NEW = (Firebug.version == '1.2' || Firebug.version == '1.3')?true:false;
 
 
 const Cc = Components.classes;
