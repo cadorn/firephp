@@ -14,6 +14,9 @@ if($file) {
     if($line = trim($line)) {
 
       $index = strpos($line, "\t");
+      if(!$index) {
+        $index = strpos($line, " ");
+      }
       $line = substr($line,0,$index).':'.substr($line,$index);
       
       if(substr($line,0,11)=='X-Wf-1-1-1-') {

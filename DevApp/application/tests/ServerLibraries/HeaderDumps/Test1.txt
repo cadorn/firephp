@@ -1,0 +1,5 @@
+X-Wf-Protocol-1 http://meta.wildfirehq.org/Protocol/JsonStream/0.2
+X-Wf-1-Plugin-1 http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library-FirePHPCore/0.2.0
+X-Wf-1-Structure-1 http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1
+X-Wf-1-1-1-1 158|[{"Type":"INFO","Label":"Notice (8): Use of undefined constant asdfasdf - assumed 'asdfasdf' [APP\/views\/users\/login.thtml, line 1","File":"","Line":""},[]]|
+X-Wf-1-Index 1 
