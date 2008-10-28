@@ -33,10 +33,19 @@ header('X-Wf-Protocol-1: http://meta.wildfirehq.org/Protocol/JsonStream/0.1');
 }
 
 
-if(true) {
-  
+if(false) {
   $var = array('i'=>10, 'j'=>20);
-  
   $firephp->log($var, 'Iterators');
 }
 
+
+if(true) {
+
+  error_reporting(E_ALL);
+  $firephp->registerErrorHandler();
+  $firephp->registerExceptionHandler();
+  
+  if (in_array(10,10)) echo $empty;
+  echo "OK";
+
+}
