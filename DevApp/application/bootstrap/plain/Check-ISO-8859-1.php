@@ -11,15 +11,25 @@ ob_start();
 
 $firephp = FirePHP::getInstance(true);
 
-$firephp->setOptions(array('useNativeJsonEncode'=>false));
-
+$firephp->setOptions(array('useNativeJsonEncode'=>true));
 
 $tab = array(
      'index' => 'mon numéro est le 0',
      'mon numéro est le 0' => 'index'
 );
-$json  = json_encode($tab);
-echo $json;
+$json  = $firephp->jsonEncode($tab);
+echo $json."<br/>\n";
+
+$firephp->fb(array('useNativeJsonEncode'=>true,'characters'=>$tab));
 
 
-$firephp->fb(array('characters'=>'mon numéro est le 0'));
+$firephp->setOptions(array('useNativeJsonEncode'=>false));
+
+$tab = array(
+     'index' => 'mon numéro est le 0',
+     'mon numéro est le 0' => 'index'
+);
+$json  = $firephp->jsonEncode($tab);
+echo $json."<br/>\n";
+
+$firephp->fb(array('useNativeJsonEncode'=>false,'characters'=>$tab));
