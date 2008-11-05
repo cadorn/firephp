@@ -814,7 +814,7 @@ class FirePHP {
    * @param object $Object The object to be encoded
    * @return string The JSON string
    */
-  protected function jsonEncode($Object, $skipObjectEncode=false)
+  public function jsonEncode($Object, $skipObjectEncode=false)
   {
     if(!$skipObjectEncode) {
       $Object = $this->encodeObject($Object);
@@ -858,7 +858,12 @@ class FirePHP {
   protected function encodeObject($Object, $ObjectDepth = 1, $ArrayDepth = 1)
   {
     $return = array();
-    
+
+    if (is_resource($Object)) {
+
+      return '** '.(string)$Object.' **';
+
+    } else    
     if (is_object($Object)) {
 
         if ($ObjectDepth > $this->options['maxObjectDepth']) {
