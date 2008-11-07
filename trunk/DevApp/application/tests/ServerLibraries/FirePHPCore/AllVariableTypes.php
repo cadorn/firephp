@@ -2,6 +2,8 @@
 
 $firephp = FirePHP::getInstance(true);
 
+//$firephp->setOptions(array('useNativeJsonEncode'=>false));
+
 
 $firephp->fb('string');
 $firephp->fb('string','Label');
@@ -29,6 +31,7 @@ $array['key8'] = array('string');
 $array['key9'] = array('key'=>'value');
 $array['key10'] = new TestObject();
 $array[1] = 'string';
+$array['resource'] = tmpfile();
 
 $obj = new TestObject();
 $obj->child = new TestObject();

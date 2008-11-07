@@ -7,6 +7,8 @@ $Test = $_REQUEST['Test'];
 ini_set('display_errors', '1');
 ini_set('error_reporting', E_ALL | E_STRICT);
 
+date_default_timezone_set('America/Los_Angeles');
+
 switch($Library) {
     
     case 'FirePHPCore':
