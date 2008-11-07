@@ -13,12 +13,16 @@ if($file) {
   foreach( $lines as $line ) {
     if($line = trim($line)) {
 
-      $index = strpos($line, "\t");
-      if(!$index) {
-        $index = strpos($line, " ");
+      if(!strpos($line,':') || strpos($line,':')>strpos($line,' ')) {
+        $index = strpos($line, "\t");
+        if(!$index) {
+          $index = strpos($line, " ");
+        }
+        $line = substr($line,0,$index).':'.substr($line,$index);
+      } else {
+        $index = strpos($line, ':');
       }
-      $line = substr($line,0,$index).':'.substr($line,$index);
-      
+            
       if(substr($line,0,11)=='X-Wf-1-1-1-') {
         $count++;
         $line = substr($line,0,11).$count.substr($line,$index);
