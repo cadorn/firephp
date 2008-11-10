@@ -1,8 +1,0 @@
-X-Wf-1-1-1-1 92|[{"Type":"INFO","File":"\/home\/cr\/worknow\/api\/v7\/core\/fblogger.inc","Line":97},"HUHU"]|
-X-Wf-Protocol-1 http://meta.wildfirehq.org/Protocol/JsonStream/0.2
-X-Wf-1-1-1-2 92|[{"Type":"INFO","File":"\/home\/cr\/worknow\/api\/v7\/core\/fblogger.inc","Line":97},"HUHU"]|
-X-Wf-1-Plugin-1 http://meta.firephp.org/Wildfire/Plugin/FirePHP/Library-FirePHPCore/0.2.0
-X-Wf-1-1-1-2 92|[{"Type":"INFO","File":"\/home\/cr\/worknow\/api\/v7\/core\/fblogger.inc","Line":97},"HUHU"]|
-X-Wf-1-Structure-1 http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1
-X-Wf-1-1-1-2 92|[{"Type":"INFO","File":"\/home\/cr\/worknow\/api\/v7\/core\/fblogger.inc","Line":97},"HUHU"]|
-X-Wf-1-Index 2 
