@@ -25,7 +25,15 @@ if($file) {
             
       if(substr($line,0,11)=='X-Wf-1-1-1-') {
         $count++;
-        $line = substr($line,0,11).$count.substr($line,$index);
+
+        $line_data = trim(substr($line,$index+1));
+        $line_size = substr($line_data,0,strpos($line_data,'|'));
+        $line_data = substr($line_data,strlen($line_size));
+        
+        // Adjust line size
+        $line_size = strlen($line_data)-2;
+        
+        $line = substr($line,0,11).$count.': '.$line_size.$line_data;
       } else
       if(substr($line,0,12)=='X-Wf-1-Index') {
         $line = substr($line,0,14).$count;
