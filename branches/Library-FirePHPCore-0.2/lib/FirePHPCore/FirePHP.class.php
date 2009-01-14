@@ -185,7 +185,7 @@ class FirePHP {
    * @var boolean
    */
   protected $enabled = true;
-  
+
   /**
    * The object constructor
    */
@@ -195,7 +195,7 @@ class FirePHP {
     $this->options['useNativeJsonEncode'] = true;
     $this->options['includeLineNumbers'] = true;
   }
-    
+
   /**
    * When the object gets serialized only include specific object members.
    * 
@@ -252,7 +252,7 @@ class FirePHP {
    * Filters are used to exclude object members.
    * 
    * @param string $Class The class name of the object
-   * @param array $Filter An array or members to exclude
+   * @param array $Filter An array of members to exclude
    * @return void
    */
   public function setObjectFilter($Class, $Filter) {
