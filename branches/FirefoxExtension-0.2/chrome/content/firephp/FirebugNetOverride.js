@@ -21,6 +21,60 @@ const binaryCategoryMap =
 
 /* Only override the net code for specific firebug versions */
 
+if(Firebug.version=='1.4') {		/* 1.4.x */
+
+Firebug.FirePHPNetOverride = extend(Firebug.Module,
+{
+    initialize: function()
+    {
+        Firebug.Module.initialize.apply(this, arguments);
+        Firebug.NetMonitor.NetInfoBody.addListener(this);
+    },
+
+    shutdown: function()
+    {
+        Firebug.Module.shutdown.apply(this, arguments);
+        Firebug.NetMonitor.NetInfoBody.removeListener(this);
+    },
+    
+    initTabBody: function(infoBox, file)
+    {
+        Firebug.NetMonitor.NetInfoBody.appendTab(infoBox,
+            "Server", "Server");
+    },
+
+    destroyTabBody: function(infoBox, file)
+    {
+        // TODO: clean up code for tab content.
+    },
+
+    updateTabBody: function(infoBox, file, context)
+    {
+        // Generate content only for the first time and only if the
+        // new tab has been just activated.
+        var tab = infoBox.selectedTab;
+        if (tab.dataPresented || !hasClass(tab, "netInfoServerTab")) {
+            return;
+        }
+
+        tab.dataPresented = true;
+
+        // Get body element associated with the tab.
+        var tabBody = getElementByClass(infoBox, "netInfoServerText");
+
+        // TODO: initialize tab content.
+        
+//        tabBody.innerHTML = 'sss';
+        
+        netInfoServerTab(infoBox, file, context, tabBody);
+        
+    }    
+});
+
+Firebug.registerModule(Firebug.FirePHPNetOverride);
+
+
+} else
 if(Firebug.version=='1.3') {		/* 1.3.x */
 
 Firebug.NetMonitor.NetInfoBody = domplate(Firebug.NetMonitor.NetInfoBody,
@@ -914,12 +968,14 @@ function isURLEncodedFile(file, text)
 /* END **** Simple copy from net.js **** */
 
 
-function netInfoServerTab(netInfoBox, file, context) {
+function netInfoServerTab(netInfoBox, file, context, responseTextBox) {
 
     netInfoBox.serverPresented = true;
-
-    var responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
-
+    
+    if(!responseTextBox || responseTextBox=='undefined') {
+      responseTextBox = getChildByClass(netInfoBox, "netInfoServerText");
+    }
+    
 		var name = '';
 		var url = '';
 		var item_index = 0;
@@ -1017,7 +1073,7 @@ function netInfoServerTab(netInfoBox, file, context) {
 				if(data || wildfire.hasMessages()) {
           parseAndPrintData(wildfire, data, mask, responseTextBox,netInfoBox.ownerDocument,hash);
 				} else {
-					responseTextBox.innerHTML = '"X-FirePHP-Data" response header not found in request response!';
+					responseTextBox.innerHTML = '<span style="color: gray;">No FirePHP data found in response headers</span>';
 				}
       }
 		}	

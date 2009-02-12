@@ -17,7 +17,9 @@ if(externalMode) {
 
 FBL.ns(function() { with (FBL) {
 
-const FB_NEW = (Firebug.version == '1.2' || Firebug.version == '1.3')?true:false;
+const FB_NEW = (Firebug.version == '1.2'
+                || Firebug.version == '1.3'
+                || Firebug.version == '1.4')?true:false;
 
 
 const Cc = Components.classes;
@@ -292,9 +294,9 @@ var FirePHP = top.FirePHP = {
   commandLineLargeText: '',
   
   setWindowStatusBarText: function(text) {
-    
-    var commandLineSmall = FirebugChrome.$("fbCommandLine");
-    var commandLineLarge = FirebugChrome.$("fbLargeCommandLine");
+        
+    var commandLineSmall = FirebugContext.chrome.$("fbCommandLine");
+    var commandLineLarge = FirebugContext.chrome.$("fbLargeCommandLine");
     
     if(text==null) {
       commandLineSmall.value = this.commandLineSmallText;

@@ -1,4 +1,9 @@
 
+2009-02-12 - Release Version: 0.2.2
+
+  - (Issue 88) FirePHP does not work with Firebug 1.4
+  - (Issue 86) File and Line info does not show when firebug is running in window
+
 2008-10-23 - Release Version: 0.2.1
 
   - Bugfix to allow data headers in any order

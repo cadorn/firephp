@@ -242,7 +242,7 @@ FirePHPProcessor.Init = function() {
                   
            
     onMouseOver: function(event) {
-      
+
       if(event.currentTarget.repInObject.meta
          && event.currentTarget.repInObject.meta.File
          && event.currentTarget.repInObject.meta.Line) {
