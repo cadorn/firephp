@@ -56,7 +56,8 @@ const firephpURLs =
     main: "http://www.firephp.org/",
     docs: "http://www.firephp.org/HQ/Use.htm",
     discuss: "http://www.firephp.org/HQ/Help.htm",
-    issues: "http://code.google.com/p/firephp/issues/list"
+    issues: "http://code.google.com/p/firephp/issues/list",
+    donate: "http://www.firephp.org/HQ/Contribute.htm?Trigger=Donate"
 };
 
 
@@ -84,10 +85,15 @@ var FirePHP = top.FirePHP = {
   initialize: function() {
     
     var currentVersion = FirePHP.getPref(FirePHP.prefDomain,'currentVersion');
+    var previousVersion = FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
     if(currentVersion!=FirePHP.version) {
 
       var url = firephpURLs['hq'];
-      url += "?Trigger=Install";
+      if(previousVersion) {
+        url += "?Trigger=Upgrade";
+      } else {
+        url += "?Trigger=Install";
+      }
 
       setTimeout(function() {
                    openNewTab(url);
