@@ -1,5 +1,5 @@
 
-2009-02-12 - Release Version: 0.2.2
+2009-02-12 - Release Version: 0.2.3
 
   - (Issue 88) FirePHP does not work with Firebug 1.4
   - (Issue 86) File and Line info does not show when firebug is running in window

@@ -71,7 +71,7 @@ const DEBUG = false;
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.2.2',
+  version: '0.2.3',
 
   prefDomain: "extensions.firephp",
   
@@ -88,11 +88,11 @@ var FirePHP = top.FirePHP = {
     var previousVersion = FirePHP.getPref(FirePHP.prefDomain,'previousVersion');
     if(currentVersion!=FirePHP.version) {
 
-      var url = firephpURLs['hq'];
+      var url = '';
       if(previousVersion) {
-        url += "?Trigger=Upgrade";
+        url = "http://www.firephp.org/HQ/Contribute.htm?Trigger=Upgrade";
       } else {
-        url += "?Trigger=Install";
+        url = "http://www.firephp.org/HQ/Install.htm?Trigger=Install";
       }
 
       setTimeout(function() {
