@@ -303,6 +303,15 @@ class FirePHP {
   }
   
   /**
+   * Get options from the library
+   *
+   * @return array The currently set options
+   */
+  public function getOptions() {
+    return $this->options;
+  }
+  
+  /**
    * Register FirePHP as your error handler
    * 
    * Will throw exceptions for each php error.
