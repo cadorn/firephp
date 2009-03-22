@@ -156,7 +156,14 @@ class FirePHP {
    * 
    * @var boolean
    */
-  protected static $inExceptionHandler = false;
+  protected $inExceptionHandler = false;
+  
+  /**
+   * Flag whether to throw PHP errors that have been converted to ErrorExceptions
+   * 
+   * @var boolean
+   */
+  protected $throwErrorExceptions = true;
   
   /**
    * Wildfire protocol message index
@@ -287,12 +294,14 @@ class FirePHP {
    * 
    * Will throw exceptions for each php error.
    */
-  public function registerErrorHandler()
+  public function registerErrorHandler($throwErrorExceptions=true)
   {
     //NOTE: The following errors will not be caught by this error handler:
     //      E_ERROR, E_PARSE, E_CORE_ERROR,
     //      E_CORE_WARNING, E_COMPILE_ERROR,
     //      E_COMPILE_WARNING, E_STRICT
+    
+    $this->throwErrorExceptions = $throwErrorExceptions;
     
     set_error_handler(array($this,'errorHandler'));     
   }
@@ -316,7 +325,13 @@ class FirePHP {
     }
     // Only throw exceptions for errors we are asking for
     if (error_reporting() & $errno) {
-      throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+
+      $exception = new ErrorException($errstr, 0, $errno, $errfile, $errline);
+      if($this->throwErrorExceptions) {
+        throw $exception;
+      } else {
+        $this->fb($exception);
+      }
     }
   }
   
@@ -338,11 +353,11 @@ class FirePHP {
    */
   function exceptionHandler($Exception) {
     
-    self::$inExceptionHandler = true;
+    $this->inExceptionHandler = true;
     
     $this->fb($Exception);
     
-    self::$inExceptionHandler = false;
+    $this->inExceptionHandler = false;
   }
   
   /**
@@ -521,7 +536,7 @@ class FirePHP {
   
     if (headers_sent($filename, $linenum)) {
       // If we are logging from within the exception handler we cannot throw another exception
-      if(self::$inExceptionHandler) {
+      if($this->inExceptionHandler) {
         // Simply echo the error out to the page
         echo '<div style="border: 2px solid red; font-family: Arial; font-size: 12px; background-color: lightgray; padding: 5px;"><span style="color: red; font-weight: bold;">FirePHP ERROR:</span> Headers already sent in <b>'.$filename.'</b> on line <b>'.$linenum.'</b>. Cannot send log data to FirePHP. You must have Output Buffering enabled via ob_start() or output_buffering ini directive.</div>';
       } else {
