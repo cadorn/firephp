@@ -307,6 +307,8 @@ class FirePHP {
    * Register FirePHP as your error handler
    * 
    * Will throw exceptions for each php error.
+   * 
+   * @return mixed Returns a string containing the previously defined error handler (if any)
    */
   public function registerErrorHandler($throwErrorExceptions=true)
   {
@@ -317,7 +319,7 @@ class FirePHP {
     
     $this->throwErrorExceptions = $throwErrorExceptions;
     
-    set_error_handler(array($this,'errorHandler'));     
+    return set_error_handler(array($this,'errorHandler'));     
   }
 
   /**
@@ -351,10 +353,14 @@ class FirePHP {
   
   /**
    * Register FirePHP as your exception handler
+   * 
+   * @return mixed Returns the name of the previously defined exception handler,
+   *               or NULL on error.
+   *               If no previous handler was defined, NULL is also returned.
    */
   public function registerExceptionHandler()
   {
-    set_exception_handler(array($this,'exceptionHandler'));     
+    return set_exception_handler(array($this,'exceptionHandler'));     
   }
   
   /**
