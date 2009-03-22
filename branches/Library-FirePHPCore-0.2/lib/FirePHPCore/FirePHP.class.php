@@ -354,14 +354,29 @@ class FirePHP {
   }
   
   /**
-   * Start a group for following messages
+   * Start a group for following messages.
+   * 
+   * Options:
+   *   Collapsed: [true|false]
+   *   Color:     [#RRGGBB|ColorName]
    *
    * @param string $Name
+   * @param array $Options OPTIONAL Instructions on how to log the group
    * @return true
    * @throws Exception
    */
-  public function group($Name) {
-    return $this->fb(null, $Name, FirePHP::GROUP_START);
+  public function group($Name, $Options=null) {
+    
+    if($Options) {
+      if(!is_array($Options)) {
+        throw new Exception('Options must be defined as an array!');
+      }
+      if(array_key_exists('Collapsed', $Options)) {
+        $Options['Collapsed'] = ($Options['Collapsed'])?'true':'false';
+      }
+    }
+    
+    return $this->fb(null, $Name, FirePHP::GROUP_START, $Options);
   }
   
   /**
@@ -498,6 +513,7 @@ class FirePHP {
   
     $Type = null;
     $Label = null;
+    $Options = array();
   
     if(func_num_args()==1) {
     } else
@@ -523,6 +539,11 @@ class FirePHP {
     if(func_num_args()==3) {
       $Type = func_get_arg(2);
       $Label = func_get_arg(1);
+    } else
+    if(func_num_args()==4) {
+      $Type = func_get_arg(2);
+      $Label = func_get_arg(1);
+      $Options = func_get_arg(3);
     } else {
       throw $this->newException('Wrong number of arguments to fb() function!');
     }
@@ -685,7 +706,8 @@ class FirePHP {
     if($Type==self::DUMP) {
     	$msg = '{"'.$Label.'":'.$this->jsonEncode($Object, $skipFinalObjectEncode).'}';
     } else {
-      $msg_meta = array('Type'=>$Type);
+      $msg_meta = $Options;
+      $msg_meta['Type'] = $Type;
       if($Label!==null) {
         $msg_meta['Label'] = $Label;
       }
