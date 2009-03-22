@@ -191,8 +191,11 @@ class FirePHP {
    * 
    * @var array
    */
-  protected $options = array();
-  
+  protected $options = array('maxObjectDepth' => 10,
+                             'maxArrayDepth' => 20,
+                             'useNativeJsonEncode' => true,
+                             'includeLineNumbers' => true);
+
   /**
    * Filters used to exclude object members when encoding
    * 
@@ -218,10 +221,6 @@ class FirePHP {
    * The object constructor
    */
   function __construct() {
-    $this->options['maxObjectDepth'] = 10;
-    $this->options['maxArrayDepth'] = 20;
-    $this->options['useNativeJsonEncode'] = true;
-    $this->options['includeLineNumbers'] = true;
   }
 
   /**
