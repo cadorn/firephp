@@ -151,10 +151,22 @@ var FirePHP = top.FirePHP = {
       /* Que processing until after context is initialized. This is for whenever a new page is loaded. */
       Firebug.FirePHP.queFile(file);
     }
-                                    
-                                    
   },
 
+
+  /* Used for FB >= 1.4a13 */
+  onResponse: function(context, file)
+  {
+    if(Firebug.FirePHP.processQueOnWatchWindow) {
+      /* Process right away as context is already initialized */
+      Firebug.FirePHP._processRequest(file.href,
+                                      FirePHP.parseHeaders(file.responseHeaders,'array'));
+    } else {
+      /* Que processing until after context is initialized. This is for whenever a new page is loaded. */
+      Firebug.FirePHP.queFile(file);
+    }
+  },
+  
 
   isEnabled: function() {
     
