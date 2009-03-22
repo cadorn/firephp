@@ -166,6 +166,20 @@ class FirePHP {
   protected $throwErrorExceptions = true;
   
   /**
+   * Flag whether to convert PHP assertion errors to Exceptions
+   * 
+   * @var boolean
+   */
+  protected $convertAssertionErrorsToExceptions = true;
+  
+  /**
+   * Flag whether to throw PHP assertion errors that have been converted to Exceptions
+   * 
+   * @var boolean
+   */
+  protected $throwAssertionExceptions = false;
+  
+  /**
    * Wildfire protocol message index
    *
    * @var int
@@ -359,6 +373,54 @@ class FirePHP {
     
     $this->inExceptionHandler = false;
   }
+  
+  /**
+   * Register FirePHP driver as your assert callback
+   * 
+   * @param boolean $convertAssertionErrorsToExceptions
+   * @param boolean $throwAssertionExceptions
+   * @return mixed Returns the original setting or FALSE on errors
+   */
+  public function registerAssertionHandler($convertAssertionErrorsToExceptions=true, $throwAssertionExceptions=false)
+  {
+    $this->convertAssertionErrorsToExceptions = $convertAssertionErrorsToExceptions;
+    $this->throwAssertionExceptions = $throwAssertionExceptions;
+    
+    if($throwAssertionExceptions && !$convertAssertionErrorsToExceptions) {
+      throw $this->newException('Cannot throw assertion exceptions as assertion errors are not being converted to exceptions!');
+    }
+    
+    return assert_options(ASSERT_CALLBACK, array($this, 'assertionHandler'));
+  }
+  
+  /**
+   * FirePHP's assertion handler
+   *
+   * Logs all assertions to your firebug console and then stops the script.
+   *
+   * @param string $file File source of assertion
+   * @param int    $line Line source of assertion
+   * @param mixed  $code Assertion code
+   */
+  public function assertionHandler($file, $line, $code)
+  {
+
+    if($this->convertAssertionErrorsToExceptions) {
+      
+      $exception = new ErrorException('Assertion Failed - Code[ '.$code.' ]', 0, null, $file, $line);
+
+      if($this->throwAssertionExceptions) {
+        throw $exception;
+      } else {
+        $this->fb($exception);
+      }
+    
+    } else {
+    
+      $this->fb($code, 'Assertion Failed', FirePHP::ERROR, array('File'=>$file,'Line'=>$line));
+    
+    }
+  }  
   
   /**
    * Set custom processor url for FirePHP
@@ -744,10 +806,10 @@ class FirePHP {
       if($Label!==null) {
         $msg_meta['Label'] = $Label;
       }
-      if(isset($meta['file'])) {
+      if(isset($meta['file']) && !isset($msg_meta['File'])) {
         $msg_meta['File'] = $meta['file'];
       }
-      if(isset($meta['line'])) {
+      if(isset($meta['line']) && !isset($msg_meta['Line'])) {
         $msg_meta['Line'] = $meta['line'];
       }
     	$msg = '['.$this->jsonEncode($msg_meta).','.$this->jsonEncode($Object, $skipFinalObjectEncode).']';
