@@ -462,6 +462,10 @@ class FirePHP {
    */
   public function group($Name, $Options=null) {
     
+    if(!$Name) {
+      throw $this->newException('You must specify a label for the group!');
+    }
+    
     if($Options) {
       if(!is_array($Options)) {
         throw $this->newException('Options must be defined as an array!');
@@ -750,6 +754,13 @@ class FirePHP {
       }
 
       $skipFinalObjectEncode = true;
+      
+    } else
+    if($Type==self::GROUP_START) {
+      
+      if(!$Label) {
+        throw $this->newException('You must specify a label for the group!');
+      }
       
     } else {
       if($Type===null) {
