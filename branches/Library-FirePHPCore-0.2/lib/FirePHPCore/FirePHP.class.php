@@ -12,7 +12,6 @@
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  * 
- *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  * 
  *     * Redistributions in binary form must reproduce the above copyright notice,
@@ -970,7 +969,7 @@ class FirePHP {
       return $this->json_encode($Object);
     }
   }
-  
+
   /**
    * Encodes a table by encoding each row and column with encodeObject()
    * 
@@ -978,17 +977,26 @@ class FirePHP {
    * @return array
    */  
   protected function encodeTable($Table) {
+    
     if(!$Table) return $Table;
-    for( $i=0 ; $i<count($Table) ; $i++ ) {
-      if(is_array($Table[$i])) {
-        for( $j=0 ; $j<count($Table[$i]) ; $j++ ) {
-          $Table[$i][$j] = $this->encodeObject($Table[$i][$j]);
+    
+    $new_table = array();
+    foreach($Table as $row) {
+  
+      if(is_array($row)) {
+        $new_row = array();
+        
+        foreach($row as $item) {
+          $new_row[] = $this->encodeObject($item);
         }
+        
+        $new_table[] = $new_row;
       }
     }
-    return $Table;
+    
+    return $new_table;
   }
-  
+
   /**
    * Encodes an object including members with
    * protected and private visibility
