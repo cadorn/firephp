@@ -116,6 +116,17 @@ class FB
   }
 
   /**
+   * Get options for the library
+   * 
+   * @see FirePHP->getOptions()
+   * @return array The options
+   */
+  public static function getOptions() {
+    $instance = FirePHP::getInstance(true);
+    return $instance->getOptions();
+  }
+
+  /**
    * Log object to firebug
    * 
    * @see http://www.firephp.org/Wiki/Reference/Fb
@@ -132,15 +143,20 @@ class FB
 
   /**
    * Start a group for following messages
+   * 
+   * Options:
+   *   Collapsed: [true|false]
+   *   Color:     [#RRGGBB|ColorName]
    *
    * @param string $Name
+   * @param array $Options OPTIONAL Instructions on how to log the group
    * @return true
-   * @throws Exception
    */
-  public static function group($Name) {
-    return self::send(null, $Name, FirePHP::GROUP_START);
+  public static function group($Name, $Options=null) {
+    $instance = FirePHP::getInstance(true);
+    return $instance->group($Name, $Options);
   }
-  
+
   /**
    * Ends a group you have started before
    *
