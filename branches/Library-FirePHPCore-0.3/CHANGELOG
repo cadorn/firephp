@@ -1,4 +1,15 @@
 
+  - (Issue 98) Thrown exceptions don't send an HTTP 500 if the FirePHP exception handler is enabled
+  - (Issue 85) Support associative arrays in encodeTable method in FirePHP.class.php
+  - (Issue 66) Add a new getOptions() public method in API
+  - (Issue 82) Define $this->options outside of __construct
+  - (Issue 72) Message error if group name is null
+  - (Issue 68) registerErrorHandler() and registerExceptionHandler() should returns previous handlers defined
+  - (Issue 69) Add the missing register handler in the triumvirate (error, exception, assert)
+  - (Issue 75) [Error & Exception Handling] Option to not exit script execution
+  - (Issue 83) Exception handler can't throw exceptions
+  - (Issue 80) Auto/Pre collapsing groups AND Custom group row colors
+
 2008-11-09 - Release Version: 0.2.1
 
   - (Issue 70) Problem when logging resources
