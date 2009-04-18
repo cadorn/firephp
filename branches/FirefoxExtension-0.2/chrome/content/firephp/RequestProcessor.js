@@ -493,10 +493,30 @@ FirePHPProcessor.processMessage = function(mode, data, meta) {
           
   if(mode=='group_start') {
     
+    var msg = null;
+
     if(meta && meta.Label) {
-      Firebug.Console.openGroup([meta.Label], null, "group", null, false);
+      msg = [meta.Label];
     } else {
-      Firebug.Console.openGroup([data[0]], null, "group", null, false);
+      msg = [data[0]];
+    }
+    
+    if(meta && (meta.Collapsed || meta.Color)) {
+      
+      // NOTE: Throttleing is disabled which may caue the group to be interted in a different
+      //       index than originally intended as other messages are inserted with throttleing enabled.
+      //       This should be done in a better way in future.
+      var row = Firebug.Console.openGroup(msg, null, "group", null, true);
+      
+      if(meta.Collapsed && meta.Collapsed=='true') {
+        removeClass(row, "opened");
+      }
+      if(meta.Color) {
+        row.style.color = meta.Color;
+      }
+      
+    } else {
+      Firebug.Console.openGroup(msg, null, "group", null, false);
     }
     
   } else
