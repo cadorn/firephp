@@ -1,4 +1,5 @@
 
+  - (Issue 90) PHP4 compatible version of FirePHPCore
   - (Issue 98) Thrown exceptions don't send an HTTP 500 if the FirePHP exception handler is enabled
   - (Issue 85) Support associative arrays in encodeTable method in FirePHP.class.php
   - (Issue 66) Add a new getOptions() public method in API

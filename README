@@ -11,14 +11,15 @@ Client Side:
 
 Server Side:
 	
-	- PHP 5.x
+	- PHP 5 (complete functionality)
+	- PHP 4 (most functionality)
 
 
 ------------------------------------------------------
 	Install Tutorial
 ------------------------------------------------------
 	
-	http://www.firephp.org/Wiki/Main/QuickStart
+	http://www.firephp.org/HQ/Install.htm
 	
 	
 ------------------------------------------------------
