@@ -1,0 +1,9 @@
+
+
+Development Setup
+-----------------
+
+The current FirePHP development setup and build scripts are very specific
+to my environment at this time. I will be updating these to be more generic
+as the PINF (http://code.google.com/p/pinf/) project evolves.
+

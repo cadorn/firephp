@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<project name="org.firephp.package.FirefoxExtension" default="install" basedir=".">
+
+  <property file="build.properties" />
+ 
+
+  <target name="install">
+
+    <phing inheritAll="false"
+           phingfile="./../../packages-alpha/org.cadorn.package.Firebug/phing/Services.xml"
+           target="InstallExtensionFromSource"
+           haltonfailure="true">
+      <property name="package.alias" value="${firebug.package.alias}"/>
+      <property name="firefox.profile.name" value="${firefox.profile.name}"/>
+    </phing>
+ 
+    <phing inheritAll="false"
+           phingfile="./../../packages-alpha/org.cadorn.package.Mac.Firefox/phing/Services.xml"
+           target="InstallExtension"
+           haltonfailure="true">
+      <property name="profile.name" value="${firefox.profile.name}"/>
+      <property name="extension.id" value="${extension.id}"/>
+      <property name="extension.path" value="${project.basedir}"/>
+    </phing>
+
+  </target>  
+	
+  <target name="launch">
+ 
+    <phing inheritAll="false"
+           phingfile="./../../packages-alpha/org.cadorn.package.Mac.Firefox/phing/Services.xml"
+           target="LaunchBrowser"
+           haltonfailure="true">
+      <property name="profile.name" value="${firefox.profile.name}"/>
+    </phing>
+
+  </target>  
+	
+</project>
