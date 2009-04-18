@@ -34,56 +34,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * ***** END LICENSE BLOCK ***** */
+ * ***** END LICENSE BLOCK *****
+ * 
+ * @copyright   Copyright (C) 2007-2009 Christoph Dorn
+ * @author      Christoph Dorn <christoph@christophdorn.com>
+ * @author      Michael Day <manveru.alma@gmail.com>
+ * @license     http://www.opensource.org/licenses/bsd-license.php
+ * @package     FirePHP
+ */
 
+require_once dirname(__FILE__).'/FirePHP.class.php4';
 
-/* NOTE: You must have the FirePHPCore library in your include path */
-
-set_include_path('./../lib/'.PATH_SEPARATOR.get_include_path());
- 
-
-require('FirePHPCore/FirePHP.class.php');
-
-/* NOTE: You must have Output Buffering enabled via
-         ob_start() or output_buffering ini directive. */
-
-
-$firephp = FirePHP::getInstance(true);
-
-
-$firephp->fb('Hello World'); /* Defaults to FirePHP::LOG */
-
-$firephp->fb('Log message'  ,FirePHP::LOG);
-$firephp->fb('Info message' ,FirePHP::INFO);
-$firephp->fb('Warn message' ,FirePHP::WARN);
-$firephp->fb('Error message',FirePHP::ERROR);
-
-$firephp->fb('Message with label','Label',FirePHP::LOG);
-
-$firephp->fb(array('key1'=>'val1',
-         'key2'=>array(array('v1','v2'),'v3')),
-   'TestArray',FirePHP::LOG);
-
-function test($Arg1) {
-  throw new Exception('Test Exception');
-}
-try {
-  test(array('Hello'=>'World'));
-} catch(Exception $e) {
-  /* Log exception including stack trace & variables */
-  $firephp->fb($e);
+/**
+ * Sends the given data to the FirePHP Firefox Extension.
+ * The data can be displayed in the Firebug Console or in the
+ * "Server" request tab.
+ * 
+ * @see http://www.firephp.org/Wiki/Reference/Fb
+ * @param mixed $Object
+ * @return true
+ * @throws Exception
+ */
+function fb()
+{
+  $instance = FirePHP::getInstance(true);
+  
+  $args = func_get_args();
+  return call_user_func_array(array($instance,'fb'),$args);
 }
 
-$firephp->fb('Backtrace to here',FirePHP::TRACE);
 
-$firephp->fb(array('2 SQL queries took 0.06 seconds',array(
-   array('SQL Statement','Time','Result'),
-   array('SELECT * FROM Foo','0.02',array('row1','row2')),
-   array('SELECT * FROM Bar','0.04',array('row1','row2'))
-  )),FirePHP::TABLE);
-
-/* Will show only in "Server" tab for the request */
-$firephp->fb(apache_request_headers(),'RequestHeaders',FirePHP::DUMP);
-
-
-print 'Hello World';
