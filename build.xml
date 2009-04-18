@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+
+<project name="FirePHPCore" default="package" basedir=".">
+
+    <property name="branch" value="0.2" />
+
+    <target name="prepare">
+      
+        <echo msg="Making directory ./build" />
+        <delete dir="./build" includeemptydirs="true" failonerror="true" />
+        <mkdir dir="./build" />
+        
+        <propertyprompt propertyName="version" promptText="Version:" />
+
+        <propertyprompt propertyName="stability" promptText="Stability (stable, beta, alpha, devel, or snapshot):" />
+        
+    </target>
+
+    <target name="build" depends="prepare">
+        <echo msg="Copying files to build directory..." />
+
+        <copy file="./README" tofile="./build/FirePHPCore-${version}/README"/>
+        <copy file="./CHANGELOG" tofile="./build/FirePHPCore-${version}/CHANGELOG"/>
+
+        <copy todir="./build/FirePHPCore-${version}/lib" >
+          <fileset dir="./lib"/>
+          <filterchain>
+            <replacetokens begintoken="##" endtoken="##">
+              <token key="VERSION" value="${version}" />
+            </replacetokens>
+          </filterchain>          
+        </copy>
+
+        <copy todir="./build/pear" >
+          <fileset dir="./lib/FirePHPCore"/>
+          <filterchain>
+            <replacetokens begintoken="##" endtoken="##">
+              <token key="VERSION" value="${version}" />
+            </replacetokens>
+          </filterchain>          
+        </copy>
+
+    </target>
+
+
+
+
+    <target name="package" depends="build">
+
+        <phingcall target="package-default"/>
+        <phingcall target="package-pear"/>
+    
+    </target>
+    
+
+    <target name="package-default">
+        
+        <echo msg="Creating archive..." />
+
+        <exec command="zip -vr FirePHPCore.zip FirePHPCore-${version}/*" dir="${project.basedir}/build/" passthru="true" />
+
+        <echo msg="Files copied and compressed in build directory OK!" />
+            
+        <echo msg="Renaming package archive to FirePHPCore-${version}.zip."/>        
+      
+        <move file="./build/FirePHPCore.zip" tofile="./build/FirePHPCore-${version}.zip" overwrite="true"/>
+
+    </target>
+    
+    <target name="package-pear">
+        
+        <php function="date" returnProperty="date">
+          <param value="Y-m-d"/>
+        </php> 
+
+        <copy file="pear.package.xml" tofile="./build/pear/package2.xml" overwrite="true">
+         
+          <filterchain>
+            <replacetokens begintoken="##" endtoken="##">
+              <token key="DATE" value="${date}" />
+              <token key="VERSION" value="${version}" />
+              <token key="STABILITY" value="${stability}" />
+            </replacetokens>
+          </filterchain>          
+        
+        </copy>
+        
+        <exec command="pear package package2.xml" dir="./build/pear" passthru="true"/>
+                  
+    </target>    
+    
+    <target name="dist" depends="package">
+            
+      <phing phingfile="./../../../../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="init">
+      </phing>
+        
+      <phing phingfile="./../../../../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="svncopy">
+        <property name="SVNCopyFrom" value="/branches/Library-FirePHPCore-${branch}"/>
+        <property name="SVNCopyTo" value="/tags/Library-FirePHPCore-${version}"/>
+      </phing>
+            
+      <phing phingfile="./../../../../../../com.cadorn.websites.FirePHP/phing/library.xml" inheritAll="false" target="upload">
+        <property name="LibraryName" value="FirePHPCore"/>
+        <property name="LibraryVersion" value="${version}"/>
+        <property name="LibraryFilepath" value="${project.basedir}/build/FirePHPCore-${version}.zip"/>
+        <property name="LibraryStability" value="${stability}"/>
+      </phing>
+      
+    </target>
+</project>
