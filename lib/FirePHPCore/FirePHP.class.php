@@ -381,7 +381,9 @@ class FirePHP {
   function exceptionHandler($Exception) {
     
     $this->inExceptionHandler = true;
-    
+
+    header('HTTP/1.1 500 Internal Server Error');
+
     $this->fb($Exception);
     
     $this->inExceptionHandler = false;
