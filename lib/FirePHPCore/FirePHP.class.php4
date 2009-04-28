@@ -150,8 +150,11 @@ class FirePHP {
    * 
    * @var array
    */
-  var $options = array();
-  
+  var $options = array('maxObjectDepth' => 10,
+                       'maxArrayDepth' => 20,
+                       'useNativeJsonEncode' => true,
+                       'includeLineNumbers' => true);
+
   /**
    * Filters used to exclude object members when encoding
    * 
@@ -172,26 +175,13 @@ class FirePHP {
    * @var boolean
    */
   var $enabled = true;
-  
+
   /**
    * The object constructor
    */
   function FirePHP() {
-    $this->options['maxObjectDepth'] = 10;
-    $this->options['maxArrayDepth'] = 20;
-    $this->options['useNativeJsonEncode'] = true;
-    $this->options['includeLineNumbers'] = true;
   }
-  
-  function &getInstance($AutoCreate=false) {
-  	global $FirePHP_Instance;
-  	
-  	if($AutoCreate===true && !$FirePHP_Instance) {
-  		$FirePHP_Instance = new FirePHP();
-  	}
-  	
-  	return $FirePHP_Instance;
-  }
+
     
   /**
    * When the object gets serialized only include specific object members.
@@ -200,6 +190,22 @@ class FirePHP {
    */  
   function __sleep() {
     return array('options','objectFilters','enabled');
+  }
+
+  /**
+   * Gets singleton instance of FirePHP
+   *
+   * @param boolean $AutoCreate
+   * @return FirePHP
+   */
+  function &getInstance($AutoCreate=false) {
+  	global $FirePHP_Instance;
+  	
+  	if($AutoCreate===true && !$FirePHP_Instance) {
+  		$FirePHP_Instance = new FirePHP();
+  	}
+  	
+  	return $FirePHP_Instance;
   }
     
   /**
@@ -227,7 +233,7 @@ class FirePHP {
    * Filters are used to exclude object members.
    * 
    * @param string $Class The class name of the object
-   * @param array $Filter An array or members to exclude
+   * @param array $Filter An array of members to exclude
    * @return void
    */
   function setObjectFilter($Class, $Filter) {
@@ -251,9 +257,20 @@ class FirePHP {
   }
   
   /**
+   * Get options from the library
+   *
+   * @return array The currently set options
+   */
+  function getOptions() {
+    return $this->options;
+  }
+  
+  /**
    * Register FirePHP as your error handler
    * 
-   * Will throw exceptions for each php error.
+   * Will use FirePHP to log each php error.
+   *
+   * @return mixed Returns a string containing the previously defined error handler (if any)
    */
   function registerErrorHandler()
   {
@@ -262,13 +279,13 @@ class FirePHP {
     //      E_CORE_WARNING, E_COMPILE_ERROR,
     //      E_COMPILE_WARNING, E_STRICT
     
-    set_error_handler(array($this,'errorHandler'));     
+    return set_error_handler(array($this,'errorHandler'));     
   }
 
   /**
    * FirePHP's error handler
    * 
-   * Throws exception for each php error that will occur.
+   * Logs each php error that will occur.
    *
    * @param int $errno
    * @param string $errstr
@@ -288,9 +305,32 @@ class FirePHP {
       $FirePHP_Instance->group($errstr);
       $FirePHP_Instance->error("{$errfile}, line $errline");
       $FirePHP_Instance->groupEnd();
-      //$FirePHP_Instance->fb('test', FirePHP_LOG);
     }
   }
+  
+  /**
+   * Register FirePHP driver as your assert callback
+   * 
+   * @return mixed Returns the original setting
+   */
+  function registerAssertionHandler()
+  {
+    return assert_options(ASSERT_CALLBACK, array($this, 'assertionHandler'));
+  }
+  
+  /**
+   * FirePHP's assertion handler
+   *
+   * Logs all assertions to your firebug console and then stops the script.
+   *
+   * @param string $file File source of assertion
+   * @param int    $line Line source of assertion
+   * @param mixed  $code Assertion code
+   */
+  function assertionHandler($file, $line, $code)
+  {
+    $this->fb($code, 'Assertion Failed', FirePHP_ERROR, array('File'=>$file,'Line'=>$line));
+  }  
   
   /**
    * Set custom processor url for FirePHP
@@ -313,14 +353,33 @@ class FirePHP {
   }
   
   /**
-   * Start a group for following messages
+   * Start a group for following messages.
+   * 
+   * Options:
+   *   Collapsed: [true|false]
+   *   Color:     [#RRGGBB|ColorName]
    *
    * @param string $Name
+   * @param array $Options OPTIONAL Instructions on how to log the group
    * @return true
    * @throws Exception
    */
-  function group($Name) {
-    return $this->fb(null, $Name, FirePHP_GROUP_START);
+  function group($Name, $Options=null) {
+    
+    if(!$Name) {
+      trigger_error('You must specify a label for the group!');
+    }
+    
+    if($Options) {
+      if(!is_array($Options)) {
+        trigger_error('Options must be defined as an array!');
+      }
+      if(array_key_exists('Collapsed', $Options)) {
+        $Options['Collapsed'] = ($Options['Collapsed'])?'true':'false';
+      }
+    }
+    
+    return $this->fb(null, $Name, FirePHP_GROUP_START, $Options);
   }
   
   /**
@@ -446,7 +505,8 @@ class FirePHP {
    * @throws Exception
    */
   function fb($Object) {
- 	if(!$this->enabled) {
+  
+    if(!$this->enabled) {
       return false;
     }
   
@@ -456,6 +516,7 @@ class FirePHP {
   
     $Type = null;
     $Label = null;
+    $Options = array();
   
     if(func_num_args()==1) {
     } else
@@ -480,6 +541,11 @@ class FirePHP {
     if(func_num_args()==3) {
       $Type = func_get_arg(2);
       $Label = func_get_arg(1);
+    } else
+    if(func_num_args()==4) {
+      $Type = func_get_arg(2);
+      $Label = func_get_arg(1);
+      $Options = func_get_arg(3);
     } else {
       trigger_error('Wrong number of arguments to fb() function!');
     }
@@ -542,6 +608,12 @@ class FirePHP {
 
       $skipFinalObjectEncode = true;
       
+    } else
+    if($Type==FirePHP_GROUP_START) {
+      
+      if(!$Label) {
+        trigger_error('You must specify a label for the group!');
+      }
     } else {
       if($Type===null) {
         $Type = FirePHP_LOG;
@@ -598,14 +670,15 @@ class FirePHP {
     if($Type==FirePHP_DUMP) {
     	$msg = '{"'.$Label.'":'.$this->jsonEncode($Object, $skipFinalObjectEncode).'}';
     } else {
-      $msg_meta = array('Type'=>$Type);
+      $msg_meta = $Options;
+      $msg_meta['Type'] = $Type;
       if($Label!==null) {
         $msg_meta['Label'] = $Label;
       }
-      if(isset($meta['file'])) {
+      if(isset($meta['file']) && !isset($msg_meta['File'])) {
         $msg_meta['File'] = $meta['file'];
       }
-      if(isset($meta['line'])) {
+      if(isset($meta['line']) && !isset($msg_meta['Line'])) {
         $msg_meta['Line'] = $meta['line'];
       }
     	$msg = '['.$this->jsonEncode($msg_meta).','.$this->jsonEncode($Object, $skipFinalObjectEncode).']';
@@ -740,20 +813,28 @@ class FirePHP {
    * @return array
    */  
    function encodeTable($Table) {
+    
     if(!$Table) return $Table;
-    for( $i=0 ; $i<count($Table) ; $i++ ) {
-      if(is_array($Table[$i])) {
-        for( $j=0 ; $j<count($Table[$i]) ; $j++ ) {
-          $Table[$i][$j] = $this->encodeObject($Table[$i][$j]);
+    
+    $new_table = array();
+    foreach($Table as $row) {
+  
+      if(is_array($row)) {
+        $new_row = array();
+        
+        foreach($row as $item) {
+          $new_row[] = $this->encodeObject($item);
         }
+        
+        $new_table[] = $new_row;
       }
     }
-    return $Table;
+    
+    return $new_table;
   }
   
   /**
-   * Encodes an object including members with
-   *  and private visibility
+   * Encodes an object
    * 
    * @param Object $Object The object to be encoded
    * @param int $Depth The current traversal depth
@@ -761,7 +842,7 @@ class FirePHP {
    */
    function encodeObject($Object, $ObjectDepth = 1, $ArrayDepth = 1)
   {
- $return = array();
+    $return = array();
 
     if (is_resource($Object)) {
 
@@ -1164,7 +1245,7 @@ class FirePHP {
               return '[' . join(',', $elements) . ']';
 
           case 'object':
-              $vars = self::encodeObject($var);
+              $vars = FirePHP::encodeObject($var);
 
               $this->json_objectStack[] = $var;
 
