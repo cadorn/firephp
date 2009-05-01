@@ -105,7 +105,7 @@
 
     <target name="tag">
 
-        <exec command="svn copy --username christoph.dorn -m 'Tag ${version}${release} for FirePHPCore' 'https://firephp.googlecode.com/svn/branches/Library-FirePHPCore-${version}' 'https://firephp.googlecode.com/svn/tags/Library-FirePHPCore-${version}${release}'" passthru="true"/>
+        <exec command="svn copy --username christoph@christophdorn.com -m 'Tag ${version}${release} for FirePHPCore' 'https://firephp.googlecode.com/svn/branches/Library-FirePHPCore-${version}' 'https://firephp.googlecode.com/svn/tags/Library-FirePHPCore-${version}${release}'" passthru="true"/>
 
     </target>
     
