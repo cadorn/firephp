@@ -1,4 +1,10 @@
 
+2009-05-01 - Release Version: 0.3.rc.1
+
+  - (Issue 104) FirePHP doesn't play nice with User Agent Switcher
+  - (Issue 80) Auto/Pre collapsing groups AND Custom group row colors
+  - (Issue 94) Console not working with Firebug 1.4a13"
+
 2009-02-12 - Release Version: 0.2.4
 
   - (Issue 88) FirePHP does not work with Firebug 1.4

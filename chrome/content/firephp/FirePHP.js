@@ -71,7 +71,7 @@ const DEBUG = false;
 
 var FirePHP = top.FirePHP = {
 
-  version: '0.2.4',
+  version: '0.3',
 
   prefDomain: "extensions.firephp",
   
@@ -182,9 +182,14 @@ var FirePHP = top.FirePHP = {
 
       /* Add FirePHP/X.X.X to User-Agent header if not already there and firephp is enabled.
        * If firephp is not enabled remove header from request if it exists.
+       * 
+       * (Issue 104)
+       * Only add FirePHP header if useragent contains Firefox. If not the user-agent string
+       * was modified by an add-on on purpose (like User Agent Switcher) and FirePHP should not be added.
        */
 
-      if(httpChannel.getRequestHeader("User-Agent").match(/\sFirePHP\/([\.|\d]*)\s?/)==null) {
+      if(httpChannel.getRequestHeader("User-Agent").match(/\sFirePHP\/([\.|\d]*)\s?/)==null &&
+         httpChannel.getRequestHeader("User-Agent").match(/\sFirefox\//)!=null) {
         if (this.isEnabled()) {
           httpChannel.setRequestHeader("User-Agent",httpChannel.getRequestHeader("User-Agent") + ' '+
             "FirePHP/" + this.version, false);
