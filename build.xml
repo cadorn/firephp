@@ -2,6 +2,7 @@
 
 <project name="org.firephp.package.FirePHPCore" default="package" basedir=".">
 
+    <property file="build.local.properties" />
     <property file="build.properties" />
 
     <target name="prepare">
@@ -15,10 +16,10 @@
     <target name="build" depends="prepare">
         <echo msg="Copying files to build directory..." />
 
-        <copy file="./CHANGELOG" tofile="./build/FirePHPCore-${version}/CHANGELOG"/>
-        <copy file="./CREDITS" tofile="./build/FirePHPCore-${version}/CREDITS"/>
+        <copy file="./CHANGELOG" tofile="./build/FirePHPCore-${version}${release}/CHANGELOG"/>
+        <copy file="./CREDITS" tofile="./build/FirePHPCore-${version}${release}/CREDITS"/>
 
-        <copy file="./README" tofile="./build/FirePHPCore-${version}/README">
+        <copy file="./README" tofile="./build/FirePHPCore-${version}${release}/README">
           <filterchain>
             <replacetokens begintoken="##" endtoken="##">
               <token key="Version" value="${version}" />
@@ -27,7 +28,7 @@
           </filterchain>          
         </copy>
 
-        <copy todir="./build/FirePHPCore-${version}/lib" >
+        <copy todir="./build/FirePHPCore-${version}${release}/lib" >
           <fileset dir="./lib"/>
           <filterchain>
             <replacetokens begintoken="##" endtoken="##">
@@ -50,10 +51,12 @@
 
 
 
-    <target name="package" depends="build">
+    <target name="dist" depends="build">
 
         <phingcall target="package-default"/>
         <phingcall target="package-pear"/>
+
+        <echo msg="Do not forget to tag the release!"/>
     
     </target>
     
@@ -62,13 +65,13 @@
         
         <echo msg="Creating archive..." />
 
-        <exec command="zip -vr FirePHPCore.zip FirePHPCore-${version}/*" dir="${project.basedir}/build/" passthru="true" />
+        <exec command="zip -vr FirePHPCore.zip FirePHPCore-${version}${release}/*" dir="${project.basedir}/build/" passthru="true" />
 
         <echo msg="Files copied and compressed in build directory OK!" />
             
-        <echo msg="Renaming package archive to FirePHPCore-${version}.zip."/>        
+        <echo msg="Renaming package archive to FirePHPCore-${version}${release}.zip."/>        
       
-        <move file="./build/FirePHPCore.zip" tofile="./build/FirePHPLibrary-FirePHPCore-${version}.zip" overwrite="true"/>
+        <move file="./build/FirePHPCore.zip" tofile="./build/FirePHPLibrary-FirePHPCore-${version}${release}.zip" overwrite="true"/>
 
     </target>
     
@@ -91,23 +94,22 @@
         
         </copy>
         
+        <exec command="pear channel-discover pear.firephp.org" passthru="true"/>
         <exec command="pear package package.xml" dir="./build/pear" passthru="true"/>
                   
     </target>    
     
-    <target name="dist" depends="package">
-
-      <exec command="pear package package.xml" dir="./build/pear" passthru="true"/>
-      
-      <echo msg="Do not forget to tag the release!"/>
-      
-    </target>
-
     <target name="tag">
 
         <exec command="svn copy --username christoph@christophdorn.com -m 'Tag ${version}${release} for FirePHPCore' 'https://firephp.googlecode.com/svn/branches/Library-FirePHPCore-${version}' 'https://firephp.googlecode.com/svn/tags/Library-FirePHPCore-${version}${release}'" passthru="true"/>
 
     </target>
     
+    
+    <target name="upload">
+      
+        <exec command="scp ./build/FirePHPLibrary-FirePHPCore-${version}${release}.zip ${upload.user}@${upload.server}:${upload.path}" passthru="true"/>
+       
+    </target>
 
 </project>
