@@ -1,4 +1,6 @@
 
+2009-05-01 - Release Version: 0.3.rc.1
+
   - (Issue 90) PHP4 compatible version of FirePHPCore
   - (Issue 98) Thrown exceptions don't send an HTTP 500 if the FirePHP exception handler is enabled
   - (Issue 85) Support associative arrays in encodeTable method in FirePHP.class.php
