@@ -66,7 +66,6 @@
         </replacetokens>
       </filterchain>
     </copy>
-	  <chmod file="./build/FirePHP-FirefoxExtension-${version}${release}.rdf" mode="777"/>
 
   </target>
   
