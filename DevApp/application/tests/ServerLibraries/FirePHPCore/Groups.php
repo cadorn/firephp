@@ -20,7 +20,7 @@ $firephp->group('Colored Collapsed Group', array('Collapsed'=>true, 'Color'=>'bl
 $firephp->fb('Test message 2.2');
 $firephp->groupEnd();
 
-$firephp->group('Colored Group', array('Color'=>'red'));
+$firephp->group('Colored Group', array('Color'=>'#FF00FF'));
 $firephp->fb('Test message 2.3');
 $firephp->groupEnd();
 
