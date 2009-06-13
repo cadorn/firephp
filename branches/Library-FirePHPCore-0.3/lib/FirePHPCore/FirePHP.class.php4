@@ -237,7 +237,7 @@ class FirePHP {
    * @return void
    */
   function setObjectFilter($Class, $Filter) {
-    $this->objectFilters[$Class] = $Filter;
+    $this->objectFilters[strtolower($Class)] = $Filter;
   }
   
   /**
@@ -863,6 +863,7 @@ class FirePHP {
         array_push($this->objectStack, $Object);
                 
         $return['__className'] = $class = get_class($Object);
+        $class_lower = strtolower($class);
 
         $members = (array)$Object;
             
@@ -880,9 +881,9 @@ class FirePHP {
           if(!isset($properties[$name])) {
             $name = 'undeclared:'.$name;
               
-            if(!(isset($this->objectFilters[$class])
-                 && is_array($this->objectFilters[$class])
-                 && in_array($raw_name,$this->objectFilters[$class]))) {
+            if(!(isset($this->objectFilters[$class_lower])
+                 && is_array($this->objectFilters[$class_lower])
+                 && in_array($raw_name,$this->objectFilters[$class_lower]))) {
               
               $return[$name] = $this->encodeObject($value, $ObjectDepth + 1, 1);
             } else {
