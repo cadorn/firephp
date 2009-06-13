@@ -1,4 +1,9 @@
 
+TBA - Release Version: 0.3.1
+
+  - (Issue 108) ignore class name case in object filter
+
+2009-05-11 - Release Version: 0.3
 2009-05-01 - Release Version: 0.3.rc.1
 
   - (Issue 90) PHP4 compatible version of FirePHPCore
