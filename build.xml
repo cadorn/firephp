@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+
+<project name="org.firephp.package.FirefoxExtension" default="install" basedir=".">
+
+  <property file="build.local.properties" />
+  <property file="build.properties" />
+
+
+  <target name="dev-setup">
+
+    <phing inheritAll="false"
+           phingfile="./../../packages-alpha/org.cadorn.package.Firebug/phing/Services.xml"
+           target="InstallExtensionFromSource"
+           haltonfailure="true">
+      <property name="package.alias" value="${firebug.package.alias}"/>
+      <property name="firefox.profile.name" value="${firefox.profile.name}"/>
+    </phing>
+ 
+    <phing inheritAll="false"
+           phingfile="./../../packages-alpha/org.cadorn.package.Mac.Firefox/phing/Services.xml"
+           target="InstallExtension"
+           haltonfailure="true">
+      <property name="profile.name" value="${firefox.profile.name}"/>
+      <property name="extension.id" value="${extension.id}"/>
+      <property name="extension.path" value="${project.basedir}"/>
+    </phing>
+
+  </target>  
+	
+  <target name="dev-launch">
+ 
+    <phing inheritAll="false"
+           phingfile="./../../packages-alpha/org.cadorn.package.Mac.Firefox/phing/Services.xml"
+           target="LaunchBrowser"
+           haltonfailure="true">
+      <property name="profile.name" value="${firefox.profile.name}"/>
+    </phing>
+
+  </target>
+	
+  
+
+  <target name="prepare">
+    <delete dir="./build" includeemptydirs="true" verbose="false" failonerror="true" />
+    <mkdir dir="./build" />
+  </target>  
+
+  <target name="build" depends="prepare">
+    
+    <copy file="install.rdf.tpl.xml" tofile="./install.rdf" overwrite="true">
+      <filterchain>
+        <replacetokens begintoken="##" endtoken="##">
+          <token key="ID" value="${extension.id}" />
+          <token key="Version" value="${version}" />
+          <token key="Release" value="${release}" />
+        </replacetokens>
+      </filterchain>
+    </copy>
+    
+    <copy file="update.rdf.tpl.xml" tofile="./build/FirePHP-FirefoxExtension-${version}${release}.rdf">
+      <filterchain>
+        <replacetokens begintoken="##" endtoken="##">
+          <token key="ID" value="${extension.id}" />
+          <token key="Version" value="${version}" />
+          <token key="Release" value="${release}" />
+        </replacetokens>
+      </filterchain>
+    </copy>
+
+  </target>
+  
+  <target name="dist" depends="build">
+    
+    <zip destfile="./build/FirePHP-FirefoxExtension-${version}${release}.xpi">
+     <fileset dir=".">
+    	 <include name="chrome/**" />
+    	 <include name="defaults/**" />
+    	 <include name="CHANGELOG" />
+    	 <include name="chrome.manifest" />
+    	 <include name="install.rdf" />
+    	 <include name="LICENSE" />
+    	 <include name="README" />
+     </fileset>
+    </zip>
+
+    <echo msg="Sign install.rdf with McCoy" />
+    
+    <php function="sha1_file" returnProperty="xpi.hash">
+      <param value="${project.basedir}/build/FirePHP-FirefoxExtension-${version}${release}.xpi"/>
+    </php>
+    
+    <exec command="${mccoy.bin.path} -sign 'file://${project.basedir}/build/FirePHP-FirefoxExtension-${version}${release}.rdf' -key '${mccoy.key.name}' -hash 'sha1:${xpi.hash}' -addOnFileName '${project.basedir}/build/FirePHP-FirefoxExtension-${version}${release}.xpi'" passthru="true"/>
+  
+  </target>
+  
+  
+    
+    <target name="tag">
+
+        <exec command="svn copy --username christoph@christophdorn.com -m 'Tag ${version}${release} for FirefoxExtension' 'https://firephp.googlecode.com/svn/branches/FirefoxExtension-${version}' 'https://firephp.googlecode.com/svn/tags/FirefoxExtension-${version}${release}'" passthru="true"/>
+
+    </target>
+    
+    
+    <target name="upload">
+      
+        <exec command="scp ./build/FirePHP-FirefoxExtension-${version}${release}.xpi ${upload.user}@${upload.server}:${upload.xpi.path}" passthru="true"/>
+        <exec command="scp ./build/FirePHP-FirefoxExtension-${version}${release}.rdf ${upload.user}@${upload.server}:${upload.updaterdf.path}" passthru="true"/>
+       
+    </target>
+    
+      
+</project>
