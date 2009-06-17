@@ -41,7 +41,13 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php
  * @package     FirePHP
  */
- 
+
+/**
+ * @see http://code.google.com/p/firephp/issues/detail?id=112
+ */
+if (!defined('E_USER_DEPRECATED')) {
+  define('E_USER_DEPRECATED', 16384);
+}
  
 /**
  * Sends the given data to the FirePHP Firefox Extension.
