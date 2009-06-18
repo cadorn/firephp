@@ -45,9 +45,18 @@
 /**
  * @see http://code.google.com/p/firephp/issues/detail?id=112
  */
-if (!defined('E_USER_DEPRECATED')) {
-  define('E_USER_DEPRECATED', 16384);
+if(!defined('E_STRICT')) {
+  define('E_STRICT', 2048);
 }
+if(!defined('E_RECOVERABLE_ERROR')) {
+  define('E_RECOVERABLE_ERROR', 4096);
+}
+if(!defined('E_DEPRECATED')) {
+  define('E_DEPRECATED', 8192);
+}
+if(!defined('E_USER_DEPRECATED')) {
+  define('E_USER_DEPRECATED', 16384);
+} 
  
 /**
  * Sends the given data to the FirePHP Firefox Extension.
