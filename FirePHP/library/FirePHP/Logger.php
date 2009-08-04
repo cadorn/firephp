@@ -11,15 +11,18 @@ class FirePHP_Logger
         $this->_bootstrap = $bootstrap;
     }
 
-
-
+    
+    public static function getInstance()
+    {
+        return FirePHP_Bootstrap::getInstance()->getLogger();
+    }
 
 
     public function log($repString, $message)
     {
         $rep = FirePHP_Rep::factory($repString);
         
-        $rep->setMessage($message);
+        $rep->setData($message);
         
         // Check if the representation should actually be displayed
         if(!$rep->shouldDisplay()) {

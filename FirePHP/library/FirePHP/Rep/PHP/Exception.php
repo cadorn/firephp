@@ -2,21 +2,15 @@
 
 class FirePHP_Rep_PHP_Exception extends FirePHP_Rep_PHP_Error
 {
-
-
-    public function setMessage($exception)
+    public function setData($exception)
     {
-        $message = array();
-
-        $message['errno'] = get_class($exception);
-        $message['errstr'] = $exception->getMessage();
-        $message['errfile'] = $exception->getFile();
-        $message['errline'] = $exception->getLine();
-        $message['backtrace'] = $exception->getTrace();
+        $data = array();
+        $data['errno'] = get_class($exception);
+        $data['errstr'] = $exception->getMessage();
+        $data['errfile'] = $exception->getFile();
+        $data['errline'] = $exception->getLine();
+        $data['backtrace'] = $exception->getTrace();
         
-//var_dump($exception->getTrace());        
-        parent::setMessage($message);
+        parent::setData($data);
     }
-
-
 }

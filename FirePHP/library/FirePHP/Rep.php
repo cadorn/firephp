@@ -3,15 +3,18 @@
 abstract class FirePHP_Rep
 {
      
-    protected $_message = null;
+    protected $_data = null;
      
      
-    public function setMessage($message)
+    public function setData($data)
     {
-    	$this->_message = $message;
+    	$this->_data = $data;
     }
     
-
+    public function getData()
+    {
+        return $this->_data;
+    }
 
     
     

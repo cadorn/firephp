@@ -39,9 +39,7 @@ class FirePHP_Exception_Handler
             $message['errstr'] = $e->getMessage();
             $message['errfile'] = $e->getFile();
             $message['errline'] = $e->getLine();
-            try {
-//            $message['backtrace'] = $e->getTrace();
-            } catch(Exception $e) {}
+            $message['backtrace'] = $e->getTrace();
             
             $this->_bootstrap->getLogger()->log('FirePHP_Rep_PHP_Error', $message);
         }
