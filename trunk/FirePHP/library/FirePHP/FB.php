@@ -38,14 +38,13 @@ class FB
         echo $table->getTable();
     } 
     
-    public static function dump($variable)
+    public static function dump($variable, $label=null)
     {
-        var_dump($variable);
-    }     
-
-    public static function log($message, $label=null)
-    {
-        echo (($label)?$label.': ':'').$message . "\n";
+        if($label!==null) {
+            FirePHP_Logger::getInstance()->log('FirePHP_Rep_PHP_LabeledVariable', array('label'=>$label, 'variable'=>$variable));
+        } else {
+            FirePHP_Logger::getInstance()->log('FirePHP_Rep_PHP_Variable', $variable);
+        }
     }     
 }
 

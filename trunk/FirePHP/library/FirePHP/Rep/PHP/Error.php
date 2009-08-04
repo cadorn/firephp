@@ -41,29 +41,29 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
         
         $string[] = array(array('LINE','bgRed'));
         
-        $string[] = array(array($this->_message['errstr'],array('hiWhite','bgRed')),
+        $string[] = array(array($this->_data['errstr'],array('hiWhite','bgRed')),
                           array('SPACER', 'bgRed'),
-                          array(' | ' . $this->_error2string($this->_message['errno']),'bgRed'));
+                          array(' | ' . $this->_error2string($this->_data['errno']),'bgRed'));
 
         $string[] = array(array('LINE','bgRed'));
 
         $insertCodeOffset = null;
-        if(isset($this->_message['backtrace'])) {
+        if(isset($this->_data['backtrace'])) {
 
             $table = new Console_Table(CONSOLE_TABLE_ALIGN_LEFT, '');
             $index = 1;
-            for( $i=0 ; $i<sizeof($this->_message['backtrace']) ; $i++ ) {
+            for( $i=0 ; $i<sizeof($this->_data['backtrace']) ; $i++ ) {
 
-                $frame = $this->_message['backtrace'][$i];
+                $frame = $this->_data['backtrace'][$i];
                 $row = array();
 
                 if($i==0) {
                     
                     // We are dealing with an exception
-                    if(is_string($this->_message['errno'])) {
+                    if(is_string($this->_data['errno'])) {
 
-                        $table->addRow(array('   | ' . $this->_normalizeFilePath($this->_message['errfile']),
-                                             '@ ' . $this->_message['errline']));
+                        $table->addRow(array('   | ' . $this->_normalizeFilePath($this->_data['errfile']),
+                                             '@ ' . $this->_data['errline']));
 
                     } else
                     // We are dealing with an error
@@ -72,7 +72,7 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
                         $i++;
 
                         if(!isset($frame['file']) && !isset($frame['line'])) {
-                            $frame = $this->_message['backtrace'][$i];
+                            $frame = $this->_data['backtrace'][$i];
                         }
                         $row[] = '   | ' . $this->_normalizeFilePath($frame['file']);
                         $row[] = '@ ' . $frame['line'];
@@ -84,8 +84,8 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
                 if(!$row) {
                     if(!isset($frame['file'])) {
                         // This is a call_user_func*() call frame
-                        if(sizeof($this->_message['backtrace'])>=$i+1) {
-                            $frameNext = $this->_message['backtrace'][$i+1];
+                        if(sizeof($this->_data['backtrace'])>=$i+1) {
+                            $frameNext = $this->_data['backtrace'][$i+1];
                             $row[] = '   | ' . $this->_normalizeFilePath($frameNext['file']);
                             $row[] = '@ ' . $frameNext['line'];
                             $row[] = '- call_user_func*(\''.$frame['class'].'\',\''.$frame['function'].'\')';
@@ -112,22 +112,22 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
             }
         }
 
-        if(isset($this->_message['errfile']) && isset($this->_message['errline'])) {
+        if(isset($this->_data['errfile']) && isset($this->_data['errline'])) {
             $code = array();
             $code[] = '    |';
 
-            $start = $this->_message['errline'] - 5;
+            $start = $this->_data['errline'] - 5;
             if($start<0) {
                 $start = 0;
             }
             // TODO: Make number of lines configurable
             $end = $start + 10;
-            $lines = file($this->_message['errfile']);
+            $lines = file($this->_data['errfile']);
             if($end>=sizeof($lines)) {
                 $end = sizeof($lines)-1;
             }
             for( $i=$start ; $i <= $end ; $i++ ) {
-                $errorLine = ($i+1==$this->_message['errline']);
+                $errorLine = ($i+1==$this->_data['errline']);
                 $lines[$i] = str_replace("\t", '    ', rtrim($lines[$i]));
                 $code[] = str_pad($i+1,4,' ',STR_PAD_LEFT). (($errorLine)?'|>':'| ') . $lines[$i];
                 
@@ -141,7 +141,7 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
                             $varLines = array();
                             $varLines[] = '';
                             foreach( $vars as $name => $value ) {
-                                $varLines[] = '    :' . str_repeat(' ',$pos-1) . $name . ' = ' . $this->_renderVar($value, 50);
+                                $varLines[] = '    :' . str_repeat(' ',$pos-1) . $name . ' = ' . $this->_renderVar($value, 70);
                             }
                             $varLines[] = '';
                             
@@ -172,11 +172,11 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
     
     public function shouldDisplay()
     {
-        if(isset($this->_message['backtrace']) &&
-           substr($this->_message['backtrace'][0]['file'],-16,16)=='/Zend/Loader.php' &&
+        if(isset($this->_data['backtrace']) &&
+           substr($this->_data['backtrace'][0]['file'],-16,16)=='/Zend/Loader.php' &&
             (
-              preg_match_all('/^include\([^)]*\): failed to open stream: No such file or directory$/si', $this->_message['errstr'], $m) ||
-              preg_match_all('/^include\(\): Failed opening \'[^\']*\' for inclusion \([^)]*\)$/si', $this->_message['errstr'], $m)
+              preg_match_all('/^include\([^)]*\): failed to open stream: No such file or directory$/si', $this->_data['errstr'], $m) ||
+              preg_match_all('/^include\(\): Failed opening \'[^\']*\' for inclusion \([^)]*\)$/si', $this->_data['errstr'], $m)
             )
           ) {
 
@@ -311,7 +311,7 @@ class FirePHP_Rep_PHP_Error extends FirePHP_Rep
             return 'NULL';
         } else
         if(is_bool($var)) {
-            return ($var)?'TRUE':'FALL';
+            return ($var)?'TRUE':'FALSE';
         } else
         if(is_int($var) || is_float($var) || is_double($var)) {
             return $this->_trimString((string)$var, $length);

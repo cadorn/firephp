@@ -8,6 +8,7 @@ class FirePHP_Bootstrap
     protected $_logger = null;
     protected $_clients = array();
     
+    protected static $_instances = array();
     
 
     public function __construct()
@@ -24,14 +25,21 @@ class FirePHP_Bootstrap
         }
     }
     
+    public static function getInstance()
+    {
+        return self::$_instances[sizeof(self::$_instances)-1];
+    }
+    
     public function activate()
     {
+        array_push(self::$_instances, $this);
         $this->_errorHandler->activate();
         $this->_exceptionHandler->activate();
     }
     
     public function deactivate()
     {
+        array_pop(self::$_instances);
         $this->_errorHandler->deactivate();
         $this->_exceptionHandler->deactivate();
     }
