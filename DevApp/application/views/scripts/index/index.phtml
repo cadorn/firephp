@@ -1,0 +1,162 @@
+<?php
+
+$this->borderContainer()->captureStart('masterLayout', array('design' => 'headline'));
+                        
+// ************* Header *************
+
+$this->contentPane()->captureStart('headerPane', array('region' => 'top'));
+?>    
+    
+<table border="0" cellpadding="0" cellspacing="0">
+ <tr>
+   <td nowrap style="padding-left: 10px;"><a href="http://www.firephp.org/" target="_blank"><img width="51" height="51" border="0" src="/images/BugLogo.png"/></a></td>
+   <td nowrap width="50%">FirePHP Development Application</td>
+   <td nowrap width="50%">
+    <table border="0" cellpadding="0" cellspacing="0">
+     <tr>
+       <td>Your Extension Version:</td>
+       <td style="padding-left: 15px;"><span style="font-size: 180%; color: red;"><?php echo $this->FirePHPUserAgentVersion; ?></span></td>
+     </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+
+<?php
+echo $this->contentPane()->captureEnd('headerPane');
+
+// ************* Header *************
+
+
+
+// ************* Left *************
+
+$this->accordionContainer()->captureStart('menuAccordion', array('region'=>'left'));
+
+
+$this->accordionPane()->captureStart('playground_menuPane', array('title' => 'Playground'));
+?>
+
+<div>
+
+<p><a target="contentIframe" href="/plain/PHPInfo.php">PHP Info</a><p>
+  
+<p><a target="contentIframe" href="/plain/LogPrivateObjectMembers.php">Log Private Object Members</a><p>
+<p><a target="contentIframe" href="/plain/LogPrivateObjectMembers2.php">Log Private Object Members 2</a><p>
+
+<p><a target="contentIframe" href="/plain/CallJavaScriptConstantDefined.php">"Call" JavaScript constant already defined</a><p>
+
+<p><a target="contentIframe" href="/plain/RandomTests.php">Random Tests</a><p>
+
+<p><a target="contentIframe" href="/plain/TestHeaderDumps.php">Test Header Dumps</a><p>
+
+<p><a target="contentIframe" href="/plain/Check-ISO-8859-1.php">Check-ISO-8859-1</a><p>
+
+<p><a target="contentIframe" href="/plain/ThrowException.php">Throw Exception</a><p>
+
+</div>
+
+<?php
+echo $this->accordionPane()->captureEnd('playground_menuPane');
+        
+        
+$this->accordionPane()->captureStart('tests_menuPane', array('title' => 'Tests', 'selected'=>true));
+?>
+
+<div>
+
+<h3>Server Libraries</h3>
+
+<div style="padding-left: 10px; padding-top: 0px;">
+
+  <p><a target="contentIframe" href="ServerLibraryTests/FirePHPCore">FirePHPCore</a><p>
+  <p><a target="contentIframe" href="ServerLibraryTests/ZendFramework">Zend Framework</a><p>
+
+</div>
+
+</div>
+
+<?php
+echo $this->accordionPane()->captureEnd('tests_menuPane');
+        
+$this->accordionPane()->captureStart('version_0_1_menuPane', array('title' => 'Version 0.1'));
+?>
+
+<div>
+  
+<p>Extension: <a target="contentIframe" href="http://code.google.com/p/firephp/source/browse/branches/FirefoxExtension-0.1">branches/FirefoxExtension-0.1</a><p>
+
+</div>
+
+<?php
+echo $this->accordionPane()->captureEnd('version_0_1_menuPane');
+    
+$this->accordionPane()->captureStart('version_0_2_menuPane', array('title' => 'Version 0.2'));
+?>
+<div>
+  
+<p>Extension: <a target="contentIframe" href="http://code.google.com/p/firephp/source/browse/branches/FirefoxExtension-0.2">branches/FirefoxExtension-0.2</a><p>
+
+<h3>Domplate Templates</h3>
+
+<div style="padding-left: 10px; padding-top: 0px;">
+
+  <p><a target="contentIframe" href="Domplate/Log">Log</a><p>
+
+</div>
+
+</div>
+<?php
+echo $this->accordionPane()->captureEnd('version_0_2_menuPane');
+
+    
+echo $this->accordionContainer()->captureEnd('menuAccordion');
+
+// ************* Left *************
+
+
+
+// ************* Main Content *************
+
+$this->contentPane()->captureStart('contentPane',array('region' => 'center'));
+
+?>
+
+<iframe id="contentIframe" name="contentIframe" src=""></iframe>
+
+<?php
+
+echo $this->contentPane()->captureEnd('contentPane');
+
+
+// ************* Main Content *************
+
+
+
+// ************* Footer *************
+
+$this->contentPane()->captureStart('footerPane', array('region' => 'bottom'));
+?>    
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+ <tr>
+   <td width="100%" align="center">
+<table class="footerTable" border="0" cellpadding="0" cellspacing="0">
+ <tr>
+   <td nowrap>Copyright &copy; 2006 - <?php echo date('Y'); ?></td>
+   <td nowrap style="padding-left: 7px; padding-right: 7px;"><a target="_blank" href="http://www.christophdorn.com/"><img src="/images/CD_Icon_21x11_bbbbbb.png" width="21" height="11" border="0"></a></td>
+   <td nowrap><a target="_blank" href="http://www.christophdorn.com/">Christoph Dorn</a></td>
+ </tr>
+</table>
+   </td>
+ </tr>
+</table>
+
+<?php
+echo $this->contentPane()->captureEnd('footerPane');
+    
+
+// ************* Footer *************
+
+echo $this->borderContainer()->captureEnd('masterLayout');
+

@@ -1,0 +1,49 @@
+
+<script type="text/javascript">
+dojo.io.script.get(
+ { 
+   url: "/plain/Test2.php", 
+   load: function (type, data, evt) {alert (data)},
+   mimetype: "text/html" 
+ } 
+); 
+</script>
+
+<h2>Dojo JSON-RPC Demo</h2>
+
+<input name="foo" type="button" value="Demo" onClick="demoRpc()"/>
+
+<?php $this->headScript()->captureStart(); ?>
+    
+function demoRpc()
+{
+    var myObject = new dojo.rpc.JsonService('json-rpc/Server');
+    console.log(myObject.bar());
+}
+
+<?php $this->headScript()->captureEnd(); ?>
+
+
+
+<?php 
+
+Zend_Registry::get('logger')->debug('This is a view debug message');
+
+
+$this->accordionContainer()->captureStart(
+    'accordion1',
+    array('title' => 'Pane Title'),
+    array('style' => 'background-color: lightgray; height: 300px;'));
+echo $this->accordionPane(
+    'p1', 
+    'Pane 1 Content', 
+    array('title' => 'Pane 1 Title'),
+    array('style' => 'background-color: lightgray;'));
+echo $this->accordionPane(
+    'p2', 
+    'Pane 2 Content', 
+    array('title' => 'Pane 2 Title'),
+    array('style' => 'background-color: lightgray;'));
+echo $this->accordionContainer()->captureEnd('accordion1');
+
+?>

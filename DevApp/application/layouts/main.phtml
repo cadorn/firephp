@@ -1,0 +1,31 @@
+<?php print $this->doctype(); ?>
+<html>
+    <head>
+        <title>FirePHP Development Application</title>
+        
+				<?php
+				$this->headLink()->prependStylesheet('/css/default.css', 'screen');
+				?>
+				
+				<?php echo $this->headLink(); ?>
+
+				<?php
+				$this->headMeta()->appendHttpEquiv('expires', 
+				                                   'Wed, 26 Feb 1997 08:21:57 GMT')
+				                 ->appendHttpEquiv('pragma', 'no-cache')
+				                 ->appendHttpEquiv('Cache-Control', 'no-cache');
+				?>                 
+
+        <?php echo $this->headMeta(); ?>
+        
+        <?php echo $this->headScript(); ?>
+        
+    </head>
+    <body class="main">
+    <div>
+      
+        <?php echo  $this->layout()->content; ?>
+
+		<div>
+    </body>
+</html>
