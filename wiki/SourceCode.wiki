@@ -1,0 +1,6 @@
+#summary Source Code is on GitHub
+
+The source code is on GitHub:
+
+  * Extension: http://github.com/cadorn/firephp-extension
+  * Server Libraries: http://github.com/cadorn/firephp-libs
