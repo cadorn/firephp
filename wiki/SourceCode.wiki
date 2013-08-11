@@ -2,5 +2,5 @@
 
 The source code is on GitHub:
 
-  * Extension: http://github.com/cadorn/firephp-extension
+  * Extension: https://github.com/firephp/firephp-extension
   * Server Libraries: http://github.com/cadorn/firephp-libs
